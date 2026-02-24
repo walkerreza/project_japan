@@ -55,7 +55,6 @@ export default function Footer() {
             </div>
             <div className="border-t border-gray-200 pt-6 flex flex-col sm:flex-row justify-between text-xs text-gray-400">
                 <span>© 2026 Japanlingo. All rights reserved.</span>
-                <span>Made with ❤️ for Japanese learners worldwide</span>
             </div>
         </footer>
     );

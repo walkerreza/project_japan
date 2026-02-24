@@ -102,14 +102,15 @@ export default function Register() {
                         <span className="absolute bg-white px-3 text-xs text-gray-400">Or continue with</span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
+                   <div className="grid grid-cols-2 gap-3">
                         <button type="button" className="flex items-center justify-center gap-2 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
-                            <span>G</span> Google
+                            <img src="https://img.icons8.com/?size=100&id=V5cGWnc9R4xj&format=png&color=000000" className="w-5 h-5" alt="" />
+                            <span>Google</span>
                         </button>
                         <button type="button" className="flex items-center justify-center gap-2 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
-                            <span>🍎</span> Apple
+                            <img src="https://img.icons8.com/color/480/facebook-new.png" className="w-5 h-5" alt="Facebook logo" /> Facebook
                         </button>
-                    </div>
+                    </div>  
                 </form>
             </div>
 

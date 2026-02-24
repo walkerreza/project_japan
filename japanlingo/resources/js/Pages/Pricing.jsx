@@ -23,8 +23,8 @@ const plans = [
     highlight: false,
   },
   {
-    name: 'Pro',
-    price: '$12',
+    name: 'Premium',
+    price: '$5',
     period: '/mo',
     desc: 'The complete toolkit for serious N3 aspirants.',
     billing: 'Billed $144 yearly',
@@ -35,25 +35,28 @@ const plans = [
       { text: 'Gamified Kanji Practice (WaniKani style)', included: true },
       { text: 'Smart SRS Review System', included: true },
       { text: 'Audio Pronunciation Guide', included: true },
-      { text: 'Offline Mode', included: true },
     ],
     highlight: true,
     badge: 'MOST POPULAR',
   },
+];
+
+const freq = [
   {
-    name: 'Intensive',
-    price: '$29',
-    period: '/mo',
-    desc: 'For those who want personalized feedback and speed.',
-    cta: 'Join Intensive',
-    ctaVariant: 'secondary',
-    features: [
-      { text: 'Everything in Pro', included: true },
-      { text: 'Weekly 1-on-1 Tutor Review (30m)', included: true },
-      { text: 'Writing Corrections & Feedback', included: true },
-      { text: 'Priority Support', included: true },
-    ],
-    highlight: false,
+    name: "Can I switch plans at any time?",
+    desc: "Yes! You can upgrade or downgrade your plan at any time. Changes take effect at the start of your next billing cycle.",
+  },
+  {
+    name: "Is there a free trial for Pro?",
+    desc: "We offer a 14-day money-back guarantee on all paid plans. Try risk-free and see if it works for you.",
+  },
+  {
+    name: "What payment methods do you accept?",
+    desc: "We accept all major credit cards, PayPal, and Google Pay. All payments are processed securely.",
+  },
+  {
+    name: "Can I cancel anytime?",
+    desc: "Absolutely. No contracts, no hidden fees. Cancel your subscription at any time from your account settings.",
   },
 ];
 
@@ -85,13 +88,13 @@ export default function Pricing() {
 
       {/* Plans */}
       <section className="px-6 lg:px-20 py-16 lg:py-20">
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-center items-stretch gap-8 max-w-5xl mx-auto">
           {plans.map((plan, i) => (
             <div
               key={i}
-              className={`relative rounded-2xl p-8 border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${plan.highlight
-                  ? 'bg-gray-900 text-white border-gray-800 shadow-2xl scale-[1.03]'
-                  : 'bg-white border-gray-200'
+              className={`relative rounded-3xl p-8 border transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl flex-1 max-w-sm ${plan.highlight
+                ? 'bg-gray-900 text-white border-gray-800 shadow-2xl z-10 scale-[1.05]'
+                : 'bg-white border-gray-200'
                 }`}
             >
               {plan.badge && (
@@ -109,8 +112,8 @@ export default function Pricing() {
               <ul className="space-y-3 mb-8">
                 {plan.features.map((f, j) => (
                   <li key={j} className={`flex items-center gap-2.5 text-sm ${plan.highlight
-                      ? f.included ? 'text-gray-300' : 'text-gray-600 line-through'
-                      : f.included ? 'text-gray-700' : 'text-gray-400 line-through'
+                    ? f.included ? 'text-gray-300' : 'text-gray-600 line-through'
+                    : f.included ? 'text-gray-700' : 'text-gray-400 line-through'
                     }`}>
                     <span className={`text-base ${f.included ? (plan.highlight ? 'text-green-400' : 'text-green-500') : 'text-gray-300'}`}>
                       {f.included ? '✓' : '✕'}
@@ -135,26 +138,49 @@ export default function Pricing() {
       </section>
 
       {/* FAQ */}
-      <section className="px-6 lg:px-20 py-16 lg:py-20 bg-gray-50">
+      <section className="px-6 lg:px-20 py-20 lg:py-32 bg-[#F9FAFB]">
         <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-3">Frequently Asked Questions</h2>
-            <p className="text-gray-500">Have questions about payments? We've got answers.</p>
+          <div className="text-center mb-16">
+            <Badge color="red" className="mb-4">FAQ</Badge>
+            <h2 className="text-3xl lg:text-4xl font-black text-gray-900 mb-4 tracking-tight">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-gray-500">Have questions about our plans? We've got you covered.</p>
           </div>
-          <div className="space-y-3">
-            {faqs.map((faq, i) => (
-              <Card key={i} className="!p-0 overflow-hidden cursor-pointer" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
-                <div className="flex items-center justify-between px-6 py-4">
-                  <span className="font-semibold text-gray-900">{faq.q}</span>
-                  <span className={`text-gray-400 text-xl transition-transform duration-200 ${openFaq === i ? 'rotate-45' : ''}`}>+</span>
-                </div>
-                {openFaq === i && (
-                  <div className="px-6 pb-4 text-sm text-gray-500 border-t border-gray-100 pt-3">
-                    {faq.a}
+
+          <div className="space-y-4">
+            {freq.map((faq, i) => {
+              const isOpen = openFaq === i;
+              return (
+                <div
+                  key={i}
+                  className={`group bg-white rounded-2xl border transition-all duration-300 overflow-hidden ${isOpen ? 'border-red-500 shadow-lg shadow-red-500/5' : 'border-gray-100 hover:border-gray-300'
+                    }`}
+                >
+                  <button
+                    className="w-full flex items-center justify-between px-6 py-5 text-left focus:outline-none"
+                    onClick={() => setOpenFaq(isOpen ? null : i)}
+                  >
+                    <span className={`font-bold transition-colors ${isOpen ? 'text-red-600' : 'text-gray-900'}`}>
+                      {faq.name}
+                    </span>
+                    <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${isOpen ? 'bg-red-600 text-white rotate-[135deg]' : 'bg-gray-100 text-gray-400 group-hover:bg-gray-200'
+                      }`}>
+                      <span className="text-xl font-light leading-none">+</span>
+                    </div>
+                  </button>
+
+                  <div
+                    className={`transition-all duration-500 ease-in-out ${isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                      }`}
+                  >
+                    <div className="px-6 pb-6 pt-2 text-gray-500 leading-relaxed border-t border-gray-50 mx-6">
+                      {faq.desc}
+                    </div>
                   </div>
-                )}
-              </Card>
-            ))}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

@@ -1,4 +1,7 @@
+//layout untuk halaman login dan register
+
 import { Link } from '@inertiajs/react';
+import fujiImage from '@/../../resources/Images/Mount-Fuji-New.jpg';
 
 export default function GuestAuthLayout({ children }) {
     return (
@@ -23,12 +26,13 @@ export default function GuestAuthLayout({ children }) {
                             🎌 JLPT N3 STRUCTURED
                         </div>
 
-                        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 mb-8">
-                            <div className="w-full h-48 bg-gradient-to-br from-pink-200/20 to-red-200/10 rounded-xl flex items-center justify-center overflow-hidden">
-                                <div className="text-center">
-                                    <div className="text-6xl mb-2">🗻</div>
-                                    <div className="text-3xl">🌸🌸🌸</div>
-                                </div>
+                        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-2 border border-white/11 mb-9">
+                            <div className="w-full h-80 rounded-xl overflow-hidden shadow-2xl">
+                                <img
+                                    src={fujiImage}
+                                    className="w-full h-full object-cover"
+                                    alt="Mount Fuji"
+                                />
                             </div>
                         </div>
 
