@@ -4,8 +4,6 @@ import Button from '@/Components/UI/Button';
 import Badge from '@/Components/UI/Badge';
 import Card from '@/Components/UI/Card';
 import Avatar from '@/Components/UI/Avatar';
-import ProgressBar from '@/Components/UI/ProgressBar';
-import LevelBadge from '@/Components/Learning/LevelBadge';
 import GuestNavbar from '@/Components/Layout/GuestNavbar';
 import Footer from '@/Components/Layout/GuestFooter';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -17,6 +15,27 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import HeadsetIcon from '@mui/icons-material/Headset';
+import rawTheme from '@/Components/theme/themes';
+import FallEffect from '@/Components/theme/FallEffect';
+
+// Map theme keys ke format yang dipakai landingPage
+const theme = {
+  heroBg: rawTheme.landingHeroBg,
+  heroGradText: rawTheme.landingGradText,
+  heroBadgeBg: rawTheme.landingBadgeBg,
+  heroBadgeDot: rawTheme.landingBadgeDot,
+  heroBadgeText: rawTheme.landingBadgeText,
+  heroGlow: rawTheme.landingGlow,
+  featureCardGlow: rawTheme.landingCardGlow,
+  highlightBorder: rawTheme.landingHighlightBorder,
+  highlightBadgeBg: rawTheme.landingHighlightBadge,
+  highlightBtnBg: rawTheme.landingHighlightBtn,
+  highlightLevel: rawTheme.landingHighlightLevel,
+  leagueBg: rawTheme.landingLeagueBg,
+  ctaBg: rawTheme.landingCtaBg,
+  ctaProBg: rawTheme.landingProBg,
+};
+
 
 const steps = [
   { icon: <AssignmentIcon />, title: 'Placement Test', desc: 'Take a quick 5-minute test to find your exact level, or start from scratch with N5.' },
@@ -31,29 +50,28 @@ const testimonials = [
 ];
 
 const LandingPage = () => {
-
   return (
     <>
+      <FallEffect />
       <Head title="Japanlingo - Gamified Japanese Learning" />
-
       <GuestNavbar />
 
       {/* Hero */}
-      <section className="relative flex flex-col lg:flex-row items-center justify-between px-6 lg:px-24 py-16 lg:py-32 bg-[#FDFEFE] gap-12 lg:gap-16 overflow-hidden">
-        {/* Background Decorative Grid */}
+      <section className={`relative flex flex-col lg:flex-row items-center justify-between px-6 lg:px-24 py-16 lg:py-32 ${theme.heroBg} gap-12 lg:gap-16 overflow-hidden`}>
         <div className="absolute inset-x-0 top-0 h-full w-full opacity-[0.03] pointer-events-none"
-          style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '32px 32px' }}></div>
+          style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '32px 32px' }}>
+        </div>
 
         <div className="max-w-xl lg:max-w-xl relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 rounded-full mb-6 border border-red-100">
-            <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
-            <span className="text-xs font-bold text-red-600 uppercase tracking-wider">#1 Platform for JLPT N3</span>
+          <div className={`inline-flex items-center gap-2 px-3 py-1 ${theme.heroBadgeBg} rounded-full mb-6 border`}>
+            <span className={`w-2 h-2 rounded-full ${theme.heroBadgeDot} animate-pulse`}></span>
+            <span className={`text-xs font-bold ${theme.heroBadgeText} uppercase tracking-wider`}>#1 Platform for JLPT N3</span>
           </div>
 
           <h1 className="text-5xl lg:text-7xl font-black leading-[1.1] mb-6 text-[#1A1A1A] tracking-tight">
             Belajar Bahasa <br />
-            <span className="bg-gradient-to-r from-red-600 via-orange-500 to-red-600 bg-clip-text text-transparent">
-              Jepang Terstruktur & Gamified
+            <span className={`bg-gradient-to-r ${theme.heroGradText} bg-clip-text text-transparent`}>
+              Jepang Terstruktur &amp; Gamified
             </span>
           </h1>
 
@@ -62,11 +80,11 @@ const LandingPage = () => {
           </p>
 
           <div className="flex flex-wrap gap-4 mb-10">
-            <Button size="lg" href="/register" className="!rounded-full !px-8 !py-4 shadow-lg shadow-red-500/20">
+            <Button size="lg" href="/register" className="!rounded-full !px-8 !py-4 shadow-lg">
               Start Learning Free ➔
             </Button>
             <Button size="lg" variant="outline" className="!rounded-full !px-8 !py-4 !bg-white">
-              <PlayCircleIcon className="text-red-600 mr-2" sx={{ fontSize: 24 }} />
+              <PlayCircleIcon className="mr-2" sx={{ fontSize: 24 }} />
               View Demo
             </Button>
           </div>
@@ -85,11 +103,9 @@ const LandingPage = () => {
 
         {/* Floating Card UI */}
         <div className="w-full max-w-lg relative lg:mr-10">
-          {/* Card Background Glow */}
-          <div className="absolute -inset-4 bg-gradient-to-tr from-red-100/40 to-blue-100/40 blur-3xl rounded-full opacity-50"></div>
+          <div className={`absolute -inset-4 bg-gradient-to-tr ${theme.heroGlow} blur-3xl rounded-full opacity-50`}></div>
 
           <div className="relative animate-float">
-            {/* Main Card */}
             <div className="bg-white rounded-[2.5rem] shadow-2xl p-8 border border-gray-100 overflow-hidden">
               <div className="flex justify-between items-start mb-8">
                 <div>
@@ -105,7 +121,6 @@ const LandingPage = () => {
               </div>
 
               <div className="space-y-6 mb-8">
-                {/* Task 1 */}
                 <div className="relative">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
@@ -121,7 +136,6 @@ const LandingPage = () => {
                   </div>
                 </div>
 
-                {/* Task 2 */}
                 <div className="relative">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
@@ -143,7 +157,6 @@ const LandingPage = () => {
               </Button>
             </div>
 
-            {/* Floating Badges */}
             <div className="absolute -left-12 -bottom-6 animate-float-delayed">
               <div className="bg-[#E4E2D5] rounded-3xl p-4 shadow-xl border border-white flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-white/50 border border-white flex items-center justify-center overflow-hidden">
@@ -186,18 +199,17 @@ const LandingPage = () => {
               <div
                 key={i}
                 className={`relative p-6 rounded-[2rem] text-left transition-all duration-300 flex flex-col h-full ${item.highlight
-                  ? 'border-2 border-red-500 shadow-2xl scale-105 z-10'
+                  ? theme.highlightBorder
                   : 'bg-gray-50/50 border border-gray-100 hover:border-gray-200'
                   }`}
               >
                 {item.highlight && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-red-600 text-[10px] font-black text-white rounded-full whitespace-nowrap tracking-wider">
+                  <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 ${theme.highlightBadgeBg} text-[10px] font-black text-white rounded-full whitespace-nowrap tracking-wider`}>
                     MOST POPULAR
                   </div>
                 )}
 
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-black mb-4 ${item.highlight ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-400'
-                  }`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-black mb-4 ${item.highlight ? theme.highlightLevel : 'bg-gray-100 text-gray-400'}`}>
                   {item.level}
                 </div>
 
@@ -207,7 +219,7 @@ const LandingPage = () => {
                 <div className="mt-auto">
                   <div className={`h-1.5 w-full rounded-full mb-4 ${item.color} opacity-80`}></div>
                   {item.highlight ? (
-                    <Button className="w-full !rounded-xl !py-2 !bg-red-600 !text-white !text-xs !font-bold">
+                    <Button className={`w-full !rounded-xl !py-2 ${theme.highlightBtnBg} !text-white !text-xs !font-bold`}>
                       Start {item.level}
                     </Button>
                   ) : (
@@ -224,7 +236,6 @@ const LandingPage = () => {
       <section className="px-6 lg:px-20 py-24 bg-gray-50/50 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
-            {/* Left side text */}
             <div>
               <Badge color="red" className="mb-4">WHY JAPANLINGO?</Badge>
               <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6 leading-[1.2]">
@@ -253,13 +264,10 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* Right side floating cards */}
             <div className="relative">
-              {/* Background Glow */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-red-100/50 blur-[120px] rounded-full"></div>
+              <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full ${theme.featureCardGlow} blur-[120px] rounded-full`}></div>
 
               <div className="grid grid-cols-2 gap-4">
-                {/* Streak Card */}
                 <div className="animate-float">
                   <div className="bg-white rounded-3xl p-6 shadow-xl border border-gray-100 translate-y-10">
                     <div className="text-red-500 mb-2">
@@ -270,9 +278,8 @@ const LandingPage = () => {
                   </div>
                 </div>
 
-                {/* League Card */}
                 <div className="animate-float-fast">
-                  <div className="bg-red-600 rounded-3xl p-6 shadow-2xl text-white relative h-full">
+                  <div className={`${theme.leagueBg} rounded-3xl p-6 shadow-2xl text-white relative h-full`}>
                     <div className="absolute top-4 right-4 text-[8px] font-bold bg-black/20 px-2 py-0.5 rounded-full">TOP 1%</div>
                     <div className="text-2xl mb-8">
                       <EmojiEventsIcon sx={{ fontSize: 32 }} />
@@ -282,7 +289,6 @@ const LandingPage = () => {
                   </div>
                 </div>
 
-                {/* Context Card */}
                 <div className="col-span-1 animate-float-delayed">
                   <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100">
                     <img src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400&h=300&fit=crop" className="w-full h-24 object-cover" alt="Context" />
@@ -292,7 +298,6 @@ const LandingPage = () => {
                   </div>
                 </div>
 
-                {/* Sensei Notification */}
                 <div className="animate-float">
                   <div className="bg-white/90 backdrop-blur-md rounded-3xl p-4 shadow-xl flex flex-col gap-3 -translate-y-10 border border-white">
                     <div className="flex items-center gap-3">
@@ -339,7 +344,7 @@ const LandingPage = () => {
 
       {/* CTA + Pricing */}
       <section className="px-6 lg:px-20 py-16 lg:py-20">
-        <div className="bg-gray-900 rounded-3xl px-6 lg:px-16 py-14 text-center text-white">
+        <div className={`${theme.ctaBg} rounded-3xl px-6 lg:px-16 py-14 text-center text-white`}>
           <h2 className="text-3xl lg:text-4xl font-extrabold mb-3">Ready to start your journey?</h2>
           <p className="text-gray-400 max-w-lg mx-auto mb-10">Join for free today. Upgrade to Premium anytime for offline access, unlimited quizzes, and personal coaching.</p>
           <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
@@ -355,11 +360,11 @@ const LandingPage = () => {
                 <li className="flex items-center gap-2 text-sm text-white/80"><span className="text-green-400">✓</span> Basic Quizzes</li>
                 <li className="flex items-center gap-2 text-sm text-white/80"><span className="text-green-400">✓</span> Community Access</li>
               </ul>
-              <Button variant="outline" href="/register" className="w-full !border-white/20 !text-white hover:!bg-white/20">
+              <Button variant="outline" href="/register" className="w-full !border-white/20 !text-white hover:!bg-black/20 hover:!text-white">
                 Get Started
               </Button>
             </div>
-            <div className="bg-red-600 rounded-2xl p-8 text-left relative">
+            <div className={`${theme.ctaProBg} rounded-2xl p-8 text-left relative`}>
               <Badge color="yellow" className="absolute -top-3 right-5">POPULAR</Badge>
               <h3 className="text-lg font-bold text-white mb-2">Pro Scholar</h3>
               <div className="flex items-baseline gap-1 mb-5">
@@ -373,14 +378,13 @@ const LandingPage = () => {
                 <li className="flex items-center gap-2 text-sm text-white/90"><span className="text-white">✓</span> Advanced Stats</li>
                 <li className="flex items-center gap-2 text-sm text-white/90"><span className="text-white">✓</span> Personal Coaching</li>
               </ul>
-              <Button href="/register" className="w-full !bg-white !text-red-600 hover:!bg-gray-100">
+              <Button href="/register" className="w-full !bg-white !text-gray-900 hover:!bg-gray-100">
                 Upgrade Now
               </Button>
             </div>
           </div>
         </div>
       </section>
-
 
       <Footer />
     </>

@@ -17,7 +17,7 @@ const adminMenu = [
 ];
 
 const userMenu = [
-    { href: '/dashboard', icon: '🏠', label: 'Dashboard' },
+    { href: '/user/dashboard', icon: '🏠', label: 'Dashboard' },
     { href: '/learn', icon: '📚', label: 'My Learning' },
     { href: '/quizzes', icon: '❓', label: 'Quizzes' },
     { href: '/leaderboard', icon: '🏆', label: 'Leaderboard' },
@@ -83,9 +83,9 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <Dropdown.Trigger>
                                         <button className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 transition">
                                             <div className="w-7 h-7 rounded-full bg-red-50 flex items-center justify-center text-red-600 text-xs font-bold">
-                                                {user.name?.charAt(0).toUpperCase()}
+                                                {user.username?.charAt(0).toUpperCase()}
                                             </div>
-                                            <span className="hidden sm:inline">{user.name}</span>
+                                            <span className="hidden sm:inline">{user.username}</span>
                                             <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                                             </svg>
