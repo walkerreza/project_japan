@@ -9,6 +9,7 @@ export default function GuestNavbar() {
                 <li><a href="/" className="text-sm font-medium text-gray-500 hover:text-red-600 transition-colors no-underline">Home</a></li>
                 <li><a href="pricing" className="text-sm font-medium text-gray-500 hover:text-red-600 transition-colors no-underline">Pricing</a></li>
                 <li><a href="/about" className="text-sm font-medium text-gray-500 hover:text-red-600 transition-colors no-underline">About</a></li>
+                <li><a href="/roadmap" className="text-sm font-medium text-gray-500 hover:text-red-600 transition-colors no-underline">Roadmap</a></li>
             </ul>
             <div className="flex items-center gap-3">
                 <Button variant="ghost" href="/login" className="hidden sm:inline-flex">Login</Button>
