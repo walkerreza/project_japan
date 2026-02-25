@@ -21,6 +21,12 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'role',
+        'subscription_status',
+        'xp',
+        'level',
+        'streak_count',
+        'last_activity_date',
     ];
 
     /**
@@ -42,7 +48,18 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_activity_date' => 'date',
             'password' => 'hashed',
         ];
+    }
+
+    public function attempts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Attempt::class);
+    }
+
+    public function progress(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Progress::class);
     }
 }
