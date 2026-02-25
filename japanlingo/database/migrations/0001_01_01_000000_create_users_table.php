@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('username', 100);
             $table->string('email', 150)->unique();
-            $table->string('role', 20)->default('student');
+            $table->string('role', 20)->default('user');
             $table->string('subscription_status', 50)->default('free');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

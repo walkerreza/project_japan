@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->integer('xp')->default(0);
+            $table->integer('level')->default(1);
+            $table->integer('streak_count')->default(0);
+            $table->date('last_activity_date')->nullable();
         });
     }
 
@@ -22,7 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->dropColumn(['xp', 'level', 'streak_count', 'last_activity_date']);
         });
     }
 };
