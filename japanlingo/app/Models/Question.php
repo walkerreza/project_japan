@@ -15,6 +15,13 @@ class Question extends Model
         'question_text',
         'correct_answer',
         'explanation',
+        'options',
+        'audio_url',
+        'order',
+    ];
+
+    protected $casts = [
+        'options' => 'array',
     ];
 
     public function quiz(): BelongsTo

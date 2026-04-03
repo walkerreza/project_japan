@@ -15,6 +15,11 @@ class Lesson extends Model
         'module_id',
         'title',
         'content',
+        'type',
+        'video_url',
+        'file_url',
+        'order',
+        'duration_minutes',
     ];
 
     public function module(): BelongsTo
@@ -22,8 +27,23 @@ class Lesson extends Model
         return $this->belongsTo(Module::class);
     }
 
+    public function quiz(): BelongsTo
+    {
+        return $this->belongsTo(Quiz::class);
+    }
+
     public function quizzes(): HasMany
     {
         return $this->hasMany(Quiz::class);
+    }
+
+    public function progress(): HasMany
+    {
+        return $this->hasMany(Progress::class);
+    }
+
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('order');
     }
 }

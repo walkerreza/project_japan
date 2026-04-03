@@ -15,6 +15,7 @@ class Module extends Model
         'level_id',
         'title',
         'week_number',
+        'description',
     ];
 
     public function level(): BelongsTo
@@ -24,7 +25,7 @@ class Module extends Model
 
     public function lessons(): HasMany
     {
-        return $this->hasMany(Lesson::class);
+        return $this->hasMany(Lesson::class)->orderBy('order');
     }
 
     public function progress(): HasMany

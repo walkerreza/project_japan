@@ -1,211 +1,255 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import Card from '@/Components/UI/Card';
-import Badge from '@/Components/UI/Badge';
-import Button from '@/Components/UI/Button';
+import theme from '@/Components/theme/themes';
+import MountFujiBg from '../../../Images/Mount-Fuji-New.jpg';
+
+// Icons
+import SearchIcon from '@mui/icons-material/Search';
+import TuneIcon from '@mui/icons-material/Tune'; // For filter icon
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+
+// Social Badges Data
+const socials = [
+    { icon: 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png', label: 'Instagram', handle: '@japanlingo' },
+    { icon: 'https://cdn4.iconfinder.com/data/icons/social-media-flat-7/64/Social-media_Tiktok-512.png', label: 'TikTok', handle: '@japanlingo' },
+    { icon: 'https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png', label: 'YouTube', handle: '@japanlingo' },
+    { icon: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg', label: 'Twitter', handle: '@japanlingo' },
+];
 
 const modules = [
-  {
-    type: 'Grammar',
-    level: 'JLPT N5',
-    title: 'Basic Particles (Wa, Ga, O)',
-    color: 'blue',
-    icon: '📝',
-    bg: 'bg-gradient-to-br from-blue-50 to-blue-100',
-    label: 'Grammar Guide',
-    time: '3 jam lalu',
-  },
-  {
-    type: 'Kanji',
-    level: 'JLPT N5',
-    title: 'Daily Kanji: Self & Family',
-    color: 'red',
-    icon: '私',
-    bg: 'bg-gradient-to-br from-red-50 to-red-100',
-    label: 'Kanji Practice',
-    time: '5 jam lalu',
-    isKanji: true,
-  },
-  {
-    type: 'Listening',
-    level: 'JLPT N4',
-    title: 'N4 Listening: Shopping',
-    color: 'yellow',
-    icon: '🎧',
-    bg: 'bg-gradient-to-br from-amber-50 to-amber-100',
-    label: 'Listening Practice',
-    time: '1 hari lalu',
-  },
-  {
-    type: 'Vocab',
-    level: 'JLPT N4',
-    title: 'Week 2: Travel Vocabulary',
-    color: 'green',
-    icon: '📚',
-    bg: 'bg-gradient-to-br from-green-50 to-green-100',
-    label: 'Vocabulary',
-    time: '2 hari lalu',
-  },
+    {
+        title: 'Basic Particles (Wa, Ga, O)',
+        category: 'Grammar',
+        categoryColor: 'bg-blue-500',
+        time: 'Diakses 7 jam lalu',
+        // Card visual
+        visualBg: 'bg-slate-50',
+        visualContent: (
+            <div className="flex flex-col items-center justify-center h-full">
+                <span className="font-bold text-gray-800 tracking-widest text-lg">JLPT N5</span>
+                <span className="text-[10px] text-red-500 font-bold tracking-widest mt-1 uppercase">Grammar Guide</span>
+                <div className="w-8 h-0.5 bg-red-500 mt-2"></div>
+            </div>
+        )
+    },
+    {
+        title: 'Daily Kanji: Self & Family',
+        category: 'Kanji',
+        categoryColor: 'bg-red-500',
+        time: 'Diakses kemarin',
+        visualBg: 'bg-pink-50',
+        visualContent: (
+            <div className="flex flex-col items-center justify-center h-full text-red-500">
+                <span className="text-4xl font-japanese font-black mb-1">私</span>
+                <span className="text-xs font-medium tracking-widest">watashi</span>
+            </div>
+        )
+    },
+    {
+        title: 'N4 Listening: Shopping',
+        category: 'Audio',
+        categoryColor: 'bg-orange-500',
+        time: 'Baru dibuat',
+        visualBg: 'bg-gray-50',
+        visualContent: (
+            <div className="flex flex-col items-center justify-center h-full text-gray-300">
+                <div className="w-16 h-12 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center mb-2">
+                    <span className="material-icons text-xl">image</span>
+                </div>
+                <span className="text-[10px] font-bold tracking-wider">Listening Practice</span>
+            </div>
+        )
+    },
+    {
+        title: 'Week 2: Travel Vocabulary',
+        category: 'Vocab',
+        categoryColor: 'bg-green-500',
+        time: '7 hari lalu',
+        visualBg: 'bg-blue-50',
+        visualContent: (
+            <div className="w-full h-full p-6 flex flex-col justify-center">
+                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs mb-4">Vocab</div>
+                <div className="w-full h-1.5 bg-blue-200 rounded-full mb-2"></div>
+                <div className="w-2/3 h-1.5 bg-blue-200 rounded-full"></div>
+            </div>
+        )
+    }
 ];
 
 const news = [
-  {
-    category: 'Teknologi',
-    categoryColor: 'blue',
-    title: 'Inovasi Robot Pelayan Baru di Kafe Tokyo Menarik Perhatian Dunia',
-    desc: 'Sebuah kafe di distrik Shibuya memperkenalkan robot pelayan AI yang mampu berinteraksi dengan pelanggan dalam 10 bahasa berbeda.',
-    source: 'Tokyo Times',
-    time: '2 jam lalu',
-    emoji: '🤖',
-    bg: 'bg-gradient-to-br from-blue-500 to-indigo-600',
-  },
-  {
-    category: 'Budaya',
-    categoryColor: 'red',
-    title: 'Festival Musim Gugur Kyoto Kembali Digelar dengan Meriah',
-    desc: 'Setelah dua tahun pembatasan, ribuan turis memadati kuil Kiyomizu-dera untuk menikmati pemandangan daun musim gugur yang spektakuler.',
-    source: 'Kyoto News',
-    time: '5 jam lalu',
-    emoji: '⛩️',
-    bg: 'bg-gradient-to-br from-red-500 to-rose-600',
-  },
-  {
-    category: 'Kuliner',
-    categoryColor: 'yellow',
-    title: 'Ramen Terpedas di Jepang: Tantangan Baru bagi Pecinta Kuliner',
-    desc: 'Sebuah kedai ramen legendaris di Osaka meluncurkan menu \'Level Neraka\' yang menggunakan cabai terpedas di dunia, berani coba?',
-    source: 'Osaka Eats',
-    time: '1 hari lalu',
-    emoji: '🍜',
-    bg: 'bg-gradient-to-br from-amber-500 to-orange-600',
-  },
+    {
+        badge: 'Teknologi',
+        badgeColor: 'bg-red-500',
+        imgUrl: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', // Tokyo tower
+        time: '2 jam yang lalu',
+        title: 'Inovasi Robot Pelayan Baru di Kafe Tokyo Menarik Perhatian Dunia',
+        desc: 'Sebuah kafe di distrik Shibuya memperkenalkan robot pelayan AI yang mampu berinteraksi dengan pelanggan dalam 10 bahasa berbeda.',
+        source: 'Tokyo Times'
+    },
+    {
+        badge: 'Budaya',
+        badgeColor: 'bg-blue-500',
+        imgUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', // Kyoto temple
+        time: '5 jam yang lalu',
+        title: 'Festival Musim Gugur Kyoto Kembali Digelar dengan Meriah',
+        desc: 'Setelah dua tahun pembatasan, ribuan turis memadati kuil Kiyomizu-dera untuk menikmati pemandangan daun musim gugur yang spektakuler.',
+        source: 'Kyoto News'
+    },
+    {
+        badge: 'Kuliner',
+        badgeColor: 'bg-orange-500',
+        imgUrl: 'https://images.unsplash.com/photo-1557872943-16a5ac26437e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', // Ramen
+        time: '1 hari yang lalu',
+        title: 'Ramen Terpedas di Jepang: Tantangan Baru bagi Pecinta Kuliner',
+        desc: 'Sebuah kedai ramen legendaris di Osaka meluncurkan menu \'Level Neraka\' yang menggunakan cabai terpedas di dunia, berani coba?',
+        source: 'Osaka Eats'
+    }
 ];
-
-const socials = [
-  { icon: '📷', label: 'Instagram', handle: '@Japanlingo', bg: 'bg-gradient-to-r from-pink-500 to-rose-500' },
-  { icon: '🎵', label: 'TikTok', handle: '@Japanlingo', bg: 'bg-gray-900' },
-  { icon: '▶️', label: 'YouTube', handle: '@Japanlingo', bg: 'bg-red-600' },
-  { icon: '𝕏', label: 'Twitter', handle: '@Japanlingo', bg: 'bg-gray-800' },
-];
-
-const dotColors = {
-  Grammar: 'bg-blue-500',
-  Kanji: 'bg-red-500',
-  Listening: 'bg-amber-500',
-  Vocab: 'bg-green-500',
-};
 
 export default function UserDashboard() {
-  return (
-    <AuthenticatedLayout
-      header={
-        <h2 className="text-xl font-bold text-gray-900">Dashboard</h2>
-      }
-    >
-      <Head title="Dashboard - Japanlingo" />
+    return (
+        <AuthenticatedLayout header={false}>
+            <Head title="Beranda Utama" />
 
-      {/* Hero Search */}
-      <section className="bg-gradient-to-br from-gray-50 to-red-50/30 rounded-2xl p-8 lg:p-12 mb-8">
-        <h1 className="text-3xl lg:text-4xl font-black text-gray-900 text-center mb-6">
-          Mau belajar apa hari ini?
-        </h1>
-        <div className="max-w-2xl mx-auto mb-6">
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg">🔍</span>
-            <input
-              type="text"
-              placeholder="Cari grammar, kanji, atau kosakata..."
-              className="w-full pl-12 pr-12 py-4 rounded-full border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-red-600/20 focus:border-red-600 shadow-sm"
-            />
-            <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-600 transition-colors text-lg">
-              ⚙️
-            </button>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-3 justify-center">
-          {socials.map((s, i) => (
-            <a key={i} href="#" className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-white text-xs font-medium ${s.bg} hover:opacity-90 transition-opacity no-underline`}>
-              <span>{s.icon}</span>
-              <span>{s.label} {s.handle}</span>
-            </a>
-          ))}
-        </div>
-      </section>
+            <div className="w-full bg-white min-h-screen pb-16">
+                
+                {/* HERO SECTION - Mount Fuji Background with Fade Overlay */}
+                <div 
+                    className="relative w-full pt-16 pb-12 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${MountFujiBg})` }}
+                >
+                    {/* Efek Fade gradasi dari gambar asli (atas) meredup ke putih pekat (bawah) tempat konten halaman dimulai */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/70 to-white pointer-events-none"></div>
 
-      {/* Modul Terbaru */}
-      <section className="mb-8">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-xl font-extrabold text-gray-900">Modul Terbaru</h2>
-          <select className="text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-500 bg-white focus:outline-none focus:ring-2 focus:ring-red-600/20">
-            <option>Semua jenis</option>
-            <option>Grammar</option>
-            <option>Kanji</option>
-            <option>Listening</option>
-            <option>Vocabulary</option>
-          </select>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {modules.map((m, i) => (
-            <Card key={i} hover className="!p-0 overflow-hidden cursor-pointer">
-              <div className={`${m.bg} h-36 flex items-center justify-center relative`}>
-                {m.isKanji ? (
-                  <span className="text-6xl font-black text-red-600/80">{m.icon}</span>
-                ) : (
-                  <span className="text-5xl">{m.icon}</span>
-                )}
-                <Badge color={m.color} className="absolute top-3 left-3 !text-[10px]">{m.label}</Badge>
-              </div>
-              <div className="p-4">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className={`w-2 h-2 rounded-full ${dotColors[m.type]}`} />
-                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{m.level}</span>
+                    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
+                        
+                        <h1 className="text-3xl md:text-5xl font-black text-gray-900 mb-8 tracking-tight">
+                            Mau belajar apa hari ini?
+                        </h1>
+                        
+                        {/* SEARCH BAR */}
+                        <div className="w-full max-w-2xl relative mb-8">
+                            <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400">
+                                <SearchIcon sx={{ fontSize: 24 }} />
+                            </div>
+                            <input 
+                                type="text"
+                                className="w-full pl-14 pr-12 py-4 rounded-full border-0 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-red-100 focus:border-red-100 transition-all text-sm md:text-base outline-none"
+                                placeholder="Cari grammar, kanji, atau kosakata..."
+                            />
+                            <div className="absolute inset-y-0 right-0 pr-5 flex items-center cursor-pointer text-gray-400 hover:text-gray-600">
+                                <TuneIcon sx={{ fontSize: 22 }} />
+                            </div>
+                        </div>
+
+                        {/* SOCIAL BADGES */}
+                        <div className="flex flex-wrap justify-center gap-3">
+                            {socials.map((social, idx) => (
+                                <a key={idx} href="#" className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-full shadow-sm border border-gray-100 hover:shadow-md transition-shadow text-xs font-bold text-gray-700">
+                                    <img src={social.icon} alt={social.label} className="w-4 h-4 object-contain" />
+                                    {social.label} {social.handle}
+                                </a>
+                            ))}
+                        </div>
+                    </div>
                 </div>
-                <h4 className="font-bold text-gray-900 text-sm mb-2 leading-snug">{m.title}</h4>
-                <span className="text-xs text-gray-400">{m.time}</span>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </section>
 
-      {/* Berita Terkini Jepang */}
-      <section className="mb-8">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-xl font-extrabold text-gray-900">Berita Terkini Jepang</h2>
-          <Link href="#" className="text-sm text-red-600 font-semibold hover:underline no-underline">
-            Lihat semua berita →
-          </Link>
-        </div>
-        <div className="grid md:grid-cols-3 gap-6">
-          {news.map((n, i) => (
-            <Card key={i} hover className="!p-0 overflow-hidden cursor-pointer group">
-              <div className={`${n.bg} h-48 flex items-center justify-center relative`}>
-                <span className="text-6xl opacity-80 group-hover:scale-110 transition-transform duration-300">{n.emoji}</span>
-                <Badge color={n.categoryColor} className="absolute top-3 left-3">{n.category}</Badge>
-              </div>
-              <div className="p-5">
-                <h4 className="font-bold text-gray-900 mb-2 leading-snug group-hover:text-red-600 transition-colors">{n.title}</h4>
-                <p className="text-sm text-gray-500 leading-relaxed mb-4 line-clamp-2">{n.desc}</p>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-400">{n.source} · {n.time}</span>
-                  <span className="text-red-600 font-semibold group-hover:underline">Baca selengkapnya →</span>
+                {/* MAIN CONTENT AREA */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 space-y-16">
+
+                    {/* Modul Terbaru Section */}
+                    <section>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+                            <h2 className="text-xl md:text-2xl font-black text-gray-900">Modul Terbaru</h2>
+                            <select className="bg-transparent border-0 text-gray-500 font-medium text-sm focus:ring-0 cursor-pointer pr-8 hover:text-gray-900">
+                                <option>Semua jenis</option>
+                                <option>Grammar</option>
+                                <option>Kanji</option>
+                            </select>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {modules.map((mod, idx) => (
+                                <Link href="#" key={idx} className="group block">
+                                    {/* Visual Thumbnail */}
+                                    <div className={`w-full aspect-[4/3] rounded-2xl ${mod.visualBg} mb-4 overflow-hidden border border-gray-100/50 group-hover:shadow-md transition-all duration-300`}>
+                                        {mod.visualContent}
+                                    </div>
+                                    
+                                    {/* Info */}
+                                    <h3 className="font-bold text-gray-900 leading-snug mb-2 group-hover:text-red-500 transition-colors line-clamp-2">
+                                        {mod.title}
+                                    </h3>
+                                    <div className="flex items-center gap-2 text-[11px] text-gray-400 font-medium">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className={`w-1.5 h-1.5 rounded-full ${mod.categoryColor}`}></span>
+                                            {mod.category}
+                                        </div>
+                                        <span>•</span>
+                                        <span>{mod.time}</span>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </section>
+
+
+                    {/* Berita Terkini Jepang Section */}
+                    <section>
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-xl md:text-2xl font-black text-gray-900">Berita Terkini Jepang</h2>
+                            <Link href="#" className="text-red-500 font-bold text-sm hover:underline">
+                                Lihat semua berita
+                            </Link>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {news.map((item, idx) => (
+                                <div key={idx} className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-10px_rgba(0,0,0,0.1)] transition-all duration-300 flex flex-col h-full group">
+                                    {/* Image with Badge */}
+                                    <div className="relative w-full aspect-video overflow-hidden">
+                                        <div className="absolute top-4 left-4 z-10">
+                                            <span className={`${item.badgeColor} text-white text-[10px] font-bold px-3 py-1.5 rounded-full tracking-wider uppercase shadow-sm`}>
+                                                {item.badge}
+                                            </span>
+                                        </div>
+                                        <img 
+                                            src={item.imgUrl} 
+                                            alt={item.title} 
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                        />
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="p-6 flex flex-col flex-grow">
+                                        <div className="flex items-center gap-1.5 text-gray-400 text-xs font-medium mb-3">
+                                            <AccessTimeIcon sx={{ fontSize: 14 }} />
+                                            {item.time}
+                                        </div>
+                                        <h3 className="font-extrabold text-gray-900 text-lg leading-snug mb-3 group-hover:text-red-600 transition-colors">
+                                            {item.title}
+                                        </h3>
+                                        <p className="text-gray-500 text-sm leading-relaxed mb-6 flex-grow line-clamp-3">
+                                            {item.desc}
+                                        </p>
+                                        
+                                        {/* Footer */}
+                                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
+                                            <span className="text-xs font-bold text-gray-400">{item.source}</span>
+                                            <Link href="#" className="font-bold text-red-500 text-xs flex items-center gap-1 hover:text-red-700 transition-colors group/link">
+                                                Baca selengkapnya <ArrowRightAltIcon sx={{ fontSize: 18 }} className="group-hover/link:translate-x-1 transition-transform" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
                 </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-200 pt-5 pb-2 flex flex-col sm:flex-row justify-between text-xs text-gray-400">
-        <span>Japanlingo © 2026</span>
-        <div className="flex gap-4">
-          <a href="#" className="hover:text-red-600 transition-colors no-underline">Privacy</a>
-          <a href="#" className="hover:text-red-600 transition-colors no-underline">Terms</a>
-          <a href="#" className="hover:text-red-600 transition-colors no-underline">Support</a>
-        </div>
-      </footer>
-    </AuthenticatedLayout>
-  );
+            </div>
+        </AuthenticatedLayout>
+    );
 }
