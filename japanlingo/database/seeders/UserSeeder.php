@@ -17,6 +17,13 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'admin',
         ]);
+        //superadmin
+        User::create([
+            'username' => 'SuperAdmin Japanlingo',
+            'email' => 'superadmin@japanlingo.com',
+            'password' => Hash::make('password'),
+            'role'=>'superadmin',
+        ]);
 
         // Create Student
         User::create([
@@ -28,6 +35,18 @@ class UserSeeder extends Seeder
             'level' => 2,
             'streak_count' => 3,
             'last_activity_date' => now(),
+        ]);
+
+        //Create Student 2 
+        User::create([
+            'username' => 'Student2 Japanlingo',
+            'email' => 'student2@japanlingo.com',
+            'password'=>Hash::make('password'),
+            'role'=>'user',
+            'xp'=>100,
+            'level'=>1,
+            'streak_count'=>1,
+            'last_activity_date'=>now(),
         ]);
     }
 }
