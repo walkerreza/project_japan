@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\LearningController;
 use App\Http\Controllers\User\ProgressController;
+use App\Http\Controllers\User\CertificateController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -58,6 +59,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/gamification', fn() => Inertia::render('Admin/Gamification/Index'))->name('gamification');
         Route::get('/quiz-builder', fn() => Inertia::render('Admin/Builders/QuizBuilder'))->name('quiz.builder');
 
+        // Level CRUD
+        Route::apiResource('/levels', LevelController::class)->only(['index', 'store', 'update', 'destroy']);
+
+        // Upload Endpoint
+        Route::post('/upload', [\App\Http\Controllers\Admin\UploadController::class, 'store'])->name('upload');
+
         // Quizzes CRUD (home/index untuk daftar kuis)
         Route::get('/quizzes', [QuizController::class, 'index'])->name('quizzes.index');
         Route::post('/quizzes', [QuizController::class, 'store'])->name('quizzes.store');
@@ -102,11 +109,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/quizzes/{quiz}', [LearningController::class, 'showQuiz'])->name('quizzes.show');
         
         Route::get('/leaderboard', fn() => Inertia::render('User/Leaderboard'))->name('leaderboard');
-        Route::get('/certificates', fn() => Inertia::render('User/Certificate'))->name('certificates');
+        Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates');
+        Route::get('/certificates/{certificate}/download', [CertificateController::class, 'download'])->name('certificates.download');
         Route::get('/progress', fn() => Inertia::render('User/Progress'))->name('progress');
         
         Route::post('/attempts', [ProgressController::class, 'storeAttempt'])->name('attempts.store');
-        Route::post('/modules/complete', [ProgressController::class, 'completeModule'])->name('modules.complete');
+        Route::post('/lessons/complete', [ProgressController::class, 'completeLesson'])->name('lessons.complete');
     });
 });
 

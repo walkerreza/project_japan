@@ -7,6 +7,8 @@ use App\Models\Attempt;
 use App\Models\Progress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Events\LessonCompleted;
+use App\Events\QuizCompleted;
 
 class ProgressController extends Controller
 {
@@ -24,21 +26,27 @@ class ProgressController extends Controller
             'attempted_at' => now(),
         ]);
 
+        event(new QuizCompleted(Auth::user(), $validated['quiz_id'], $validated['score'], $validated['xp_earned']));
+
         return redirect()->back();
     }
 
-    public function completeModule(Request $request)
+    public function completeLesson(Request $request)
     {
         $validated = $request->validate([
-            'module_id' => 'required|exists:modules,id',
+            'lesson_id' => 'required|exists:lessons,id',
+            'score' => 'nullable|integer',
         ]);
 
         Progress::firstOrCreate([
             'user_id' => Auth::id(),
-            'module_id' => $validated['module_id'],
+            'lesson_id' => $validated['lesson_id'],
         ], [
+            'score' => $validated['score'] ?? null,
             'completed_at' => now(),
         ]);
+
+        event(new LessonCompleted(Auth::user(), $validated['lesson_id'], $validated['score'] ?? null));
 
         return redirect()->back();
     }

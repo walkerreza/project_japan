@@ -46,7 +46,9 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        if ($user->role === 'admin') {
+        if ($user->role === 'superadmin') {
+            return redirect(route('superadmin.dashboard', absolute: false));
+        } elseif ($user->role === 'admin') {
             return redirect(route('admin.dashboard', absolute: false));
         }
 

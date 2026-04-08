@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Question;
 use App\Models\Quiz;
+use App\Http\Requests\Admin\QuestionRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -46,34 +47,9 @@ class QuestionController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(QuestionRequest $request)
     {
-        $rules = [
-            'quiz_id'        => 'required|exists:quizzes,id',
-            'question_text'  => 'required|string',
-            'correct_answer' => 'required|string',
-            'explanation'    => 'nullable|string',
-            'order'          => 'required|integer|min:0',
-        ];
-
-        // Field kondisional berdasarkan tipe quiz
-        $quiz = Quiz::find($request->quiz_id);
-        if ($quiz && $quiz->type === 'multiple_choice') {
-            $rules['options'] = 'required|array|min:2';
-            $rules['options.*'] = 'required|string';
-        }
-        if ($quiz && $quiz->type === 'listening') {
-            $rules['audio_url'] = 'nullable|string|url';
-        }
-
-        $validated = $request->validate($rules, [
-            'quiz_id.required'        => 'Kuis wajib dipilih',
-            'quiz_id.exists'          => 'Kuis tidak ditemukan',
-            'question_text.required'  => 'Teks pertanyaan wajib diisi',
-            'correct_answer.required' => 'Jawaban benar wajib diisi',
-            'options.required'        => 'Pilihan jawaban wajib diisi untuk soal pilihan ganda',
-            'options.min'             => 'Minimal 2 pilihan jawaban diperlukan',
-        ]);
+        $validated = $request->validated();
 
         Question::create($validated);
 
@@ -89,29 +65,9 @@ class QuestionController extends Controller
         ]);
     }
 
-    public function update(Request $request, Question $question)
+    public function update(QuestionRequest $request, Question $question)
     {
-        $rules = [
-            'quiz_id'        => 'required|exists:quizzes,id',
-            'question_text'  => 'required|string',
-            'correct_answer' => 'required|string',
-            'explanation'    => 'nullable|string',
-            'order'          => 'required|integer|min:0',
-        ];
-
-        $quiz = Quiz::find($request->quiz_id);
-        if ($quiz && $quiz->type === 'multiple_choice') {
-            $rules['options'] = 'required|array|min:2';
-        }
-        if ($quiz && $quiz->type === 'listening') {
-            $rules['audio_url'] = 'nullable|string|url';
-        }
-
-        $validated = $request->validate($rules, [
-            'quiz_id.required'        => 'Kuis wajib dipilih',
-            'question_text.required'  => 'Teks pertanyaan wajib diisi',
-            'correct_answer.required' => 'Jawaban benar wajib diisi',
-        ]);
+        $validated = $request->validated();
 
         $question->update($validated);
 

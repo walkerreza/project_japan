@@ -3,7 +3,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
+        username: '',
         email: '',
         password: '',
         password_confirmation: '',
@@ -39,13 +39,13 @@ export default function Register() {
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">👤</span>
                             <input
                                 type="text"
-                                value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
+                                value={data.username}
+                                onChange={(e) => setData('username', e.target.value)}
                                 placeholder="Your name"
                                 className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-600/20 focus:border-red-600"
                             />
                         </div>
-                        {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name}</p>}
+                        {errors.username && <p className="mt-1 text-xs text-red-600">{errors.username}</p>}
                     </div>
 
                     <div>

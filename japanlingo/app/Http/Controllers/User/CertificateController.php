@@ -55,14 +55,13 @@ class CertificateController extends Controller
      * Ini mencegah user A mengakses sertifikat milik user B.
      *
      * @param  \App\Models\Certificate  $certificate
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Http\RedirectResponse
      */
     public function download(Certificate $certificate)
     {
         // Keamanan: pastikan hanya pemilik sertifikat yang bisa download
         abort_if($certificate->user_id !== Auth::id(), 403, 'Akses ditolak.');
 
-        // Cek apakah file PDF sudah di-generate dan ada di storage
         if ($certificate->file_path && Storage::exists($certificate->file_path)) {
             return Storage::download(
                 $certificate->file_path,
@@ -70,6 +69,21 @@ class CertificateController extends Controller
             );
         }
 
-        return redirect()->back()->with('error', 'File sertifikat belum tersedia atau tidak ditemukan.');
+        // Logic generasi sertifikat On-the-Fly jika package laravel-dompdf terinstall
+        // Perintah instalasi kepada user: composer require barryvdh/laravel-dompdf
+        if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('certificate.template', [
+                'user' => Auth::user(),
+                'certificate' => $certificate,
+                'level' => $certificate->level,
+                'date' => $certificate->issued_at->format('d F Y')
+            ]);
+            
+            // Atur landscape karena ini sertifikat
+            $pdf->setPaper('A4', 'landscape');
+            return $pdf->download("sertifikat-{$certificate->certificate_number}.pdf");
+        }
+
+        return redirect()->back()->with('error', 'File sertifikat belum tersedia atau fitur pembuatan PDF belum di-install.');
     }
 }
