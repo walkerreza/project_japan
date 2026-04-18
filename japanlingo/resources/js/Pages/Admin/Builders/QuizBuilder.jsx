@@ -189,7 +189,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
 
                     {/* ─── Multiple Choice: Options Grid ─── */}
                     {qType === 'multiple_choice' && (
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             {(activeQ.options || ['', '', '', '']).map((opt, optIdx) => {
                                 const isCorrect = activeQ.correct_answer === opt && opt !== '';
                                 return (
@@ -381,7 +381,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
         return (
             <div className="max-w-3xl mx-auto space-y-6">
                 {/* Summary Cards */}
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     {[
                         { label: 'Total Soal', value: qCount, color: 'text-[#E64A19]' },
                         { label: 'Multiple Choice', value: mcCount, color: 'text-blue-600' },
@@ -410,7 +410,8 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                         <h3 className="text-sm font-black text-gray-900 flex items-center gap-2"><TrendingUpIcon sx={{ fontSize: 18 }} className="text-[#E64A19]" /> Item Analysis</h3>
                         <p className="text-[11px] text-gray-400 mt-1">Analisis tiap soal — data akan terisi setelah ada percobaan siswa</p>
                     </div>
-                    <table className="w-full text-sm">
+                    <div className="overflow-x-auto">
+                    <table className="w-full min-w-[760px] text-sm">
                         <thead>
                             <tr className="bg-gray-50 text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                 <th className="px-5 py-3 text-left">#</th>
@@ -444,6 +445,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                             })}
                         </tbody>
                     </table>
+                    </div>
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 flex items-start gap-3">
@@ -532,22 +534,23 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
             <Head title="Quiz Builder - Japanlingo" />
 
             {/* Top Nav */}
-            <header className="h-16 bg-white border-b border-gray-200 px-6 flex items-center justify-between shrink-0 sticky top-0 z-40">
-                <div className="flex items-center gap-4">
+            <header className="sticky top-0 z-40 shrink-0 border-b border-gray-200 bg-white px-4 py-3 lg:h-16 lg:px-6 lg:py-0">
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div className="flex min-w-0 items-center gap-4">
                     <Link href={route('admin.quizzes.index')} className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-colors">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     </Link>
                     <div className="h-6 w-px bg-gray-200"></div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex min-w-0 items-center gap-2">
                         <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">文A</div>
-                        <div>
-                            <h1 className="text-sm font-black text-gray-900 leading-none tracking-tight">JapanLingo Quiz Builder</h1>
-                            <p className="text-[11px] text-gray-400 mt-0.5 font-medium">{quiz?.lesson?.title || 'Untitled'} — {quiz?.type}</p>
+                        <div className="min-w-0">
+                            <h1 className="truncate text-sm font-black text-gray-900 leading-none tracking-tight">JapanLingo Quiz Builder</h1>
+                            <p className="mt-0.5 truncate text-[11px] font-medium text-gray-400">{quiz?.lesson?.title || 'Untitled'} — {quiz?.type}</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-1">
+                <div className="flex flex-wrap items-center gap-1">
                     {['questions', 'settings', 'analysis'].map(tab => (
                         <button
                             key={tab}
@@ -563,26 +566,28 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                     ))}
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3 lg:justify-end">
                     {recentlySuccessful && <span className="text-xs font-bold text-green-600 animate-pulse">Tersimpan!</span>}
                     <button onClick={handleSave} disabled={processing} className="bg-[#E64A19] hover:bg-[#D84315] disabled:opacity-50 text-white rounded-xl px-6 h-9 shadow-md shadow-orange-500/20 text-sm font-bold flex items-center gap-2 transition-colors">
                         <SaveOutlinedIcon sx={{ fontSize: 18 }} />
                         {processing ? 'Menyimpan...' : 'Publish Quiz'}
                     </button>
                 </div>
+                </div>
             </header>
 
             {/* Workspace */}
-            <main className="flex-1 flex overflow-hidden">
+            <main className="flex-1 flex flex-col overflow-hidden lg:flex-row">
 
                 {/* Left Panel (only on questions tab) */}
                 {activeTab === 'questions' && (
-                    <aside className="w-72 bg-white border-r border-gray-200 flex flex-col shrink-0">
+                    <aside className="flex w-full shrink-0 flex-col border-b border-gray-200 bg-white lg:w-72 lg:border-b-0 lg:border-r">
                         <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                             <span className="text-xs font-black text-gray-400 uppercase tracking-widest">Questions ({data.questions.length})</span>
                             <span className="text-xs font-bold text-red-600">Points: {totalPoints}</span>
                         </div>
-                        <div className="flex-1 overflow-y-auto p-3 space-y-2">
+                        <div className="flex-1 overflow-x-auto p-3 lg:overflow-y-auto">
+                            <div className="flex min-w-max gap-2 lg:min-w-0 lg:block lg:space-y-2">
                             {data.questions.map((q, i) => {
                                 const tLabel = TYPE_LABELS[q.type || 'multiple_choice'];
                                 const tColor = TYPE_COLORS[q.type || 'multiple_choice'];
@@ -590,7 +595,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                                     <button
                                         key={i}
                                         onClick={() => setActiveIndex(i)}
-                                        className={`w-full text-left p-3 rounded-xl border transition-all ${
+                                        className={`w-56 shrink-0 rounded-xl border p-3 text-left transition-all lg:w-full ${
                                             activeIndex === i ? 'border-red-500 bg-red-50 shadow-sm ring-1 ring-red-500' : 'border-gray-100 hover:border-gray-300 hover:bg-gray-50'
                                         }`}
                                     >
@@ -604,8 +609,9 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                                     </button>
                                 );
                             })}
+                            </div>
                         </div>
-                        <div className="p-3 border-t border-gray-100 bg-white space-y-2">
+                        <div className="grid grid-cols-1 gap-2 border-t border-gray-100 bg-white p-3 sm:grid-cols-3 lg:grid-cols-1">
                             {QUESTION_TYPES.map(t => (
                                 <button key={t.value} onClick={() => addQuestion(t.value)} className="w-full py-2 border border-dashed border-gray-200 rounded-lg flex items-center justify-center gap-2 text-xs font-bold text-gray-400 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-600 transition-all">
                                     <AddIcon sx={{ fontSize: 14 }} /> {t.label}
@@ -616,13 +622,13 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                 )}
 
                 {/* Center */}
-                <section className="flex-1 overflow-y-auto p-8 relative">
+                <section className="relative flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
                     {activeTab === 'questions' && renderEditor()}
                     {activeTab === 'settings' && renderSettings()}
                     {activeTab === 'analysis' && renderAnalysis()}
 
                     {activeTab === 'questions' && (
-                        <div className="fixed bottom-8 right-[340px]">
+                        <div className="fixed bottom-6 right-6 z-30 lg:bottom-8 lg:right-[340px]">
                             <button onClick={() => addQuestion()} className="w-14 h-14 bg-[#E64A19] hover:bg-[#D84315] text-white rounded-full shadow-xl shadow-orange-500/30 flex items-center justify-center transition-transform hover:scale-105">
                                 <AddIcon sx={{ fontSize: 28 }} />
                             </button>
@@ -632,7 +638,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
 
                 {/* Right Panel (preview, always visible on questions tab) */}
                 {activeTab === 'questions' && (
-                    <aside className="w-80 bg-gray-50 border-l border-gray-200 flex flex-col shrink-0 p-6 space-y-6">
+                    <aside className="flex w-full shrink-0 flex-col space-y-6 border-t border-gray-200 bg-gray-50 p-4 sm:p-6 lg:w-80 lg:border-t-0 lg:border-l">
                         {renderPreview()}
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
                             <h4 className="text-xs font-black uppercase text-gray-400 tracking-widest mb-4">Set Summary</h4>

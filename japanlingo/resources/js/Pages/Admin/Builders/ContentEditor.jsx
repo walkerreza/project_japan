@@ -67,23 +67,24 @@ export default function ContentEditor({ module, lessons: initialLessons = [] }) 
         <AuthenticatedLayout>
             <Head title={`Builder: ${module.title} - Japanlingo`} />
             <div className="min-h-screen bg-[#F8F9FB] flex flex-col font-sans">
-                <header className="h-16 bg-white border-b border-gray-200 px-6 flex items-center justify-between sticky top-0 z-40">
-                    <div className="flex items-center gap-4">
+                <header className="sticky top-0 z-40 border-b border-gray-200 bg-white px-4 py-3 lg:h-16 lg:px-6 lg:py-0">
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="flex min-w-0 items-center gap-4">
                         <Link href={route('admin.modules.index')} className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-colors">
                             <ArrowBackIcon sx={{ fontSize: 18 }} />
                         </Link>
                         <div className="h-6 w-px bg-gray-200"></div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex min-w-0 items-center gap-2">
                             <div className="w-8 h-8 bg-[#E64A19] rounded-lg flex items-center justify-center text-white font-bold text-xs">
                                 {module.level?.level_name?.charAt(0) || 'M'}
                             </div>
-                            <div>
-                                <h1 className="text-sm font-black text-gray-900 leading-none tracking-tight">Content Builder</h1>
-                                <p className="text-[11px] text-gray-400 mt-0.5 font-medium">{module.title}</p>
+                            <div className="min-w-0">
+                                <h1 className="truncate text-sm font-black text-gray-900 leading-none tracking-tight">Content Builder</h1>
+                                <p className="mt-0.5 truncate text-[11px] font-medium text-gray-400">{module.title}</p>
                             </div>
                         </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3 lg:justify-end">
                         {recentlySuccessful && <span className="text-xs font-bold text-green-600 animate-pulse">Tersimpan!</span>}
                         <button 
                             type="button"
@@ -101,19 +102,20 @@ export default function ContentEditor({ module, lessons: initialLessons = [] }) 
                             {processing ? 'Menyimpan...' : 'Simpan Konten'}
                         </button>
                     </div>
+                    </div>
                 </header>
 
-                <main className="flex-1 flex justify-center p-8 relative">
+                <main className="relative flex flex-1 flex-col justify-center gap-6 p-4 sm:p-6 lg:flex-row lg:p-8">
                     <div className="w-full max-w-[760px] space-y-6 pb-32">
-                        <div className="bg-white rounded-[20px] shadow-sm border border-gray-200 border-t-8 border-t-[#E64A19] p-8">
+                        <div className="bg-white rounded-[20px] shadow-sm border border-gray-200 border-t-8 border-t-[#E64A19] p-6 sm:p-8">
                              <h2 className="text-3xl font-black text-gray-900 mb-2">{module.title}</h2>
                              <p className="text-sm font-medium text-gray-500">{module.description || 'Tidak ada deskripsi'}</p>
                         </div>
 
                         {data.lessons.map((lesson, idx) => (
                             <div key={idx} onClick={() => setActiveBlockId(idx)} className={`bg-white rounded-2xl transition-all duration-200 ${activeBlockId === idx ? 'shadow-lg border-l-4 border-l-[#E64A19] ring-2 ring-orange-500/10' : 'shadow-sm border border-gray-200'}`}>
-                                <div className="p-8">
-                                    <div className="flex items-center justify-between mb-4">
+                                <div className="p-5 sm:p-6 lg:p-8">
+                                    <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                         <div className="flex items-center gap-2">
                                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-1 rounded">Blok {idx + 1}</span>
                                             <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded ${lesson.type === 'text' ? 'bg-blue-50 text-blue-600' : lesson.type === 'video_yt' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
@@ -155,7 +157,7 @@ export default function ContentEditor({ module, lessons: initialLessons = [] }) 
                                                     <div className="p-3 bg-green-50 rounded-xl border border-green-100 flex items-center justify-between">
                                                         <div className="flex items-center gap-2">
                                                             <PictureAsPdfOutlinedIcon className="text-green-600" sx={{fontSize: 20}} />
-                                                            <span className="text-xs font-bold text-green-700 truncate max-w-[200px]">
+                                                            <span className="max-w-[160px] truncate text-xs font-bold text-green-700 sm:max-w-[200px]">
                                                                 {lesson.file_uploaded ? lesson.file_uploaded.name : lesson.file_url.split('/').pop()}
                                                             </span>
                                                         </div>
@@ -176,7 +178,7 @@ export default function ContentEditor({ module, lessons: initialLessons = [] }) 
                                     )}
                                 </div>
                                 {activeBlockId === idx && (
-                                    <div className="border-t border-gray-100 px-6 py-3 flex justify-end gap-3 bg-gray-50/50 rounded-b-2xl">
+                                    <div className="flex justify-end gap-3 rounded-b-2xl border-t border-gray-100 bg-gray-50/50 px-4 py-3 sm:px-6">
                                         <button onClick={(e) => { e.stopPropagation(); duplicateBlock(idx); }} className="p-2 text-gray-400 hover:text-gray-900"><ContentCopyIcon sx={{ fontSize: 18 }} /></button>
                                         <button onClick={(e) => { e.stopPropagation(); removeBlock(idx); }} className="p-2 text-gray-400 hover:text-red-600"><DeleteOutlineIcon sx={{ fontSize: 20 }} /></button>
                                     </div>
@@ -185,8 +187,8 @@ export default function ContentEditor({ module, lessons: initialLessons = [] }) 
                         ))}
                     </div>
 
-                    <div className="fixed bottom-10 right-10 lg:sticky lg:top-24 lg:ml-6 w-14 z-50">
-                          <div className="bg-white border border-gray-200 shadow-xl rounded-full flex flex-col items-center py-4 gap-2">
+                    <div className="fixed bottom-4 left-1/2 z-50 w-auto -translate-x-1/2 lg:static lg:w-14 lg:translate-x-0 lg:self-start lg:sticky lg:top-24 lg:ml-6">
+                          <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-3 shadow-xl lg:flex-col lg:px-0 lg:py-4">
                              <button onClick={() => addBlock('text')} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-50 text-blue-600"><ControlPointIcon /></button>
                              <button onClick={() => addBlock('video_yt')} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-50 text-red-600"><PlayCircleOutlineIcon /></button>
                              <button onClick={() => addBlock('file')} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-green-50 text-green-600"><PictureAsPdfOutlinedIcon /></button>
