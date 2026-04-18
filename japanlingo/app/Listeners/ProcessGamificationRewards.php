@@ -25,7 +25,7 @@ class ProcessGamificationRewards
         
         // 10 is base xp for lesson
         $totalXp = 10 + $streakInfo['bonus_xp'];
-        $this->xpService->awardXP($event->user, $totalXp, 'lesson');
+        $this->xpService->awardXP($event->user, $totalXp, 'lesson', $event->lessonId, 'Penyelesaian Pelajaran');
     }
 
     public function handleQuizCompleted(QuizCompleted $event)
@@ -33,7 +33,7 @@ class ProcessGamificationRewards
         $streakInfo = $this->streakService->updateStreak($event->user);
         
         $totalXp = $event->xpEarned + $streakInfo['bonus_xp'];
-        $this->xpService->awardXP($event->user, $totalXp, 'quiz');
+        $this->xpService->awardXP($event->user, $totalXp, 'quiz', $event->quizId, 'Penyelesaian Kuis');
     }
 
     public function subscribe(Dispatcher $events): void

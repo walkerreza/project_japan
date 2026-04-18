@@ -231,14 +231,18 @@ export default function Quiz({ quiz, questions: rawQuestions = [] }) {
                         </div>
 
                         {/* Flashcard Canvas */}
-                        <div className="w-full max-w-[500px] aspect-video bg-white rounded-[2rem] shadow-sm border-2 border-gray-100 flex items-center justify-center relative mb-10">
-                            <span className="text-[72px] sm:text-[100px] md:text-[140px] leading-none font-medium text-gray-900 select-none">{currentQ.kanji}</span>
-                            
-                            <button className="absolute bottom-4 right-4 md:bottom-6 md:right-6 w-12 h-12 text-white rounded-2xl shadow-md border-b-4 flex items-center justify-center active:translate-y-1 active:border-b-0 transition-all hover:brightness-110"
-                                    style={{ backgroundColor: theme.activeColor, borderColor: theme.activeShadow }}>
-                                <VolumeUpIcon />
-                            </button>
-                        </div>
+                        {(currentQ.kanji || currentQ.audio_url) && (
+                            <div className="w-full max-w-[500px] aspect-video bg-white rounded-[2rem] shadow-sm border-2 border-gray-100 flex items-center justify-center relative mb-10">
+                                {currentQ.kanji && <span className="text-[72px] sm:text-[100px] md:text-[140px] leading-none font-medium text-gray-900 select-none">{currentQ.kanji}</span>}
+                                
+                                {currentQ.audio_url && (
+                                    <button className="absolute bottom-4 right-4 md:bottom-6 md:right-6 w-12 h-12 text-white rounded-2xl shadow-md border-b-4 flex items-center justify-center active:translate-y-1 active:border-b-0 transition-all hover:brightness-110"
+                                            style={{ backgroundColor: theme.activeColor, borderColor: theme.activeShadow }}>
+                                        <VolumeUpIcon />
+                                    </button>
+                                )}
+                            </div>
+                        )}
 
                         {/* Multiple Choice Options */}
                         <motion.div 

@@ -5,17 +5,21 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import StarsIcon from '@mui/icons-material/Stars';
 
-const players = [
-    { rank: 1, name: 'Yuki Tanaka', level: 'N2 Master', xp: 28450, streak: 48, avatar: 'Yuki', badge: '🥇', color: 'text-amber-500' },
-    { rank: 2, name: 'Reza Pratama', level: 'N3 Scholar', xp: 24100, streak: 32, avatar: 'Reza', badge: '🥈', color: 'text-slate-400' },
-    { rank: 3, name: 'Hana Sato', level: 'N3 Scholar', xp: 21800, streak: 29, avatar: 'Hana', badge: '🥉', color: 'text-amber-700' },
-    { rank: 4, name: 'Sarah (You)', level: 'N3 Aspirant', xp: 12450, streak: 12, avatar: 'Sarah', badge: '4', color: 'text-red-600', isMe: true },
-    { rank: 5, name: 'Budi Santoso', level: 'N4 Student', xp: 9800, streak: 8, avatar: 'Budi', badge: '5', color: 'text-gray-400' },
-    { rank: 6, name: 'Mia Watanabe', level: 'N4 Student', xp: 8200, streak: 5, avatar: 'Mia', badge: '6', color: 'text-gray-400' },
-    { rank: 7, name: 'Andi Kurniawan', level: 'N5 Beginner', xp: 6700, streak: 3, avatar: 'Andi', badge: '7', color: 'text-gray-400' },
-];
+export default function Leaderboard({ players = [] }) {
+    // Menambahkan badge dan warna berdasarkan rank
+    const formattedPlayers = players.map(p => {
+        let badge = p.rank.toString();
+        let color = 'text-gray-400';
+        if (p.rank === 1) { badge = '🥇'; color = 'text-amber-500'; }
+        else if (p.rank === 2) { badge = '🥈'; color = 'text-slate-400'; }
+        else if (p.rank === 3) { badge = '🥉'; color = 'text-amber-700'; }
+        
+        return { ...p, badge, color };
+    });
 
-export default function Leaderboard() {
+    const topThree = formattedPlayers.filter(p => p.rank <= 3);
+    const podiumReady = topThree.length >= 3;
+
     return (
         <AuthenticatedLayout header={<h2 className="text-xl font-bold text-gray-900 flex items-center gap-2"><EmojiEventsIcon className="text-amber-500" /> Leaderboard</h2>}>
             <Head title="Leaderboard - Japanlingo" />
@@ -27,42 +31,48 @@ export default function Leaderboard() {
 
                 <div className="flex flex-col items-center justify-center gap-6 sm:flex-row sm:items-end sm:gap-4">
                     {/* 2nd */}
-                    <div className="flex flex-col items-center gap-3">
-                        <div className="relative">
-                            <img src={`https://ui-avatars.com/api/?name=${players[1].avatar}&background=64748b&color=fff&size=80`} className="w-16 h-16 rounded-full border-4 border-slate-400 shadow-xl" />
-                            <span className="absolute -top-2 -right-2 text-xl">🥈</span>
+                    {topThree[1] && (
+                        <div className="flex flex-col items-center gap-3">
+                            <div className="relative">
+                                <img src={`https://ui-avatars.com/api/?name=${topThree[1].avatar}&background=64748b&color=fff&size=80`} className="w-16 h-16 rounded-full border-4 border-slate-400 shadow-xl" />
+                                <span className="absolute -top-2 -right-2 text-xl">🥈</span>
+                            </div>
+                            <div className="text-center w-20">
+                                <p className="font-bold text-sm leading-tight truncate">{topThree[1].name}</p>
+                                <p className="text-gray-400 text-xs">{topThree[1].xp.toLocaleString()} XP</p>
+                            </div>
+                            <div className="bg-slate-500 rounded-t-xl w-20 h-16 flex items-center justify-center text-2xl font-black text-white">2</div>
                         </div>
-                        <div className="text-center w-20">
-                            <p className="font-bold text-sm leading-tight truncate">{players[1].name}</p>
-                            <p className="text-gray-400 text-xs">{players[1].xp.toLocaleString()} XP</p>
-                        </div>
-                        <div className="bg-slate-500 rounded-t-xl w-20 h-16 flex items-center justify-center text-2xl font-black text-white">2</div>
-                    </div>
+                    )}
                     {/* 1st */}
-                    <div className="flex flex-col items-center gap-3 sm:-mt-8">
-                        <StarsIcon className="text-amber-400" sx={{ fontSize: 28 }} />
-                        <div className="relative">
-                            <img src={`https://ui-avatars.com/api/?name=${players[0].avatar}&background=f59e0b&color=fff&size=96`} className="w-20 h-20 rounded-full border-4 border-amber-400 shadow-2xl shadow-amber-400/30" />
-                            <span className="absolute -top-2 -right-2 text-2xl">🥇</span>
+                    {topThree[0] && (
+                        <div className="flex flex-col items-center gap-3 sm:-mt-8">
+                            <StarsIcon className="text-amber-400" sx={{ fontSize: 28 }} />
+                            <div className="relative">
+                                <img src={`https://ui-avatars.com/api/?name=${topThree[0].avatar}&background=f59e0b&color=fff&size=96`} className="w-20 h-20 rounded-full border-4 border-amber-400 shadow-2xl shadow-amber-400/30" />
+                                <span className="absolute -top-2 -right-2 text-2xl">🥇</span>
+                            </div>
+                            <div className="text-center w-24">
+                                <p className="font-black text-sm leading-tight truncate">{topThree[0].name}</p>
+                                <p className="text-amber-400 text-xs font-bold">{topThree[0].xp.toLocaleString()} XP</p>
+                            </div>
+                            <div className="bg-amber-500 rounded-t-xl w-24 h-24 flex items-center justify-center text-3xl font-black text-white">1</div>
                         </div>
-                        <div className="text-center w-24">
-                            <p className="font-black text-sm leading-tight truncate">{players[0].name}</p>
-                            <p className="text-amber-400 text-xs font-bold">{players[0].xp.toLocaleString()} XP</p>
-                        </div>
-                        <div className="bg-amber-500 rounded-t-xl w-24 h-24 flex items-center justify-center text-3xl font-black text-white">1</div>
-                    </div>
+                    )}
                     {/* 3rd */}
-                    <div className="flex flex-col items-center gap-3">
-                        <div className="relative">
-                            <img src={`https://ui-avatars.com/api/?name=${players[2].avatar}&background=92400e&color=fff&size=80`} className="w-16 h-16 rounded-full border-4 border-amber-700 shadow-xl" />
-                            <span className="absolute -top-2 -right-2 text-xl">🥉</span>
+                    {topThree[2] && (
+                        <div className="flex flex-col items-center gap-3">
+                            <div className="relative">
+                                <img src={`https://ui-avatars.com/api/?name=${topThree[2].avatar}&background=92400e&color=fff&size=80`} className="w-16 h-16 rounded-full border-4 border-amber-700 shadow-xl" />
+                                <span className="absolute -top-2 -right-2 text-xl">🥉</span>
+                            </div>
+                            <div className="text-center w-20">
+                                <p className="font-bold text-sm leading-tight truncate">{topThree[2].name}</p>
+                                <p className="text-gray-400 text-xs">{topThree[2].xp.toLocaleString()} XP</p>
+                            </div>
+                            <div className="bg-amber-800 rounded-t-xl w-20 h-12 flex items-center justify-center text-2xl font-black text-white">3</div>
                         </div>
-                        <div className="text-center w-20">
-                            <p className="font-bold text-sm leading-tight truncate">{players[2].name}</p>
-                            <p className="text-gray-400 text-xs">{players[2].xp.toLocaleString()} XP</p>
-                        </div>
-                        <div className="bg-amber-800 rounded-t-xl w-20 h-12 flex items-center justify-center text-2xl font-black text-white">3</div>
-                    </div>
+                    )}
                 </div>
             </div>
 
@@ -78,7 +88,7 @@ export default function Leaderboard() {
                 </div>
 
                 <div className="divide-y divide-gray-50">
-                    {players.map((p, i) => (
+                    {formattedPlayers.map((p, i) => (
                         <div key={i} className={`flex flex-wrap items-center gap-4 px-6 py-4 transition-colors hover:bg-gray-50 sm:flex-nowrap ${p.isMe ? 'bg-red-50/60 border-l-4 border-red-600' : ''}`}>
                             <span className={`w-8 text-center font-black text-lg ${p.color}`}>{p.rank <= 3 ? p.badge : p.rank}</span>
                             <img src={`https://ui-avatars.com/api/?name=${p.avatar}&background=random&size=48`} className="w-11 h-11 rounded-full border-2 border-white shadow-sm shrink-0" />

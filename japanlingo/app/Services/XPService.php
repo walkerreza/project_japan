@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Models\RewardLog;
 
 class XPService
 {
@@ -18,9 +19,40 @@ class XPService
     /**
      * Award XP to a user and update their level if necessary
      */
-    public function awardXP(User $user, int $amount, string $source): array
+    public function awardXP(User $user, int $amount, string $sourceType, ?int $sourceId = null, string $description = ''): array
     {
-        $user->xp += $amount;
+        // 1. Prevent Double Reward for the same lesson/quiz
+        if ($sourceId !== null && in_array($sourceType, ['lesson', 'quiz'])) {
+            $alreadyRewarded = RewardLog::where('user_id', $user->id)
+                ->where('source_type', $sourceType)
+                ->where('source_id', $sourceId)
+                ->exists();
+
+            if ($alreadyRewarded) {
+                return [
+                    'xp_awarded' => 0,
+                    'level_up' => false,
+                    'new_level' => $user->level,
+                    'duplicate' => true
+                ];
+            }
+        }
+
+        // 2. Grant XP
+        if ($amount > 0) {
+            $user->xp += $amount;
+            
+            // 3. Log the reward
+            RewardLog::create([
+                'user_id' => $user->id,
+                'source_type' => $sourceType,
+                'source_id' => $sourceId,
+                'xp_amount' => $amount,
+                'description' => $description
+            ]);
+        }
+
+        // 4. Calculate Level Up
         $newLevel = $this->calculateLevel($user->xp);
         
         $levelUp = false;
@@ -34,7 +66,8 @@ class XPService
         return [
             'xp_awarded' => $amount,
             'level_up' => $levelUp,
-            'new_level' => $user->level
+            'new_level' => $user->level,
+            'duplicate' => false
         ];
     }
 

@@ -17,7 +17,7 @@ class DashboardController extends Controller
         
         return Inertia::render('User/UserDashboard', [
             'user' => $user,
-            'recentProgress' => $user->progress()->with('module')->latest()->take(5)->get(),
+            'recentProgress' => $user->progress()->with('lesson.module')->latest()->take(5)->get(),
             'availableLevels' => Level::with('modules')->get(),
         ]);
     }

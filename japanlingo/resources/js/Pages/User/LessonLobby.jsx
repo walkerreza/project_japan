@@ -9,121 +9,107 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import TranslateIcon from '@mui/icons-material/Translate';
 
-export default function LessonLobby() {
-    // Data tiruan kuis yang tersedia (biasanya dipicu dari Inertia props Backend)
-    const availableLessons = [
-        {
-            id: 1,
-            title: "Pengenalan Huruf Hiragana",
-            description: "Pelajari 46 huruf dasar untuk membaca kalimat Jepang.",
-            xpReward: 10,
-            durationEstimate: "15 Menit",
-            totalPages: 5,
-            status: "available",
-            colorHint: "from-blue-400 to-blue-500",
-            shadowHint: "shadow-blue-200"
-        },
-        {
-            id: 2,
-            title: "Pengucapan Vokal Diftong",
-            description: "Memahami bagaimana bunyi gabungan AI, OI, dan EI diucapkan.",
-            xpReward: 20,
-            durationEstimate: "10 Menit",
-            totalPages: 3,
-            status: "locked",
-            colorHint: "from-gray-300 to-gray-400",
-            shadowHint: "shadow-gray-200"
-        }
-    ];
+export default function LessonLobby({ lessons = [] }) {
+    // Memberikan warna dinamis agar tegas dan variatif
+    const getCardStyle = (index, status) => {
+        if (status === 'locked') return { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-500', shadow: 'none', hint: 'from-slate-300 to-slate-400', badge: 'bg-slate-200 text-slate-500' };
+        const styles = [
+            { bg: 'bg-white', border: 'border-blue-100', text: 'text-gray-900', shadow: 'shadow-[0_15px_40px_-15px_rgba(37,99,235,0.3)]', hint: 'from-blue-500 to-indigo-600', badge: 'bg-blue-100 text-blue-700' },
+            { bg: 'white', border: 'border-red-100', text: 'text-gray-900', shadow: 'shadow-[0_15px_40px_-15px_rgba(220,38,38,0.3)]', hint: 'from-red-500 to-rose-600', badge: 'bg-red-100 text-red-700' },
+            { bg: 'white', border: 'border-green-100', text: 'text-gray-900', shadow: 'shadow-[0_15px_40px_-15px_rgba(22,163,74,0.3)]', hint: 'from-emerald-500 to-green-600', badge: 'bg-green-100 text-green-700' },
+        ];
+        return styles[index % styles.length];
+    };
 
     return (
         <AuthenticatedLayout
-            header={<h2 className="font-bold text-xl text-gray-800 leading-tight">Lobi Matapelajaran</h2>}
+            header={<h2 className="font-extrabold text-2xl text-gray-900 leading-tight tracking-tight">Lobi Pelajaran</h2>}
         >
             <Head title="Lobi Pelajaran" />
 
-            <div className="py-12" style={{ backgroundColor: theme.landingHeroBg }}>
+            <div className="py-12 min-h-screen" style={{ backgroundColor: theme.landingHeroBg }}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     {/* Header Banner */}
                     <motion.div 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-[2rem] p-6 sm:p-8 shadow-sm border-2 border-gray-100 flex flex-col md:flex-row items-center justify-between gap-8 py-8 sm:py-10 mb-10 overflow-hidden relative"
+                        className="bg-gray-900 rounded-[2.5rem] p-8 sm:p-12 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 py-8 sm:py-10 mb-12 overflow-hidden relative"
                     >
                         {/* Motif Latar Belakang */}
-                        <div className="absolute -top-24 -right-16 opacity-20 sm:opacity-30 pointer-events-none">
-                             <TranslateIcon sx={{ fontSize: 240, color: theme.activeColor }} />
+                        <div className="absolute -top-16 -right-16 opacity-10 pointer-events-none">
+                             <TranslateIcon sx={{ fontSize: 300, color: 'white' }} />
                         </div>
 
-                        <div className="relative z-10 max-w-lg">
-                            <span className="inline-block py-1 px-3 rounded-full text-sm font-bold tracking-wider uppercase mb-3" style={{ backgroundColor: theme.heroBlob1, color: theme.activeShadow }}>
+                        <div className="relative z-10 max-w-2xl">
+                            <span className="inline-block py-1.5 px-4 rounded-full text-xs font-black tracking-widest uppercase mb-4 text-white bg-white/20 backdrop-blur-md">
                                 RUANG LITERASI
                             </span>
-                            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 mb-4 tracking-tight">
+                            <h3 className="text-3xl sm:text-4xl font-black text-white mb-4 tracking-tight leading-none">
                                 Mulai Perjalanan Membacamu
                             </h3>
-                            <p className="text-gray-500 font-medium text-base sm:text-lg leading-relaxed">
+                            <p className="text-gray-300 font-medium text-base sm:text-lg leading-relaxed">
                                 Baca dengan seksama, catat kosa kata baru, dan pahami tata nahunya sebelum kamu melaju ke Arena Kuis. Semakin banyak membaca, semakin kuat fondasimu!
                             </p>
                         </div>
                     </motion.div>
 
                     {/* Katagog Pelajaran */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {availableLessons.map((lesson, idx) => (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {lessons.length === 0 && (
+                            <div className="col-span-full text-center py-12">
+                                <p className="text-gray-500 font-bold text-lg">Belum ada materi pelajaran yang dipublikasikan.</p>
+                            </div>
+                        )}
+                        {lessons.map((lesson, idx) => {
+                            const style = getCardStyle(idx, lesson.status);
+                            return (
                             <motion.div 
                                 key={lesson.id}
-                                initial={{ opacity: 0, scale: 0.9 }}
+                                initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: idx * 0.1 }}
-                                className={`relative rounded-3xl p-6 border-2 transition-all ${
-                                    lesson.status === 'locked' 
-                                    ? 'bg-gray-50 border-gray-200' 
-                                    : 'bg-white border-gray-100 shadow-xl hover:-translate-y-2'
-                                }`}
-                                style={{
-                                    boxShadow: lesson.status !== 'locked' ? `0 10px 30px -10px ${theme.activeColor}40` : 'none'
-                                }}
+                                className={`relative rounded-[2rem] p-8 border-2 transition-all duration-300 ${style.bg} ${style.border} ${lesson.status !== 'locked' ? 'hover:-translate-y-3' : ''}`}
+                                style={{ boxShadow: style.shadow }}
                             >
                                 {/* Kunci / Tersedia Badge */}
                                 <div className="flex justify-between items-start mb-6">
-                                    <div className={`p-3 rounded-2xl bg-gradient-to-br ${lesson.colorHint} text-white shadow-lg ${lesson.shadowHint}`}>
-                                        <AutoStoriesIcon />
+                                    <div className={`p-4 rounded-2xl bg-gradient-to-br ${style.hint} text-white shadow-xl`}>
+                                        <AutoStoriesIcon sx={{ fontSize: 28 }} />
                                     </div>
-                                    <span className={`px-3 py-1 text-xs font-bold rounded-full uppercase tracking-widest ${lesson.status === 'locked' ? 'bg-gray-200 text-gray-500' : 'bg-blue-100 text-blue-700'}`}>
+                                    <span className={`px-4 py-1.5 text-[10px] font-black rounded-full uppercase tracking-widest ${style.badge}`}>
                                         {lesson.status === 'locked' ? 'Terkunci' : 'Tersedia'}
                                     </span>
                                 </div>
 
-                                <h4 className={`text-xl font-black mb-2 ${lesson.status === 'locked' ? 'text-gray-500' : 'text-gray-900'}`}>
+                                <h4 className={`text-2xl font-black mb-3 leading-tight ${style.text}`}>
                                     {lesson.title}
                                 </h4>
-                                <p className="text-gray-500 font-medium text-sm mb-6 min-h-[3rem]">
+                                <p className="text-gray-500 font-medium text-sm mb-8 min-h-[3rem] leading-relaxed">
                                     {lesson.description}
                                 </p>
 
-                                <div className="flex flex-wrap items-center gap-4 mb-8 text-sm font-bold text-gray-400">
+                                <div className="flex flex-wrap items-center gap-5 mb-8 text-sm font-bold text-gray-400 border-t border-gray-100 pt-6">
                                     <span className="flex items-center gap-1.5"><AccessTimeIcon sx={{ fontSize: 18 }} /> {lesson.durationEstimate}</span>
-                                    <span className="flex items-center gap-1.5"><MenuBookIcon sx={{ fontSize: 18 }} /> {lesson.totalPages} Halaman</span>
+                                    <span className="flex items-center gap-1.5"><MenuBookIcon sx={{ fontSize: 18 }} /> {lesson.totalPages} Lembar</span>
                                 </div>
 
                                 {/* Tombol Aksi */}
                                 {lesson.status === 'locked' ? (
-                                    <button disabled className="w-full py-4 bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed">
+                                    <button disabled className="w-full py-4 bg-slate-100 text-slate-400 font-black tracking-wide rounded-2xl cursor-not-allowed uppercase border border-slate-200">
                                         BELUM BISA DIAKSES
                                     </button>
                                 ) : (
                                     <Link 
                                         href={`/user/lessons/${lesson.id}`} 
-                                        className={`w-full flex items-center justify-center gap-2 py-4 text-white font-black text-base md:text-lg rounded-2xl transition-all hover:brightness-110 active:translate-y-1 bg-gradient-to-br ${theme.ctaBg}`}
-                                        style={{ boxShadow: `0 4px 0 0 ${theme.activeShadow}` }}
+                                        className={`w-full flex items-center justify-center gap-2 py-4 text-white font-black text-base md:text-lg tracking-wide rounded-2xl transition-all hover:brightness-110 active:translate-y-1 bg-gradient-to-br ${theme.ctaBg}`}
+                                        style={{ boxShadow: `0 6px 0 0 ${theme.activeShadow}` }}
                                     >
                                         <MenuBookIcon /> BUKA MATERI
                                     </Link>
                                 )}
                             </motion.div>
-                        ))}
+                        )})}
                     </div>
 
                 </div>

@@ -108,7 +108,7 @@ const news = [
     }
 ];
 
-export default function UserDashboard() {
+export default function UserDashboard({ user = {}, recentProgress = [] }) {
     return (
         <AuthenticatedLayout header={false}>
             <Head title="Beranda Utama" />
@@ -130,7 +130,7 @@ export default function UserDashboard() {
                         </h1>
                         
                         {/* SEARCH BAR */}
-                        <div className="w-full max-w-2xl relative mb-8">
+                        <div className="w-full max-w-2xl relative mb-6">
                             <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400">
                                 <SearchIcon sx={{ fontSize: 24 }} />
                             </div>
@@ -141,6 +141,26 @@ export default function UserDashboard() {
                             />
                             <div className="absolute inset-y-0 right-0 pr-5 flex items-center cursor-pointer text-gray-400 hover:text-gray-600">
                                 <TuneIcon sx={{ fontSize: 22 }} />
+                            </div>
+                        </div>
+
+                        {/* USER GAMIFICATION STATS BUBBLES */}
+                        <div className="flex flex-wrap justify-center gap-4 mb-8">
+                            <div className="bg-white/90 backdrop-blur-sm px-5 py-3 rounded-2xl shadow-sm border border-gray-100/50 flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-black shadow-inner">
+                                    Lv.{user.level || 1}
+                                </div>
+                                <div className="text-left leading-tight">
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Total XP</p>
+                                    <p className="text-base font-black text-gray-900">{user.xp || 0}</p>
+                                </div>
+                            </div>
+                            <div className="bg-white/90 backdrop-blur-sm px-5 py-3 rounded-2xl shadow-sm border border-gray-100/50 flex items-center gap-3">
+                                <div className="text-3xl filter drop-shadow-sm">🔥</div>
+                                <div className="text-left leading-tight">
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Beruntun</p>
+                                    <p className="text-base font-black text-gray-900">{user.streak_count || 0} Hari</p>
+                                </div>
                             </div>
                         </div>
 

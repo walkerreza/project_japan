@@ -11,6 +11,71 @@ use Inertia\Inertia;
 
 class LearningController extends Controller
 {
+    public function lessonLobby()
+    {
+        $user = Auth::user();
+        
+        $lessons = Lesson::with('module')->orderBy('module_id')->orderBy('order')->get();
+        $completedLessonIds = $user->progress()->pluck('lesson_id')->toArray();
+
+        $formattedLessons = $lessons->map(function ($lesson, $index) use ($completedLessonIds, $lessons) {
+            $isCompleted = in_array($lesson->id, $completedLessonIds);
+            
+            // Unlocked if it's the first lesson, or if it is completed, or if the previous lesson in the list is completed.
+            $isLocked = true;
+            if ($index === 0 || $isCompleted) {
+                $isLocked = false;
+            } else {
+                $previousLesson = $lessons[$index - 1];
+                if (in_array($previousLesson->id, $completedLessonIds)) {
+                    $isLocked = false;
+                }
+            }
+
+            return [
+                'id' => $lesson->id,
+                'title' => $lesson->title,
+                'description' => 'Materi ' . $lesson->type . ' dari modul ' . ($lesson->module ? $lesson->module->title : 'Umum'),
+                'durationEstimate' => $lesson->duration_minutes . ' Menit',
+                'totalPages' => 1,
+                'status' => $isLocked ? 'locked' : 'available',
+            ];
+        });
+
+        return Inertia::render('User/LessonLobby', [
+            'lessons' => $formattedLessons,
+        ]);
+    }
+
+    public function quizLobby()
+    {
+        $user = Auth::user();
+        
+        $quizzes = Quiz::with('lesson')->withCount('questions')->get();
+        $completedLessonIds = $user->progress()->pluck('lesson_id')->toArray();
+
+        $formattedQuizzes = $quizzes->map(function ($quiz) use ($completedLessonIds) {
+            $isLocked = true;
+            if ($quiz->lesson_id === null || in_array($quiz->lesson_id, $completedLessonIds)) {
+                $isLocked = false;
+            }
+
+            return [
+                'id' => $quiz->id,
+                'title' => $quiz->title,
+                'description' => $quiz->description ?? 'Kuis evaluasi pemahaman materi.',
+                'xpReward' => 50, // Base XP as defined in rules
+                'durationEstimate' => $quiz->time_limit ? $quiz->time_limit . ' Menit' : '10 Menit',
+                'totalQuestions' => $quiz->questions_count,
+                'status' => $isLocked ? 'locked' : 'available',
+            ];
+        });
+
+        return Inertia::render('User/QuizLobby', [
+            'quizzes' => $formattedQuizzes,
+        ]);
+    }
+
     public function showLesson($id)
     {
         $lesson = Lesson::with(['module.lessons' => function ($q) {
@@ -76,7 +141,9 @@ class LearningController extends Controller
 
         $questions = $quiz->questions->map(fn($q) => [
             'id'             => $q->id,
-            'question_text'  => $q->question_text,
+            'question'       => $q->question_text, // Map to question for UI
+            'kanji'          => '', // We don't have separate kanji field currently, can be empty or parse from text
+            'type'           => $q->type,
             'options'        => $q->options, // JSON column, auto-cast array
             'correct_answer' => $q->correct_answer,
             'explanation'    => $q->explanation,

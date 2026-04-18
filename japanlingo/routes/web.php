@@ -103,13 +103,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
         Route::get('/profile', fn() => Inertia::render('User/Profile'))->name('profile');
         
-        Route::get('/lessons', fn() => Inertia::render('User/LessonLobby'))->name('lessons.index');
+        Route::get('/lessons', [LearningController::class, 'lessonLobby'])->name('lessons.index');
         Route::get('/lessons/{lesson}', [LearningController::class, 'showLesson'])->name('lessons.show');
         
-        Route::get('/quizzes', fn() => Inertia::render('User/QuizLobby'))->name('quizzes.index');
+        Route::get('/quizzes', [LearningController::class, 'quizLobby'])->name('quizzes.index');
         Route::get('/quizzes/{quiz}', [LearningController::class, 'showQuiz'])->name('quizzes.show');
         
-        Route::get('/leaderboard', fn() => Inertia::render('User/Leaderboard'))->name('leaderboard');
+        Route::get('/leaderboard', function () {
+            $users = \App\Models\User::where('role', 'user')
+                ->orderByDesc('xp')
+                ->take(10)
+                ->get()
+                ->map(function ($user, $index) {
+                    return [
+                        'rank' => $index + 1,
+                        'name' => $user->username,
+                        'level' => 'Level ' . $user->level,
+                        'xp' => $user->xp,
+                        'streak' => $user->streak_count,
+                        'avatar' => $user->username,
+                        'isMe' => $user->id === auth()->id(),
+                    ];
+                });
+            return Inertia::render('User/Leaderboard', ['players' => $users]);
+        })->name('leaderboard');
         Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates');
         Route::get('/certificates/{certificate}/download', [CertificateController::class, 'download'])->name('certificates.download');
         Route::get('/progress', fn() => Inertia::render('User/Progress'))->name('progress');
