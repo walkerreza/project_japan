@@ -57,7 +57,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('/users', fn() => Inertia::render('Admin/Users/Index'))->name('users');
         Route::get('/gamification', fn() => Inertia::render('Admin/Gamification/Index'))->name('gamification');
-        Route::get('/quiz-builder', fn() => Inertia::render('Admin/Builders/QuizBuilder'))->name('quiz.builder');
+        Route::get('/quizzes/{quiz}/builder', [QuizController::class, 'builder'])->name('quizzes.builder');
+        Route::post('/quizzes/{quiz}/builder', [QuizController::class, 'updateQuestions'])->name('quizzes.builder.update');
 
         // Level CRUD
         Route::apiResource('/levels', LevelController::class)->only(['index', 'store', 'update', 'destroy']);

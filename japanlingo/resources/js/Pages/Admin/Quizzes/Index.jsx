@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 import AddIcon from '@mui/icons-material/Add';
@@ -22,6 +22,13 @@ const TYPE_CONFIG = {
 export default function QuizzesIndex({ quizzes = [], lessons = [] }) {
     const [filterLesson, setFilterLesson] = useState('all');
     const [deleteConfirm, setDeleteConfirm] = useState(null);
+    const [showCreateModal, setShowCreateModal] = useState(false);
+
+    const createForm = useForm({
+        lesson_id: '',
+        type: 'multiple_choice',
+        time_limit: '',
+    });
 
     const filtered = filterLesson === 'all'
         ? quizzes
@@ -30,6 +37,16 @@ export default function QuizzesIndex({ quizzes = [], lessons = [] }) {
     const confirmDelete = () => {
         router.delete(route('admin.quizzes.destroy', deleteConfirm.id), {
             onSuccess: () => setDeleteConfirm(null),
+        });
+    };
+
+    const handleCreateQuiz = (e) => {
+        e.preventDefault();
+        createForm.post(route('admin.quizzes.store'), {
+            onSuccess: () => {
+                setShowCreateModal(false);
+                createForm.reset();
+            },
         });
     };
 
@@ -50,7 +67,6 @@ export default function QuizzesIndex({ quizzes = [], lessons = [] }) {
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        {/* Filter Pelajaran */}
                         <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
                             <FilterListIcon sx={{ fontSize: 16 }} className="text-gray-400" />
                             <select
@@ -62,21 +78,13 @@ export default function QuizzesIndex({ quizzes = [], lessons = [] }) {
                                 {lessons.map(l => <option key={l.id} value={l.id}>{l.title}</option>)}
                             </select>
                         </div>
-                        {/* Tombol ke Quiz Builder visual */}
-                        <Link
-                            href={route('admin.quiz.builder')}
-                            className="border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl px-4 h-10 text-sm font-bold flex items-center gap-2 transition-colors"
-                        >
-                            <OpenInNewIcon sx={{ fontSize: 16 }} />
-                            Buka Builder
-                        </Link>
-                        <Link
-                            href={route('admin.questions.create')}
+                        <button
+                            onClick={() => setShowCreateModal(true)}
                             className="bg-[#E64A19] hover:bg-[#D84315] text-white rounded-xl px-5 h-10 text-sm font-bold flex items-center gap-2 shadow-md shadow-orange-500/20 transition-colors"
                         >
                             <AddIcon sx={{ fontSize: 18 }} />
-                            Tambah Soal
-                        </Link>
+                            Buat Kuis Baru
+                        </button>
                     </div>
                 </header>
 
@@ -85,6 +93,12 @@ export default function QuizzesIndex({ quizzes = [], lessons = [] }) {
                         <div className="text-center py-24 text-gray-400">
                             <QuizOutlinedIcon sx={{ fontSize: 48 }} className="mb-3 opacity-30" />
                             <p className="font-medium">Belum ada kuis untuk pelajaran ini.</p>
+                            <button
+                                onClick={() => setShowCreateModal(true)}
+                                className="mt-4 text-sm font-bold text-[#E64A19] hover:underline"
+                            >
+                                + Buat Kuis Pertama
+                            </button>
                         </div>
                     ) : (
                         <div className="space-y-3">
@@ -92,12 +106,9 @@ export default function QuizzesIndex({ quizzes = [], lessons = [] }) {
                                 const typeConf = TYPE_CONFIG[quiz.type] || { label: quiz.type, icon: null, color: 'bg-gray-100 text-gray-600' };
                                 return (
                                     <div key={quiz.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm px-5 py-4 flex items-center gap-4">
-                                        {/* Ikon tipe */}
                                         <div className="w-10 h-10 rounded-xl bg-orange-50 text-[#E64A19] flex items-center justify-center shrink-0">
                                             <QuizOutlinedIcon sx={{ fontSize: 20 }} />
                                         </div>
-
-                                        {/* Info */}
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2 mb-0.5">
                                                 <span className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${typeConf.color}`}>
@@ -114,12 +125,17 @@ export default function QuizzesIndex({ quizzes = [], lessons = [] }) {
                                                 {quiz.lesson?.title || <span className="text-gray-400 italic">Pelajaran tidak ditemukan</span>}
                                             </p>
                                         </div>
-
-                                        {/* Statistik */}
                                         <div className="flex items-center gap-4 shrink-0">
                                             <span className="text-xs font-bold text-gray-500 bg-gray-50 border border-gray-200 px-3 py-1 rounded-full">
                                                 {quiz.question_count} Soal
                                             </span>
+                                            <Link
+                                                href={route('admin.quizzes.builder', quiz.id)}
+                                                className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 transition-colors"
+                                                title="Buka Builder"
+                                            >
+                                                <OpenInNewIcon sx={{ fontSize: 18 }} />
+                                            </Link>
                                             <Link
                                                 href={route('admin.questions.index', { quiz_id: quiz.id })}
                                                 className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
@@ -141,6 +157,64 @@ export default function QuizzesIndex({ quizzes = [], lessons = [] }) {
                     )}
                 </main>
             </div>
+
+            {/* Create Quiz Modal */}
+            {showCreateModal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+                        <div className="p-6 border-b border-gray-100">
+                            <h3 className="text-lg font-black text-gray-900">Buat Kuis Baru</h3>
+                            <p className="text-sm text-gray-400 mt-1">Pilih pelajaran dan tipe kuis, lalu buka Builder untuk menambah soal.</p>
+                        </div>
+                        <form onSubmit={handleCreateQuiz} className="p-6 space-y-4">
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1.5">Pelajaran <span className="text-red-500">*</span></label>
+                                <select
+                                    value={createForm.data.lesson_id}
+                                    onChange={e => createForm.setData('lesson_id', e.target.value)}
+                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E64A19]/30 focus:border-[#E64A19]"
+                                    required
+                                >
+                                    <option value="">Pilih Pelajaran</option>
+                                    {lessons.map(l => <option key={l.id} value={l.id}>{l.title}</option>)}
+                                </select>
+                                {createForm.errors.lesson_id && <p className="text-xs text-red-500 mt-1">{createForm.errors.lesson_id}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1.5">Tipe Kuis <span className="text-red-500">*</span></label>
+                                <select
+                                    value={createForm.data.type}
+                                    onChange={e => createForm.setData('type', e.target.value)}
+                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E64A19]/30 focus:border-[#E64A19]"
+                                    required
+                                >
+                                    <option value="multiple_choice">Pilihan Ganda</option>
+                                    <option value="typing">Mengetik</option>
+                                    <option value="listening">Mendengarkan</option>
+                                </select>
+                                {createForm.errors.type && <p className="text-xs text-red-500 mt-1">{createForm.errors.type}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1.5">Batas Waktu (detik) <span className="text-gray-400 font-normal">Opsional</span></label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    value={createForm.data.time_limit}
+                                    onChange={e => createForm.setData('time_limit', e.target.value)}
+                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E64A19]/30 focus:border-[#E64A19]"
+                                    placeholder="Kosongkan jika tanpa batas"
+                                />
+                            </div>
+                            <div className="flex gap-3 pt-2">
+                                <button type="button" onClick={() => setShowCreateModal(false)} className="flex-1 h-11 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors">Batal</button>
+                                <button type="submit" disabled={createForm.processing} className="flex-1 h-11 rounded-xl bg-[#E64A19] hover:bg-[#D84315] text-white text-sm font-bold transition-colors disabled:opacity-50">
+                                    {createForm.processing ? 'Membuat...' : 'Buat Kuis'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             {/* Delete Dialog */}
             {deleteConfirm && (

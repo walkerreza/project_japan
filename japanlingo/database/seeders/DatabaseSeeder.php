@@ -6,6 +6,9 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+
+//Main call untuk all seeder
+
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
