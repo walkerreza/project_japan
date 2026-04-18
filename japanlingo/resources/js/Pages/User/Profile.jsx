@@ -49,7 +49,7 @@ export default function Profile() {
                     {/* Alamat Email */}
                     <div>
                         <h3 className="text-lg font-bold text-gray-900 mb-4">Informasi Kontak Dasar</h3>
-                        <div className="flex flex-col md:flex-row md:items-end gap-4">
+                        <div className="flex flex-col lg:flex-row lg:items-end gap-4">
                             <div className="flex-1">
                                 <label className="block text-sm font-bold text-gray-500 mb-1">Alamat Email</label>
                                 <input type="email" defaultValue={user.email} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-700 focus:ring-red-100 focus:border-red-300" disabled />
@@ -101,13 +101,13 @@ export default function Profile() {
         if (activeTab === 'billing') {
             return (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
                         <h3 className="text-lg font-bold text-gray-900">Riwayat Tagihan & Langganan</h3>
                     </div>
 
                     {/* Tabel Transaksi Desktop */}
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full min-w-[720px] text-left border-collapse">
                             <thead>
                                 <tr className="border-b-2 border-gray-100">
                                     <th className="py-4 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Tanggal</th>
@@ -159,8 +159,8 @@ export default function Profile() {
                     <div className="absolute inset-0 bg-black/10"></div>
                     
                     {/* Foto Profil Avatar Melayang */}
-                    <div className="absolute left-1/2 -translate-x-1/2 -bottom-16 md:bottom-auto md:top-full md:-translate-y-1/2 md:left-24 flex items-end">
-                        <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white p-2 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)]">
+                    <div className="absolute left-1/2 -translate-x-1/2 -bottom-16 md:bottom-auto md:top-full md:-translate-y-1/2 md:left-16 lg:left-24 flex items-end">
+                        <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full bg-white p-2 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)]">
                             <div className="w-full h-full rounded-full flex items-center justify-center text-4xl font-black text-white bg-gradient-to-br from-indigo-500 to-purple-600 relative overflow-hidden group cursor-pointer">
                                 {user.username?.charAt(0).toUpperCase()}
                                 <div className="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center transition-all">
@@ -173,7 +173,7 @@ export default function Profile() {
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 md:mt-12">
                     {/* Block Nama Pengguna & Status Premium */}
-                    <div className="md:ml-56 mb-10 flex flex-col md:flex-row md:items-center gap-4 py-4 md:py-0">
+                    <div className="md:ml-40 lg:ml-56 mb-10 flex flex-col md:flex-row md:items-center gap-4 py-4 md:py-0">
                         <div>
                             <h1 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-2">
                                 {user.username}
@@ -192,7 +192,7 @@ export default function Profile() {
                     <div className="flex flex-wrap gap-2 mb-8 border-b border-gray-200 pb-2">
                         <button 
                             onClick={() => setActiveTab('stats')}
-                            className={`px-5 py-3 rounded-t-2xl font-black text-sm tracking-wide transition-all ${
+                            className={`w-full sm:w-auto px-5 py-3 rounded-t-2xl font-black text-sm tracking-wide transition-all ${
                                 activeTab === 'stats' ? 'bg-white text-gray-900 border-2 border-b-white border-gray-200/60 translate-y-[2px]' : 'text-gray-400 hover:text-gray-600 hover:bg-white/50'
                             }`}
                         >
@@ -200,7 +200,7 @@ export default function Profile() {
                         </button>
                         <button 
                             onClick={() => setActiveTab('settings')}
-                            className={`px-5 py-3 rounded-t-2xl font-black text-sm tracking-wide transition-all ${
+                            className={`w-full sm:w-auto px-5 py-3 rounded-t-2xl font-black text-sm tracking-wide transition-all ${
                                 activeTab === 'settings' ? 'bg-white text-gray-900 border-2 border-b-white border-gray-200/60 translate-y-[2px]' : 'text-gray-400 hover:text-gray-600 hover:bg-white/50'
                             }`}
                         >
@@ -208,7 +208,7 @@ export default function Profile() {
                         </button>
                         <button 
                             onClick={() => setActiveTab('billing')}
-                            className={`px-5 py-3 rounded-t-2xl font-black text-sm tracking-wide transition-all ${
+                            className={`w-full sm:w-auto px-5 py-3 rounded-t-2xl font-black text-sm tracking-wide transition-all ${
                                 activeTab === 'billing' ? 'bg-white text-gray-900 border-2 border-b-white border-gray-200/60 translate-y-[2px]' : 'text-gray-400 hover:text-gray-600 hover:bg-white/50'
                             }`}
                         >

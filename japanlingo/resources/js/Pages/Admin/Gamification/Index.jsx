@@ -45,7 +45,7 @@ export default function Gamification() {
 
                     {/* Section 1: XP & Points */}
                     <Card className="!p-8 !rounded-2xl border-transparent shadow-sm">
-                        <div className="flex justify-between items-center mb-6">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
                             <h3 className="font-bold text-gray-900 flex items-center gap-2 text-lg">
                                 <FlashOnIcon className="text-red-600" /> XP & Points Configuration
                             </h3>
@@ -110,11 +110,11 @@ export default function Gamification() {
 
                         <div className="space-y-4">
                             {/* Level Card 1 */}
-                            <div className="border border-gray-100 rounded-2xl p-4 flex items-center justify-between bg-white relative overflow-hidden group">
+                            <div className="border border-gray-100 rounded-2xl p-4 bg-white relative overflow-hidden group">
                                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-600"></div>
-                                <div className="flex items-center gap-6 pl-4 w-full">
+                                <div className="flex flex-col gap-4 pl-4 sm:flex-row sm:items-center sm:gap-6 w-full">
                                     <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-red-500/30 shrink-0">10</div>
-                                    <div className="grid grid-cols-3 gap-4 flex-1 items-center">
+                                    <div className="grid grid-cols-1 gap-4 flex-1 items-start sm:grid-cols-3 sm:items-center">
                                         <div>
                                             <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Rank Title</p>
                                             <p className="font-bold text-gray-900">Shogun Master</p>
@@ -135,11 +135,11 @@ export default function Gamification() {
                             </div>
 
                             {/* Level Card 2 */}
-                             <div className="border border-gray-100 rounded-2xl p-4 flex items-center justify-between bg-white relative overflow-hidden group">
+                             <div className="border border-gray-100 rounded-2xl p-4 bg-white relative overflow-hidden group">
                                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-gray-200"></div>
-                                <div className="flex items-center gap-6 pl-4 w-full">
+                                <div className="flex flex-col gap-4 pl-4 sm:flex-row sm:items-center sm:gap-6 w-full">
                                     <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-black text-xl shrink-0">09</div>
-                                    <div className="grid grid-cols-3 gap-4 flex-1 items-center">
+                                    <div className="grid grid-cols-1 gap-4 flex-1 items-start sm:grid-cols-3 sm:items-center">
                                         <div>
                                             <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Rank Title</p>
                                             <p className="font-bold text-gray-900">Daimyo Elite</p>
@@ -172,7 +172,7 @@ export default function Gamification() {
                                 <EmojiEventsIcon className="text-red-600" /> Badge Rules
                             </h3>
                             <div className="space-y-6">
-                                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                <div className="flex flex-col items-start gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100 sm:flex-row sm:items-center">
                                     <div className="w-16 h-16 bg-white rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 shadow-sm shrink-0">
                                         <ImageOutlinedIcon />
                                     </div>

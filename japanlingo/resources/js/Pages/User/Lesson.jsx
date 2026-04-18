@@ -31,7 +31,7 @@ export default function Lesson({ lesson, lessons = [], is_completed }) {
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                     <Link href={route('user.dashboard')} className="text-gray-400 hover:text-gray-600 transition-colors text-sm font-medium">
                         ← Dashboard
                     </Link>
@@ -39,7 +39,7 @@ export default function Lesson({ lesson, lessons = [], is_completed }) {
                     <span className="text-sm font-medium text-gray-500">{lesson.module?.title ?? 'Module'}</span>
                     <span className="text-gray-300">/</span>
                     <span className="text-sm font-bold text-gray-900">{lesson.title}</span>
-                    <div className="ml-auto flex items-center gap-3">
+                    <div className="flex w-full flex-wrap items-center gap-3 sm:ml-auto sm:w-auto">
                         <div className="bg-amber-50 px-3 h-8 rounded-full flex items-center gap-2 border border-amber-100">
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
                             <span className="font-bold text-xs text-amber-600">{auth.user.streak_count ?? 0} Day Streak</span>
@@ -56,7 +56,7 @@ export default function Lesson({ lesson, lessons = [], is_completed }) {
         >
             <Head title={`Lesson - ${lesson.title}`} />
 
-            <div className="flex gap-6 items-start">
+            <div className="flex flex-col gap-6 items-start lg:flex-row">
 
                 {/* Sidebar: Daftar Lesson dalam Modul */}
                 <aside className="w-[260px] shrink-0 hidden lg:block sticky top-20">
@@ -208,4 +208,3 @@ export default function Lesson({ lesson, lessons = [], is_completed }) {
         </AuthenticatedLayout>
     );
 }
-

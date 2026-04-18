@@ -25,7 +25,7 @@ export default function Leaderboard() {
                 <div className="absolute inset-0 opacity-5 pointer-events-none select-none text-[200px] font-black flex items-center justify-center leading-none">🏆</div>
                 <h2 className="text-center text-lg font-black uppercase tracking-widest text-gray-400 mb-8">This Week's Champions</h2>
 
-                <div className="flex items-end justify-center gap-4">
+                <div className="flex flex-col items-center justify-center gap-6 sm:flex-row sm:items-end sm:gap-4">
                     {/* 2nd */}
                     <div className="flex flex-col items-center gap-3">
                         <div className="relative">
@@ -39,7 +39,7 @@ export default function Leaderboard() {
                         <div className="bg-slate-500 rounded-t-xl w-20 h-16 flex items-center justify-center text-2xl font-black text-white">2</div>
                     </div>
                     {/* 1st */}
-                    <div className="flex flex-col items-center gap-3 -mt-8">
+                    <div className="flex flex-col items-center gap-3 sm:-mt-8">
                         <StarsIcon className="text-amber-400" sx={{ fontSize: 28 }} />
                         <div className="relative">
                             <img src={`https://ui-avatars.com/api/?name=${players[0].avatar}&background=f59e0b&color=fff&size=96`} className="w-20 h-20 rounded-full border-4 border-amber-400 shadow-2xl shadow-amber-400/30" />
@@ -68,9 +68,9 @@ export default function Leaderboard() {
 
             {/* Full Ranking Table */}
             <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <div className="px-6 py-4 border-b border-gray-100 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <h3 className="font-black text-gray-900">All Rankings</h3>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                         {['Weekly', 'Monthly', 'All Time'].map((t, i) => (
                             <button key={i} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${i === 0 ? 'bg-red-600 text-white' : 'text-gray-400 hover:bg-gray-50'}`}>{t}</button>
                         ))}
@@ -79,17 +79,17 @@ export default function Leaderboard() {
 
                 <div className="divide-y divide-gray-50">
                     {players.map((p, i) => (
-                        <div key={i} className={`flex items-center gap-4 px-6 py-4 transition-colors hover:bg-gray-50 ${p.isMe ? 'bg-red-50/60 border-l-4 border-red-600' : ''}`}>
+                        <div key={i} className={`flex flex-wrap items-center gap-4 px-6 py-4 transition-colors hover:bg-gray-50 sm:flex-nowrap ${p.isMe ? 'bg-red-50/60 border-l-4 border-red-600' : ''}`}>
                             <span className={`w-8 text-center font-black text-lg ${p.color}`}>{p.rank <= 3 ? p.badge : p.rank}</span>
                             <img src={`https://ui-avatars.com/api/?name=${p.avatar}&background=random&size=48`} className="w-11 h-11 rounded-full border-2 border-white shadow-sm shrink-0" />
-                            <div className="flex-1">
+                            <div className="min-w-0 flex-1">
                                 <p className={`font-bold text-sm ${p.isMe ? 'text-red-600' : 'text-gray-900'}`}>{p.name}</p>
                                 <p className="text-xs text-gray-400 font-medium">{p.level}</p>
                             </div>
-                            <div className="flex items-center gap-1.5 text-amber-500 text-xs font-bold">
+                            <div className="flex items-center gap-1.5 text-amber-500 text-xs font-bold sm:ml-auto">
                                 <LocalFireDepartmentIcon sx={{ fontSize: 14 }} />{p.streak}d
                             </div>
-                            <div className="text-right">
+                            <div className="w-full text-left sm:w-auto sm:text-right">
                                 <p className="font-black text-gray-900 text-sm">{p.xp.toLocaleString()}</p>
                                 <p className="text-[10px] font-bold text-gray-400 uppercase">XP</p>
                             </div>

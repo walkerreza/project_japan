@@ -29,9 +29,9 @@ export default function Users() {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     
                     <Card className="!p-0 !rounded-2xl border-transparent shadow-sm overflow-hidden bg-white">
-                        <div className="px-8 py-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="px-4 py-5 sm:px-6 lg:px-8 lg:py-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <h3 className="font-bold text-gray-900 text-lg">Manage Students</h3>
-                            <div className="relative">
+                            <div className="relative w-full sm:w-auto">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
                                 <input
                                     type="text"
@@ -44,29 +44,29 @@ export default function Users() {
                         </div>
 
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left">
+                            <table className="w-full min-w-[720px] text-left">
                                 <thead>
                                     <tr className="bg-gray-50/50">
-                                        <th className="px-8 py-4 text-xs font-bold uppercase text-gray-500 tracking-wider">Student</th>
-                                        <th className="px-8 py-4 text-xs font-bold uppercase text-gray-500 tracking-wider">JLPT Progress</th>
-                                        <th className="px-8 py-4 text-xs font-bold uppercase text-gray-500 tracking-wider">Role</th>
-                                        <th className="px-8 py-4 text-xs font-bold uppercase text-gray-500 tracking-wider">Status</th>
-                                        <th className="px-8 py-4 text-xs font-bold uppercase text-gray-500 tracking-wider text-right">Actions</th>
+                                        <th className="px-4 py-4 sm:px-6 lg:px-8 text-xs font-bold uppercase text-gray-500 tracking-wider">Student</th>
+                                        <th className="px-4 py-4 sm:px-6 lg:px-8 text-xs font-bold uppercase text-gray-500 tracking-wider">JLPT Progress</th>
+                                        <th className="px-4 py-4 sm:px-6 lg:px-8 text-xs font-bold uppercase text-gray-500 tracking-wider">Role</th>
+                                        <th className="px-4 py-4 sm:px-6 lg:px-8 text-xs font-bold uppercase text-gray-500 tracking-wider">Status</th>
+                                        <th className="px-4 py-4 sm:px-6 lg:px-8 text-xs font-bold uppercase text-gray-500 tracking-wider text-right">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {filteredStudents.map((user) => (
                                         <tr key={user.id} className="hover:bg-gray-50/50 transition-colors">
-                                            <td className="px-8 py-5">
+                                            <td className="px-4 py-5 sm:px-6 lg:px-8">
                                                 <div className="flex items-center gap-3">
                                                     <Avatar size="sm" />
-                                                    <div>
+                                                    <div className="min-w-0">
                                                         <p className="text-sm font-bold text-gray-900 leading-none">{user.name}</p>
-                                                        <p className="text-xs text-gray-500 mt-1">{user.email}</p>
+                                                        <p className="text-xs text-gray-500 mt-1 truncate">{user.email}</p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-8 py-5">
+                                            <td className="px-4 py-5 sm:px-6 lg:px-8">
                                                 <div className="flex flex-col gap-1 w-32">
                                                     <div className="flex justify-between text-xs font-bold">
                                                         <span className="text-red-600">{user.jlpt}</span>
@@ -77,12 +77,12 @@ export default function Users() {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-8 py-5">
+                                            <td className="px-4 py-5 sm:px-6 lg:px-8">
                                                 <Badge color={user.role === 'admin' ? 'purple' : 'gray'} className="!text-xs">
                                                     {user.role}
                                                 </Badge>
                                             </td>
-                                            <td className="px-8 py-5">
+                                            <td className="px-4 py-5 sm:px-6 lg:px-8">
                                                 <div className="flex items-center gap-2">
                                                     <div className={`w-2 h-2 rounded-full ${user.status === 'Active' ? 'bg-green-500' : 'bg-red-500'}`}></div>
                                                     <span className={`text-xs font-bold ${user.status === 'Active' ? 'text-green-700' : 'text-red-700'}`}>
@@ -90,7 +90,7 @@ export default function Users() {
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="px-8 py-5 text-right space-x-3">
+                                            <td className="px-4 py-5 sm:px-6 lg:px-8 text-right space-x-3 whitespace-nowrap">
                                                 <button className="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">Edit</button>
                                                 {user.status === 'Active' ? (
                                                     <button className="text-xs font-bold text-red-600 hover:text-red-800 transition-colors">Suspend</button>
@@ -102,7 +102,7 @@ export default function Users() {
                                     ))}
                                     {filteredStudents.length === 0 && (
                                         <tr>
-                                            <td colSpan="5" className="px-8 py-8 text-center text-gray-500 text-sm">
+                                            <td colSpan="5" className="px-4 py-8 sm:px-6 lg:px-8 text-center text-gray-500 text-sm">
                                                 No students found matching your search.
                                             </td>
                                         </tr>

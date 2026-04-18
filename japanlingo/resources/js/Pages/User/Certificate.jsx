@@ -55,7 +55,7 @@ export default function Certificates() {
             <Head title="Certificates - Japanlingo" />
 
             {/* Stats Summary */}
-            <div className="grid grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
                 {[
                     { label: 'Earned', value: '3', color: 'text-green-600', bg: 'bg-green-50' },
                     { label: 'In Progress', value: '1', color: 'text-amber-600', bg: 'bg-amber-50' },
@@ -86,7 +86,7 @@ export default function Certificates() {
                         {/* Certificate Details */}
                         <div className="bg-white p-5">
                             {cert.earned ? (
-                                <div className="flex items-center justify-between">
+                                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                                     <div>
                                         <p className="text-xs text-gray-400 font-medium">Issued on</p>
                                         <p className="text-sm font-bold text-gray-900">{cert.date}</p>

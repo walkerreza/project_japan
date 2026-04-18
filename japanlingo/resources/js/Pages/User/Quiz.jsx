@@ -156,7 +156,7 @@ export default function Quiz({ quiz, questions: rawQuestions = [] }) {
                         {isSuccess ? "Kamu mendapatkan pengetahuan baru hari ini." : "Jangan menyerah, kamu pasti bisa."}
                     </p>
 
-                    <div className="grid grid-cols-3 gap-4 mb-8">
+                    <div className="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-3">
                         <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
                             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Skor</h3>
                             <div className="text-2xl font-black" style={{ color: theme.activeColor }}>
@@ -226,13 +226,13 @@ export default function Quiz({ quiz, questions: rawQuestions = [] }) {
                     >
                         {/* Question Info */}
                         <div className="text-center mb-8 w-full">
-                            <h2 className="text-2xl md:text-3xl font-black text-gray-900 mb-2">{currentQ.question}</h2>
+                            <h2 className="text-xl md:text-3xl font-black text-gray-900 mb-2">{currentQ.question}</h2>
                             <p className="text-sm font-bold text-gray-400 uppercase tracking-widest text-shadow">Soal {currentIndex + 1} dari {questions.length}</p>
                         </div>
 
                         {/* Flashcard Canvas */}
                         <div className="w-full max-w-[500px] aspect-video bg-white rounded-[2rem] shadow-sm border-2 border-gray-100 flex items-center justify-center relative mb-10">
-                            <span className="text-[100px] md:text-[140px] leading-none font-medium text-gray-900 select-none">{currentQ.kanji}</span>
+                            <span className="text-[72px] sm:text-[100px] md:text-[140px] leading-none font-medium text-gray-900 select-none">{currentQ.kanji}</span>
                             
                             <button className="absolute bottom-4 right-4 md:bottom-6 md:right-6 w-12 h-12 text-white rounded-2xl shadow-md border-b-4 flex items-center justify-center active:translate-y-1 active:border-b-0 transition-all hover:brightness-110"
                                     style={{ backgroundColor: theme.activeColor, borderColor: theme.activeShadow }}>

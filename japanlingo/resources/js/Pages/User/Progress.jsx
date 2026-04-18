@@ -39,16 +39,16 @@ export default function Progress() {
             <Head title="Progress - Japanlingo" />
 
             {/* Stat Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
                 {[
                     { label: 'Total XP', value: '12,450', icon: <EmojiEventsIcon />, color: 'text-amber-500', bg: 'bg-amber-50' },
                     { label: 'Day Streak', value: '12', icon: <LocalFireDepartmentIcon />, color: 'text-red-500', bg: 'bg-red-50' },
                     { label: 'Lessons Done', value: '24', icon: <AutoStoriesIcon />, color: 'text-blue-500', bg: 'bg-blue-50' },
                     { label: 'Quizzes', value: '18', icon: <HelpCenterIcon />, color: 'text-green-500', bg: 'bg-green-50' },
                 ].map((s, i) => (
-                    <div key={i} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
+                    <div key={i} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 min-w-0">
                         <div className={`w-11 h-11 rounded-full ${s.bg} ${s.color} flex items-center justify-center shrink-0`}>{s.icon}</div>
-                        <div>
+                        <div className="min-w-0">
                             <p className="text-xl font-black text-gray-900 leading-none">{s.value}</p>
                             <p className="text-[10px] uppercase tracking-widest font-bold text-gray-400 mt-0.5">{s.label}</p>
                         </div>
@@ -63,11 +63,11 @@ export default function Progress() {
 
                     {/* Weekly Activity Bar Chart */}
                     <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100">
-                        <div className="flex items-center justify-between mb-6">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
                             <h3 className="font-black text-gray-900">Weekly Activity</h3>
                             <span className="text-xs font-bold text-gray-400 bg-gray-50 px-3 py-1.5 rounded-lg">Total: 1,140 XP</span>
                         </div>
-                        <div className="flex items-end gap-2 h-40">
+                        <div className="flex items-end gap-1 sm:gap-2 h-40">
                             {weekActivity.map((d, i) => (
                                 <div key={i} className="flex-1 flex flex-col items-center gap-2">
                                     <p className="text-xs font-bold text-gray-400">{d.xp > 0 ? d.xp : ''}</p>
@@ -121,7 +121,7 @@ export default function Progress() {
                                         {l.done ? '✓' : l.level}
                                     </span>
                                     <div className="flex-1">
-                                        <div className="flex justify-between text-xs font-bold mb-1">
+                                        <div className="flex items-center justify-between gap-3 text-xs font-bold mb-1">
                                             <span className={l.done ? 'text-green-600' : l.pct > 0 ? 'text-red-600' : 'text-gray-400'}>JLPT {l.level}</span>
                                             <span className="text-gray-400">{l.pct}%</span>
                                         </div>

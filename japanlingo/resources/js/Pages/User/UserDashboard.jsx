@@ -147,7 +147,7 @@ export default function UserDashboard() {
                         {/* SOCIAL BADGES */}
                         <div className="flex flex-wrap justify-center gap-3">
                             {socials.map((social, idx) => (
-                                <a key={idx} href="#" className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-full shadow-sm border border-gray-100 hover:shadow-md transition-shadow text-xs font-bold text-gray-700">
+                                <a key={idx} href="#" className="flex items-center justify-center gap-2 bg-white px-4 py-2.5 rounded-full shadow-sm border border-gray-100 hover:shadow-md transition-shadow text-xs font-bold text-gray-700 w-full sm:w-auto">
                                     <img src={social.icon} alt={social.label} className="w-4 h-4 object-contain" />
                                     {social.label} {social.handle}
                                 </a>
@@ -198,7 +198,7 @@ export default function UserDashboard() {
 
                     {/* Berita Terkini Jepang Section */}
                     <section>
-                        <div className="flex items-center justify-between mb-6">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
                             <h2 className="text-xl md:text-2xl font-black text-gray-900">Berita Terkini Jepang</h2>
                             <Link href="#" className="text-red-500 font-bold text-sm hover:underline">
                                 Lihat semua berita
@@ -236,7 +236,7 @@ export default function UserDashboard() {
                                         </p>
                                         
                                         {/* Footer */}
-                                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
+                                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mt-auto pt-4 border-t border-gray-50">
                                             <span className="text-xs font-bold text-gray-400">{item.source}</span>
                                             <Link href="#" className="font-bold text-red-500 text-xs flex items-center gap-1 hover:text-red-700 transition-colors group/link">
                                                 Baca selengkapnya <ArrowRightAltIcon sx={{ fontSize: 18 }} className="group-hover/link:translate-x-1 transition-transform" />

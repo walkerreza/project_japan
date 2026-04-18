@@ -174,7 +174,7 @@ export default function AuthenticatedLayout({ children }) {
 
                     {/* Pop-up Menu Profil Ala Canva */}
                     {profileMenuOpen && (
-                        <div className="absolute bottom-16 left-[96px] w-[300px] bg-white rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.25)] border border-gray-100 overflow-hidden transform origin-bottom-left animate-in fade-in slide-in-from-bottom-5 duration-200 text-left">
+                        <div className="absolute bottom-16 left-3 right-3 w-auto bg-white rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.25)] border border-gray-100 overflow-hidden transform origin-bottom-left animate-in fade-in slide-in-from-bottom-5 duration-200 text-left lg:left-[96px] lg:right-auto lg:w-[300px]">
                             
                             {/* Header Akun */}
                             <div className="p-4 hover:bg-gray-50 transition-colors cursor-pointer flex items-center justify-between group">

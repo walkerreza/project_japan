@@ -43,16 +43,16 @@ export default function LessonLobby() {
             <Head title="Lobi Pelajaran" />
 
             <div className="py-12" style={{ backgroundColor: theme.landingHeroBg }}>
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     {/* Header Banner */}
                     <motion.div 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-[2rem] p-8 shadow-sm border-2 border-gray-100 flex flex-col md:flex-row items-center justify-between gap-8 py-10 mb-10 overflow-hidden relative"
+                        className="bg-white rounded-[2rem] p-6 sm:p-8 shadow-sm border-2 border-gray-100 flex flex-col md:flex-row items-center justify-between gap-8 py-8 sm:py-10 mb-10 overflow-hidden relative"
                     >
                         {/* Motif Latar Belakang */}
-                        <div className="absolute -top-24 -right-16 opacity-30 pointer-events-none">
+                        <div className="absolute -top-24 -right-16 opacity-20 sm:opacity-30 pointer-events-none">
                              <TranslateIcon sx={{ fontSize: 240, color: theme.activeColor }} />
                         </div>
 
@@ -60,10 +60,10 @@ export default function LessonLobby() {
                             <span className="inline-block py-1 px-3 rounded-full text-sm font-bold tracking-wider uppercase mb-3" style={{ backgroundColor: theme.heroBlob1, color: theme.activeShadow }}>
                                 RUANG LITERASI
                             </span>
-                            <h3 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">
+                            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 mb-4 tracking-tight">
                                 Mulai Perjalanan Membacamu
                             </h3>
-                            <p className="text-gray-500 font-medium text-lg leading-relaxed">
+                            <p className="text-gray-500 font-medium text-base sm:text-lg leading-relaxed">
                                 Baca dengan seksama, catat kosa kata baru, dan pahami tata nahunya sebelum kamu melaju ke Arena Kuis. Semakin banyak membaca, semakin kuat fondasimu!
                             </p>
                         </div>
@@ -99,11 +99,11 @@ export default function LessonLobby() {
                                 <h4 className={`text-xl font-black mb-2 ${lesson.status === 'locked' ? 'text-gray-500' : 'text-gray-900'}`}>
                                     {lesson.title}
                                 </h4>
-                                <p className="text-gray-500 font-medium text-sm mb-6 h-12">
+                                <p className="text-gray-500 font-medium text-sm mb-6 min-h-[3rem]">
                                     {lesson.description}
                                 </p>
 
-                                <div className="flex items-center gap-4 mb-8 text-sm font-bold text-gray-400">
+                                <div className="flex flex-wrap items-center gap-4 mb-8 text-sm font-bold text-gray-400">
                                     <span className="flex items-center gap-1.5"><AccessTimeIcon sx={{ fontSize: 18 }} /> {lesson.durationEstimate}</span>
                                     <span className="flex items-center gap-1.5"><MenuBookIcon sx={{ fontSize: 18 }} /> {lesson.totalPages} Halaman</span>
                                 </div>
