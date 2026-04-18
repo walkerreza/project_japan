@@ -83,3 +83,32 @@ export default function Page() {
 - `UserDashboard.jsx` dipindahkan dari `MainDashboard.jsx`
 - `Roadmap.jsx` — desain Duolingo-style zigzag path dengan MUI icons
 - Route roadmap: `GET /roadmap` → `Roadmap` component
+
+---
+
+## Memory 2026-04-17 - Audit Requirements vs Implementasi
+
+### Ringkasan
+- Requirement di `requirements.md`, `tambahan.md`, dan `.kiro/specs/*/requirements.md` jauh lebih lengkap dibanding implementasi `japanlingo` saat ini.
+- Fondasi stack, auth dasar, migration inti, CRUD admin parsial, dan sebagian gamifikasi event-driven sudah ada.
+- Banyak flow penting masih belum end-to-end, masih statis, atau masih placeholder terutama area murid, superadmin, dan pembayaran/subscription.
+
+### Temuan Penting
+- `japanlingo/README.md` masih README default Laravel, bukan dokumentasi produk Japanlingo.
+- Route murid masih memakai `role:user`, padahal requirement memakai role `student`: lihat `japanlingo/routes/web.php`.
+- Register masih auto-login dan redirect ke dashboard, padahal spec publik minta redirect ke `/login` dengan success message.
+- Register belum punya checkbox terms & conditions.
+- Superadmin routes hanya render page placeholder tanpa controller/data real.
+- Admin route `questions.index` ada, tetapi file `resources/js/Pages/Admin/Questions/Index.jsx` tidak ada.
+- Progress lesson sudah per-lesson dan lebih sesuai spec, tetapi daftar modul/detail modul end-to-end belum ada.
+- Quiz/Lesson frontend masih banyak elemen hardcoded dan belum mengikuti semua tipe/hasil kuis yang diminta spec.
+- Certificate download ada, tetapi generator PDF sebenarnya belum selesai dan masih fallback kondisional.
+- Belum ada domain payment/subscription/transaction/payment plan sama sekali selain field `subscription_status` di user.
+- Belum ada domain kloter/cohort, key access, login history, bulk operation superadmin, maupun activity tracking seperti di spec.
+
+### Prioritas Lanjutan
+1. Rapikan auth dan role naming: `student/admin/superadmin`, redirect sesuai spec, register flow, terms checkbox.
+2. Bangun flow murid end-to-end: modules list, module detail, unlock logic, lesson progress, quiz result, next lesson.
+3. Rapikan admin panel agar operasional penuh: level, module, lesson, quiz, question index/show/edit, dependency checks, preview.
+4. Bangun superadmin pengguna dan pembayaran dari backend schema sampai UI.
+5. Tambahkan test untuk flow utama murid, admin, gamifikasi, superadmin, dan pembayaran.

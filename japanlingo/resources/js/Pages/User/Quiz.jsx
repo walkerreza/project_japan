@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Confetti from 'react-confetti';
@@ -12,36 +12,27 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import StarIcon from '@mui/icons-material/Star';
 
-// Mockup Data (Nantinya akan dikirim via Inertia Props)
-const MOCK_QUESTIONS = [
-    {
-        id: 1,
-        question: "Pilih arti yang tepat untuk Kanji ini",
-        kanji: "糸",
-        options: ["Benang (Thread)", "Mobil (Car)", "Gunung (Mountain)", "Air (Water)"],
-        correctIndex: 0,
-        explanation: "Benang (Thread) adalah jawaban yang tepat untuk kanji 糸."
-    },
-    {
-        id: 2,
-        question: "Pilih arti yang tepat untuk Kanji ini",
-        kanji: "車",
-        options: ["Sepeda (Bike)", "Mobil (Car)", "Kereta (Train)", "Pesawat (Plane)"],
-        correctIndex: 1,
-        explanation: "Kanji 車 berarti Mobil atau kendaraan beroda."
-    },
-    {
-        id: 3,
-        question: "Pilih arti yang tepat untuk Kanji ini",
-        kanji: "山",
-        options: ["Sungai (River)", "Langit (Sky)", "Gunung (Mountain)", "Pohon (Tree)"],
-        correctIndex: 2,
-        explanation: "Bentuk kanji 山 menyerupai tiga puncak gunung."
-    }
-];
+// Hitung XP berdasarkan akurasi
+function calcXP(correct, total) {
+    const pct = total > 0 ? correct / total : 0;
+    if (pct === 1) return 50;
+    if (pct >= 0.8) return 35;
+    if (pct >= 0.6) return 20;
+    return 10;
+}
 
-export default function Quiz() {
-    const [questions] = useState(MOCK_QUESTIONS);
+export default function Quiz({ quiz, questions: rawQuestions = [] }) {
+    // Normalise: backend kirim correct_answer (string), ubah ke correctIndex
+    const [questions] = useState(() =>
+        rawQuestions.map(q => ({
+            ...q,
+            // options adalah array string dari DB
+            options: Array.isArray(q.options) ? q.options : [],
+            correctIndex: Array.isArray(q.options)
+                ? q.options.indexOf(q.correct_answer)
+                : -1,
+        }))
+    );
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [isCorrect, setIsCorrect] = useState(false);
@@ -51,6 +42,8 @@ export default function Quiz() {
     const [score, setScore] = useState(0);
     const [showResult, setShowResult] = useState(false);
     
+    const submitted = useRef(false);
+
     // Animasi state
     const [shakeKey, setShakeKey] = useState(0); // Trigger shake animation
 
@@ -84,20 +77,29 @@ export default function Quiz() {
         }
     };
 
+    const submitAttempt = (finalScore) => {
+        if (submitted.current || !quiz?.id) return;
+        submitted.current = true;
+        const xp = calcXP(finalScore, questions.length);
+        router.post(route('user.attempts.store'), {
+            quiz_id: quiz.id,
+            score: finalScore,
+            xp_earned: xp,
+        }, { preserveState: true });
+    };
+
     const handleNext = () => {
-        if (lives === 0) {
-            // Logika game over
+        const gameOver = lives === 0;
+        const lastQuestion = currentIndex >= questions.length - 1;
+
+        if (gameOver || lastQuestion) {
+            submitAttempt(score);
             setShowResult(true);
             return;
         }
 
-        if (currentIndex < questions.length - 1) {
-            setCurrentIndex(prev => prev + 1);
-            setSelectedAnswer(null);
-        } else {
-            // Selesai semua soal
-            setShowResult(true);
-        }
+        setCurrentIndex(prev => prev + 1);
+        setSelectedAnswer(null);
     };
 
     const confirmExit = (e) => {
@@ -107,9 +109,26 @@ export default function Quiz() {
         }
     };
 
+    // Jika tidak ada soal dari DB
+    if (questions.length === 0) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Head title="Quiz" />
+                <div className="text-center">
+                    <p className="text-2xl font-black text-gray-400 mb-4">😅 Belum Ada Soal</p>
+                    <p className="text-gray-500 mb-6">Admin belum menambahkan soal untuk kuis ini.</p>
+                    <Link href={route('user.dashboard')} className="px-6 py-3 bg-red-600 text-white font-bold rounded-xl no-underline">
+                        Kembali ke Dashboard
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
     // === TAMPILAN HASIL (SUMMARY SCREEN) ===
     if (showResult) {
         const accuracy = Math.round((score / questions.length) * 100);
+        const xpEarned = calcXP(score, questions.length);
         const isSuccess = lives > 0;
 
         return (
@@ -137,11 +156,11 @@ export default function Quiz() {
                         {isSuccess ? "Kamu mendapatkan pengetahuan baru hari ini." : "Jangan menyerah, kamu pasti bisa."}
                     </p>
 
-                    <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="grid grid-cols-3 gap-4 mb-8">
                         <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
-                            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Total Skor</h3>
+                            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Skor</h3>
                             <div className="text-2xl font-black" style={{ color: theme.activeColor }}>
-                                {score} / {questions.length}
+                                {score}/{questions.length}
                             </div>
                         </div>
                         <div className="bg-yellow-50 rounded-2xl p-4 border border-yellow-100">
@@ -149,12 +168,15 @@ export default function Quiz() {
                             <div className="text-2xl font-black text-yellow-600">
                                 {accuracy}%
                             </div>
-                            <StarIcon className="absolute top-4 right-4 text-yellow-400 opacity-20" sx={{ fontSize: 40 }} />
+                        </div>
+                        <div className="bg-green-50 rounded-2xl p-4 border border-green-100">
+                            <h3 className="text-sm font-bold text-green-500 uppercase tracking-wider mb-1">XP</h3>
+                            <div className="text-2xl font-black text-green-600">+{xpEarned}</div>
                         </div>
                     </div>
 
                     <button 
-                        onClick={() => router.get('/user/dashboard')}
+                        onClick={() => router.get(route('user.dashboard'))}
                         className="w-full py-4 rounded-2xl font-black text-white text-lg tracking-wide uppercase shadow-lg hover:brightness-110 active:translate-y-1 active:shadow-none transition-all"
                         style={{ backgroundColor: theme.doneColor, boxShadow: `0 4px 0 0 ${theme.doneShadow}` }}
                     >
