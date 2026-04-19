@@ -48,7 +48,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admins', fn() => Inertia::render('SuperAdmin/Admins'))->name('admins');
         Route::get('/content', fn() => Inertia::render('SuperAdmin/Content'))->name('content');
         Route::get('/gamification', fn() => Inertia::render('SuperAdmin/Gamification'))->name('gamification');
-        Route::get('/pricing', fn() => Inertia::render('SuperAdmin/Pricing'))->name('pricing');
+        Route::get('/activity', fn() => Inertia::render('SuperAdmin/Activity'))->name('activity');
+        Route::redirect('/pricing', '/superadmin/activity');
         Route::get('/system', fn() => Inertia::render('SuperAdmin/System'))->name('system');
     });
 

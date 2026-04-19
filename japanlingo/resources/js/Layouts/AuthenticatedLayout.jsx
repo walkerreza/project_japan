@@ -73,7 +73,7 @@ export default function AuthenticatedLayout({ children }) {
         { href: '/superadmin/admins', icon: <ShieldIcon sx={{ fontSize: 24 }} />, label: 'Data Admin' },
         { href: '/superadmin/content', icon: <MonitorHeartIcon sx={{ fontSize: 24 }} />, label: 'Konten' },
         { href: '/superadmin/gamification', icon: <EmojiEventsIcon sx={{ fontSize: 24 }} />, label: 'Gamifikasi' },
-        { href: '/superadmin/pricing', icon: <PaymentsIcon sx={{ fontSize: 24 }} />, label: 'Pemasukan' },
+        { href: '/superadmin/activity', icon: <ReceiptLongOutlinedIcon sx={{ fontSize: 24 }} />, label: 'Aktivitas' },
         { href: '/superadmin/system', icon: <SettingsIcon sx={{ fontSize: 24 }} />, label: 'Sistem' },
     ];
 
