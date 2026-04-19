@@ -37,6 +37,10 @@ class HandleInertiaRequests extends Middleware
                     'xp', 'level', 'streak_count', 'subscription_status',
                 ]),
             ],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'newAchievements' => fn () => $request->session()->get('newAchievements'),
+            ],
         ];
     }
 }

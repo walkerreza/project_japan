@@ -108,7 +108,7 @@ const news = [
     }
 ];
 
-export default function UserDashboard({ user = {}, recentProgress = [] }) {
+export default function UserDashboard({ user = {}, recentProgress = [], rewardHistory = [] }) {
     return (
         <AuthenticatedLayout header={false}>
             <Head title="Beranda Utama" />
@@ -267,6 +267,35 @@ export default function UserDashboard({ user = {}, recentProgress = [] }) {
                             ))}
                         </div>
                     </section>
+                    {/* Riwayat Perolehan XP */}
+                    {rewardHistory.length > 0 && (
+                        <section>
+                            <h2 className="text-xl md:text-2xl font-black text-gray-900 mb-6">Riwayat Perolehan XP</h2>
+                            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+                                <div className="divide-y divide-gray-50">
+                                    {rewardHistory.map((log, idx) => (
+                                        <div key={idx} className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors">
+                                            <div className="flex items-center gap-4">
+                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-black ${
+                                                    log.source_type === 'lesson' ? 'bg-blue-50 text-blue-600' :
+                                                    log.source_type === 'quiz' ? 'bg-red-50 text-red-600' :
+                                                    log.source_type === 'achievement' ? 'bg-amber-50 text-amber-600' :
+                                                    'bg-green-50 text-green-600'
+                                                }`}>
+                                                    {log.source_type === 'lesson' ? '📖' : log.source_type === 'quiz' ? '📝' : log.source_type === 'achievement' ? '🏆' : '⚡'}
+                                                </div>
+                                                <div>
+                                                    <p className="font-bold text-gray-900 text-sm">{log.description || log.source_type}</p>
+                                                    <p className="text-[11px] text-gray-400 font-medium">{new Date(log.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                                                </div>
+                                            </div>
+                                            <span className="font-black text-green-600 bg-green-50 px-3 py-1 rounded-lg text-sm">+{log.xp_amount} XP</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+                    )}
 
                 </div>
             </div>

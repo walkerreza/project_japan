@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\LessonController;
 use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\QuestionController;
+use App\Http\Controllers\Admin\AchievementController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\LearningController;
 use App\Http\Controllers\User\ProgressController;
@@ -57,7 +58,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('/users', fn() => Inertia::render('Admin/Users/Index'))->name('users');
-        Route::get('/gamification', fn() => Inertia::render('Admin/Gamification/Index'))->name('gamification');
+        Route::get('/gamification', fn() => Inertia::render('Admin/Gamification/Index', [
+            'achievements' => \App\Models\Achievement::withCount('users')->orderBy('created_at', 'desc')->get(),
+        ]))->name('gamification');
+        Route::post('/achievements', [AchievementController::class, 'store'])->name('achievements.store');
+        Route::put('/achievements/{achievement}', [AchievementController::class, 'update'])->name('achievements.update');
+        Route::delete('/achievements/{achievement}', [AchievementController::class, 'destroy'])->name('achievements.destroy');
         Route::get('/quizzes/{quiz}/builder', [QuizController::class, 'builder'])->name('quizzes.builder');
         Route::post('/quizzes/{quiz}/builder', [QuizController::class, 'updateQuestions'])->name('quizzes.builder.update');
 

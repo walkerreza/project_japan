@@ -4,86 +4,59 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Certificate;
+use App\Models\Level;
+use App\Services\CertificateService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
-/**
- * CertificateController (User)
- *
- * Mengelola sertifikat yang dimiliki user.
- * Sertifikat diterbitkan otomatis oleh sistem saat user menyelesaikan seluruh
- * module dalam satu level JLPT (N5 → N4 → N3 → N2 → N1).
- *
- * Fitur:
- *   - index()    : Tampilkan semua sertifikat milik user yang sedang login
- *   - download() : Download file PDF sertifikat (hanya pemilik yang bisa)
- *
- * Route:
- *   GET  /user/certificates          → index()
- *   GET  /user/certificates/{id}/download → download()
- *
- * Halaman React terkait: resources/js/Pages/User/Certificate.jsx
- *
- * CATATAN untuk pengembang:
- *   File PDF sertifikat disimpan di storage/app/certificates/
- *   Generate PDF menggunakan library (misal: barryvdh/laravel-dompdf) — belum diimplementasi.
- */
 class CertificateController extends Controller
 {
-    /**
-     * Tampilkan daftar sertifikat milik user yang sedang login.
-     * Data level (N5/N4/dst) ikut di-load via eager loading.
-     */
+    protected CertificateService $certificateService;
+
+    public function __construct(CertificateService $certificateService)
+    {
+        $this->certificateService = $certificateService;
+    }
+
     public function index()
     {
-        $certificates = Auth::user()
-            ->certificates()
-            ->with('level')           // Sertakan data level (nama: N5, N4, dll)
-            ->orderByDesc('issued_at') // Terbaru ditampilkan pertama
-            ->get();
+        $user = Auth::user();
+        $levels = Level::all();
+
+        $certificatesData = $levels->map(function ($level) use ($user) {
+            $certificate = Certificate::where('user_id', $user->id)
+                ->where('level_id', $level->id)
+                ->first();
+
+            $progress = $this->certificateService->getProgressPercentage($user, $level->id);
+
+            if (!$certificate && $progress >= 100) {
+                $certificate = $this->certificateService->checkAndIssueCertificate($user, $level->id);
+            }
+
+            return [
+                'level_id' => $level->id,
+                'level_name' => $level->level_name,
+                'stage' => $level->stage,
+                'progress' => $progress,
+                'certificate' => $certificate,
+            ];
+        });
 
         return Inertia::render('User/Certificate', [
-            'certificates' => $certificates,
+            'certificates' => $certificatesData,
         ]);
     }
 
-    /**
-     * Download file PDF sertifikat.
-     *
-     * PENTING: Dilindungi dengan pengecekan kepemilikan (abort 403 jika bukan pemilik).
-     * Ini mencegah user A mengakses sertifikat milik user B.
-     *
-     * @param  \App\Models\Certificate  $certificate
-     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Http\RedirectResponse
-     */
     public function download(Certificate $certificate)
     {
-        // Keamanan: pastikan hanya pemilik sertifikat yang bisa download
-        abort_if($certificate->user_id !== Auth::id(), 403, 'Akses ditolak.');
-
-        if ($certificate->file_path && Storage::exists($certificate->file_path)) {
-            return Storage::download(
-                $certificate->file_path,
-                "sertifikat-{$certificate->certificate_number}.pdf"
-            );
+        if ($certificate->user_id !== Auth::id()) {
+            abort(403);
         }
 
-        // Logic generasi sertifikat On-the-Fly jika package laravel-dompdf terinstall
-        // Perintah instalasi kepada user: composer require barryvdh/laravel-dompdf
-        if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('certificate.template', [
-                'user' => Auth::user(),
-                'certificate' => $certificate,
-                'level' => $certificate->level,
-                'date' => $certificate->issued_at->format('d F Y')
-            ]);
-            
-            // Atur landscape karena ini sertifikat
-            $pdf->setPaper('A4', 'landscape');
-            return $pdf->download("sertifikat-{$certificate->certificate_number}.pdf");
-        }
-
-        return redirect()->back()->with('error', 'File sertifikat belum tersedia atau fitur pembuatan PDF belum di-install.');
+        return Inertia::render('User/CertificateView', [
+            'certificate' => $certificate->load('level'),
+            'user' => Auth::user(),
+        ]);
     }
 }

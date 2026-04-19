@@ -34,7 +34,17 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 export default function AuthenticatedLayout({ children }) {
     const { user } = usePage().props.auth;
+    const flash = usePage().props.flash || {};
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+    const [toastAchievements, setToastAchievements] = useState([]);
+
+    useEffect(() => {
+        if (flash.newAchievements && flash.newAchievements.length > 0) {
+            setToastAchievements(flash.newAchievements);
+            const timer = setTimeout(() => setToastAchievements([]), 6000);
+            return () => clearTimeout(timer);
+        }
+    }, [flash.newAchievements]);
     const [isExpanded, setIsExpanded] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const menuRef = useRef();
@@ -223,6 +233,25 @@ export default function AuthenticatedLayout({ children }) {
                     {children}
                 </main>
             </div>
+
+            {/* Achievement Toast Notification */}
+            {toastAchievements.length > 0 && (
+                <div className="fixed top-6 right-6 z-[100] flex flex-col gap-3 animate-in">
+                    {toastAchievements.map((ach, i) => (
+                        <div key={i} className="bg-white rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.25)] border-2 border-amber-300 p-5 flex items-center gap-4 min-w-[320px]" style={{ animation: `fade-in-slide-up 0.4s ${i * 0.15}s both` }}>
+                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-3xl shadow-lg shadow-amber-400/30 shrink-0">
+                                {ach.icon || '🏆'}
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Lencana Terbuka!</p>
+                                <p className="font-black text-gray-900 text-sm">{ach.name}</p>
+                                <p className="text-xs text-gray-500 font-medium">{ach.description}</p>
+                                {ach.xp_reward > 0 && <span className="text-[10px] font-black text-green-600 bg-green-50 px-2 py-0.5 rounded-full mt-1 inline-block">+{ach.xp_reward} XP</span>}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
 
             {/* Gaya CSS Helper untuk Hide-Scrollbar dan Animasi pop-up */}
             <style dangerouslySetInnerHTML={{__html:`
