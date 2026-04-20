@@ -19,8 +19,9 @@ const TYPE_CONFIG = {
     listening:       { label: 'Mendengarkan',  icon: <HearingIcon sx={{ fontSize: 14 }} />,   color: 'bg-green-100 text-green-700' },
 };
 
-export default function QuizzesIndex({ quizzes = [], lessons = [] }) {
+export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
     const [filterLesson, setFilterLesson] = useState('all');
+    const [searchQuery, setSearchQuery] = useState(filters?.search || '');
     const [deleteConfirm, setDeleteConfirm] = useState(null);
     const [showCreateModal, setShowCreateModal] = useState(false);
 
@@ -30,9 +31,16 @@ export default function QuizzesIndex({ quizzes = [], lessons = [] }) {
         time_limit: '',
     });
 
+    const quizItems = quizzes?.data || quizzes || [];
+
     const filtered = filterLesson === 'all'
-        ? quizzes
-        : quizzes.filter(q => q.lesson?.id == filterLesson);
+        ? quizItems
+        : quizItems.filter(q => q.lesson?.id == filterLesson);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        router.get(route('admin.quizzes.index'), { search: searchQuery }, { preserveState: true });
+    };
 
     const confirmDelete = () => {
         router.delete(route('admin.quizzes.destroy', deleteConfirm.id), {
@@ -67,6 +75,15 @@ export default function QuizzesIndex({ quizzes = [], lessons = [] }) {
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
+                        <form onSubmit={handleSearch} className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+                            <input 
+                                type="text"
+                                placeholder="Cari Kuis/Tipe..."
+                                value={searchQuery}
+                                onChange={e => setSearchQuery(e.target.value)}
+                                className="text-sm font-medium text-gray-700 bg-transparent border-none focus:ring-0 outline-none w-32 md:w-48"
+                            />
+                        </form>
                         <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
                             <FilterListIcon sx={{ fontSize: 16 }} className="text-gray-400" />
                             <select
@@ -153,6 +170,20 @@ export default function QuizzesIndex({ quizzes = [], lessons = [] }) {
                                     </div>
                                 );
                             })}
+                        </div>
+                    )}
+
+                    {/* Pagination Links */}
+                    {quizzes?.links && quizzes.links.length > 3 && (
+                        <div className="flex justify-center gap-2 mt-8">
+                            {quizzes.links.map((link, i) => (
+                                <Link
+                                    key={i}
+                                    href={link.url}
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${link.active ? 'bg-[#E64A19] text-white shadow-md' : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50'} ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                />
+                            ))}
                         </div>
                     )}
                 </main>

@@ -7,6 +7,7 @@ export default function Register() {
         email: '',
         password: '',
         password_confirmation: '',
+        terms_accepted: false,
     });
 
     const submit = (e) => {
@@ -93,7 +94,23 @@ export default function Register() {
                         {errors.password_confirmation && <p className="mt-1 text-xs text-red-600">{errors.password_confirmation}</p>}
                     </div>
 
-                    <button type="submit" disabled={processing} className="w-full py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all disabled:opacity-50 text-sm">
+                    <div>
+                        <label className="flex items-start gap-2 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={data.terms_accepted}
+                                onChange={(e) => setData('terms_accepted', e.target.checked)}
+                                className="mt-1 w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500 focus:ring-2"
+                                required
+                            />
+                            <span className="text-sm text-gray-500">
+                                I agree to the <Link href="#" className="font-medium text-red-600 hover:underline">Terms & Conditions</Link> and <Link href="#" className="font-medium text-red-600 hover:underline">Privacy Policy</Link>.
+                            </span>
+                        </label>
+                        {errors.terms_accepted && <p className="mt-1 text-xs text-red-600">{errors.terms_accepted}</p>}
+                    </div>
+
+                    <button type="submit" disabled={processing || !data.terms_accepted} className="w-full py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all disabled:opacity-50 text-sm">
                         Create Account (登録する)
                     </button>
 

@@ -9,6 +9,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import LockIcon from '@mui/icons-material/Lock';
 import StarIcon from '@mui/icons-material/Star';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
 export default function Lesson({ lesson, lessons = [], is_completed }) {
     const { auth } = usePage().props;
@@ -118,7 +120,7 @@ export default function Lesson({ lesson, lessons = [], is_completed }) {
                 {/* Main Lesson Content */}
                 <div className="flex-1 min-w-0">
 
-                    {/* Video / Thumbnail */}
+                    {/* Video / Media Utama */}
                     {lesson.video_url ? (
                         <div className="w-full aspect-video bg-gray-900 rounded-[2rem] overflow-hidden relative shadow-lg mb-8 group cursor-pointer border border-gray-100">
                             <iframe
@@ -128,20 +130,18 @@ export default function Lesson({ lesson, lessons = [], is_completed }) {
                                 title={lesson.title}
                             />
                         </div>
-                    ) : (
-                        <div className="w-full aspect-video bg-gray-900 rounded-[2rem] overflow-hidden relative shadow-lg mb-8 group cursor-pointer border border-gray-100">
-                            <img
-                                src="https://images.unsplash.com/photo-1578269174936-2709b6aeb913?q=80&w=2671&auto=format&fit=crop"
-                                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
-                                alt={lesson.title}
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="w-20 h-20 bg-red-600/90 backdrop-blur-sm rounded-2xl flex items-center justify-center text-white shadow-2xl group-hover:scale-110 group-hover:bg-red-600 transition-all duration-300">
-                                    <PlayCircleFilledIcon sx={{ fontSize: 48 }} />
-                                </div>
+                    ) : lesson.type === 'file' && lesson.file_url ? (
+                        <div className="w-full bg-blue-50 rounded-[2rem] overflow-hidden relative shadow-sm mb-8 border border-blue-100 p-8 flex flex-col items-center justify-center text-center">
+                            <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4">
+                                {lesson.file_url.endsWith('.pdf') ? <PictureAsPdfIcon sx={{ fontSize: 40 }} /> : <InsertDriveFileIcon sx={{ fontSize: 40 }} />}
                             </div>
+                            <h3 className="text-lg font-black text-blue-900 mb-2">Materi Dokumen Tersedia</h3>
+                            <p className="text-blue-700 text-sm mb-6">Silakan baca atau unduh materi dokumen untuk lesson ini.</p>
+                            <a href={lesson.file_url} target="_blank" rel="noreferrer" className="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30">
+                                Buka Dokumen Utama
+                            </a>
                         </div>
-                    )}
+                    ) : null}
 
                     {/* Title */}
                     <h1 className="text-3xl font-black text-gray-900 mb-2">{lesson.title}</h1>

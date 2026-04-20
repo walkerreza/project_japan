@@ -11,8 +11,9 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import FilterListIcon from '@mui/icons-material/FilterList';
 
-export default function ModulesIndex({ modules = [], levels = [] }) {
+export default function ModulesIndex({ modules, levels = [], filters = {} }) {
     const [filterLevel, setFilterLevel] = useState('all');
+    const [searchQuery, setSearchQuery] = useState(filters?.search || '');
     const [expandedModules, setExpandedModules] = useState({});
     const [showModuleModal, setShowModuleModal] = useState(false);
     const [editingModule, setEditingModule] = useState(null);
@@ -25,9 +26,16 @@ export default function ModulesIndex({ modules = [], levels = [] }) {
         description: '',
     });
 
+    const moduleItems = modules?.data || modules || [];
+
     const filteredModules = filterLevel === 'all'
-        ? modules
-        : modules.filter(m => m.level?.id == filterLevel);
+        ? moduleItems
+        : moduleItems.filter(m => m.level?.id == filterLevel);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        router.get(route('admin.modules.index'), { search: searchQuery }, { preserveState: true });
+    };
 
     const toggleExpand = (id) => {
         setExpandedModules(prev => ({ ...prev, [id]: !prev[id] }));
@@ -96,6 +104,15 @@ export default function ModulesIndex({ modules = [], levels = [] }) {
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
+                        <form onSubmit={handleSearch} className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+                            <input 
+                                type="text"
+                                placeholder="Cari Modul..."
+                                value={searchQuery}
+                                onChange={e => setSearchQuery(e.target.value)}
+                                className="text-sm font-medium text-gray-700 bg-transparent border-none focus:ring-0 outline-none w-32 md:w-48"
+                            />
+                        </form>
                         <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
                             <FilterListIcon sx={{ fontSize: 16 }} className="text-gray-400" />
                             <select
@@ -170,6 +187,20 @@ export default function ModulesIndex({ modules = [], levels = [] }) {
                             )}
                         </div>
                     ))}
+
+                    {/* Pagination Links */}
+                    {modules?.links && modules.links.length > 3 && (
+                        <div className="flex justify-center gap-2 mt-8">
+                            {modules.links.map((link, i) => (
+                                <Link
+                                    key={i}
+                                    href={link.url}
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${link.active ? 'bg-[#E64A19] text-white shadow-md' : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50'} ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </main>
             </div>
 

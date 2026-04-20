@@ -230,16 +230,31 @@ export default function Quiz({ quiz, questions: rawQuestions = [] }) {
                             <p className="text-sm font-bold text-gray-400 uppercase tracking-widest text-shadow">Soal {currentIndex + 1} dari {questions.length}</p>
                         </div>
 
-                        {/* Flashcard Canvas */}
+                        {/* Flashcard Canvas / Media */}
                         {(currentQ.kanji || currentQ.audio_url) && (
-                            <div className="w-full max-w-[500px] aspect-video bg-white rounded-[2rem] shadow-sm border-2 border-gray-100 flex items-center justify-center relative mb-10">
+                            <div className="w-full max-w-[500px] aspect-video bg-white rounded-[2rem] shadow-sm border-2 border-gray-100 flex items-center justify-center relative mb-10 overflow-hidden">
                                 {currentQ.kanji && <span className="text-[72px] sm:text-[100px] md:text-[140px] leading-none font-medium text-gray-900 select-none">{currentQ.kanji}</span>}
                                 
                                 {currentQ.audio_url && (
-                                    <button className="absolute bottom-4 right-4 md:bottom-6 md:right-6 w-12 h-12 text-white rounded-2xl shadow-md border-b-4 flex items-center justify-center active:translate-y-1 active:border-b-0 transition-all hover:brightness-110"
-                                            style={{ backgroundColor: theme.activeColor, borderColor: theme.activeShadow }}>
-                                        <VolumeUpIcon />
-                                    </button>
+                                    (currentQ.audio_url.includes('youtube.com') || currentQ.audio_url.includes('youtu.be')) ? (
+                                        <iframe
+                                            src={currentQ.audio_url.includes('watch?v=') ? currentQ.audio_url.replace('watch?v=', 'embed/') : currentQ.audio_url}
+                                            className="w-full h-full"
+                                            allowFullScreen
+                                            title="Audio Question"
+                                        />
+                                    ) : (
+                                        <>
+                                            {!currentQ.kanji && <span className="text-gray-400 font-bold tracking-widest uppercase">Pesan Suara</span>}
+                                            <audio id={`audio-${currentQ.id}`} src={currentQ.audio_url} />
+                                            <button 
+                                                onClick={() => document.getElementById(`audio-${currentQ.id}`).play()}
+                                                className="absolute bottom-4 right-4 md:bottom-6 md:right-6 w-12 h-12 text-white rounded-2xl shadow-md border-b-4 flex items-center justify-center active:translate-y-1 active:border-b-0 transition-all hover:brightness-110"
+                                                style={{ backgroundColor: theme.activeColor, borderColor: theme.activeShadow }}>
+                                                <VolumeUpIcon />
+                                            </button>
+                                        </>
+                                    )
                                 )}
                             </div>
                         )}

@@ -204,7 +204,7 @@ export default function AuthenticatedLayout({ children }) {
 
                             {/* Daftar Tautan Menu Aktif */}
                             <div className="py-2">
-                                <Link href="/user/profile" className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 font-medium">
+                                <Link href={route('profile.edit')} className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 font-medium">
                                     <div className="flex items-center gap-3"><SettingsOutlinedIcon sx={{ fontSize: 18 }} className="text-gray-500" /> Pengaturan profil</div>
                                 </Link>
                             </div>

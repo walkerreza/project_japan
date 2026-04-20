@@ -5,18 +5,21 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Module;
 use App\Models\Level;
+use App\Http\Requests\Admin\ModuleRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ModuleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $modules = Module::with(['level', 'lessons'])
-            ->orderBy('level_id')
-            ->orderBy('week_number')
-            ->get()
-            ->map(fn($m) => [
+        $query = Module::with(['level', 'lessons'])->orderBy('level_id')->orderBy('week_number');
+
+        if ($request->filled('search')) {
+            $query->where('title', 'ilike', '%' . $request->search . '%');
+        }
+
+        $modules = $query->paginate(10)->through(fn($m) => [
                 'id'           => $m->id,
                 'title'        => $m->title,
                 'description'  => $m->description,
@@ -30,44 +33,21 @@ class ModuleController extends Controller
         return Inertia::render('Admin/Modules/Index', [
             'modules' => $modules,
             'levels'  => $levels,
+            'filters' => $request->only('search'),
         ]);
     }
 
-    public function store(Request $request)
+    public function store(ModuleRequest $request)
     {
-        $validated = $request->validate([
-            'level_id'    => 'required|exists:levels,id',
-            'title'       => 'required|string|max:255',
-            'week_number' => 'required|integer|min:1',
-            'description' => 'nullable|string',
-        ], [
-            'level_id.required'    => 'Level wajib dipilih',
-            'level_id.exists'      => 'Level tidak ditemukan',
-            'title.required'       => 'Judul modul wajib diisi',
-            'week_number.required' => 'Nomor minggu wajib diisi',
-            'week_number.integer'  => 'Nomor minggu harus berupa angka',
-        ]);
-
+        $validated = $request->validated();
         Module::create($validated);
-
         return redirect()->back()->with('success', 'Modul berhasil dibuat');
     }
 
-    public function update(Request $request, Module $module)
+    public function update(ModuleRequest $request, Module $module)
     {
-        $validated = $request->validate([
-            'level_id'    => 'required|exists:levels,id',
-            'title'       => 'required|string|max:255',
-            'week_number' => 'required|integer|min:1',
-            'description' => 'nullable|string',
-        ], [
-            'level_id.required'    => 'Level wajib dipilih',
-            'title.required'       => 'Judul modul wajib diisi',
-            'week_number.required' => 'Nomor minggu wajib diisi',
-        ]);
-
+        $validated = $request->validated();
         $module->update($validated);
-
         return redirect()->back()->with('success', 'Modul berhasil diperbarui');
     }
 

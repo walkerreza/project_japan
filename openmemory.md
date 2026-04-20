@@ -93,22 +93,53 @@ export default function Page() {
 - Fondasi stack, auth dasar, migration inti, CRUD admin parsial, dan sebagian gamifikasi event-driven sudah ada.
 - Banyak flow penting masih belum end-to-end, masih statis, atau masih placeholder terutama area murid, superadmin, dan pembayaran/subscription.
 
-### Temuan Penting
-- `japanlingo/README.md` masih README default Laravel, bukan dokumentasi produk Japanlingo.
-- Route murid masih memakai `role:user`, padahal requirement memakai role `student`: lihat `japanlingo/routes/web.php`.
-- Register masih auto-login dan redirect ke dashboard, padahal spec publik minta redirect ke `/login` dengan success message.
-- Register belum punya checkbox terms & conditions.
+### Temuan Penting (Disaring - Sisanya Belum Dikerjakan)
+- `japanlingo/README.md` perlu dirombak total di fase akhir deployment.
 - Superadmin routes hanya render page placeholder tanpa controller/data real.
-- Admin route `questions.index` ada, tetapi file `resources/js/Pages/Admin/Questions/Index.jsx` tidak ada.
-- Progress lesson sudah per-lesson dan lebih sesuai spec, tetapi daftar modul/detail modul end-to-end belum ada.
-- Quiz/Lesson frontend masih banyak elemen hardcoded dan belum mengikuti semua tipe/hasil kuis yang diminta spec.
-- Certificate download ada, tetapi generator PDF sebenarnya belum selesai dan masih fallback kondisional.
+- Admin route `questions.index` ada, tetapi komponen React file UI-nya belum solid terintegrasi.
+- Progress lesson sudah per-lesson, tetapi daftar modul/detail modul end-to-end dengan _lock indicator_ belum utuh.
 - Belum ada domain payment/subscription/transaction/payment plan sama sekali selain field `subscription_status` di user.
 - Belum ada domain kloter/cohort, key access, login history, bulk operation superadmin, maupun activity tracking seperti di spec.
 
 ### Prioritas Lanjutan
-1. Rapikan auth dan role naming: `student/admin/superadmin`, redirect sesuai spec, register flow, terms checkbox.
-2. Bangun flow murid end-to-end: modules list, module detail, unlock logic, lesson progress, quiz result, next lesson.
-3. Rapikan admin panel agar operasional penuh: level, module, lesson, quiz, question index/show/edit, dependency checks, preview.
-4. Bangun superadmin pengguna dan pembayaran dari backend schema sampai UI.
-5. Tambahkan test untuk flow utama murid, admin, gamifikasi, superadmin, dan pembayaran.
+1. Bangun fitur Subscription (Free/Premium) middleware.
+2. Rapikan UI admin panel untuk operasional `Question` dan `Levels`.
+3. Bangun superadmin pengguna dan pembayaran dari backend schema sampai UI yang utuh.
+4. Tambahkan test untuk flow utama.
+
+---
+
+## Memory 2026-04-19 - Superadmin Final Structure
+
+### Navbar Final
+- `Beranda`
+- `Data User`
+- `Data Admin`
+- `Konten`
+- `Gamifikasi`
+- `Aktivitas`
+- `Sistem`
+
+### Keputusan Scope
+- Menu `Pemasukan` diganti menjadi `Aktivitas` karena backend payment/subscription belum ada dan belum masuk scope aktif.
+- `Konten` untuk superadmin mencakup:
+  - monitoring module/lesson/quiz
+  - news / announcement untuk dashboard user
+  - status draft / published / pinned
+- Superadmin saat ini difokuskan ke:
+  - pengawasan platform
+  - pengelolaan user dan admin
+  - monitoring gamifikasi global
+  - activity log / login history
+  - system summary ringan
+
+### Implementasi Frontend
+- Halaman `SuperAdmin` sudah diubah dari placeholder menjadi UI operasional statis:
+  - `SuperAdminDashboard.jsx`
+  - `Users.jsx`
+  - `Admins.jsx`
+  - `Content.jsx`
+  - `Gamification.jsx`
+  - `Activity.jsx`
+  - `System.jsx`
+- Route `/superadmin/pricing` sekarang di-redirect ke `/superadmin/activity`.

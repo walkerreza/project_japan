@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\Lesson;
+use App\Http\Requests\Admin\QuizRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,11 +15,17 @@ class QuizController extends Controller
     {
         $query = Quiz::with(['lesson:id,title'])->withCount('questions');
 
+        if ($request->filled('search')) {
+            $query->whereHas('lesson', function($q) use ($request) {
+                $q->where('title', 'ilike', '%' . $request->search . '%');
+            })->orWhere('type', 'ilike', '%' . $request->search . '%');
+        }
+
         if ($request->filled('lesson_id')) {
             $query->where('lesson_id', $request->lesson_id);
         }
 
-        $quizzes = $query->get()->map(fn($q) => [
+        $quizzes = $query->paginate(10)->through(fn($q) => [
             'id'             => $q->id,
             'type'           => $q->type,
             'time_limit'     => $q->time_limit,
@@ -31,23 +38,14 @@ class QuizController extends Controller
         return Inertia::render('Admin/Quizzes/Index', [
             'quizzes' => $quizzes,
             'lessons' => $lessons,
+            'filters' => $request->only('search', 'lesson_id'),
         ]);
     }
 
-    public function store(Request $request)
+    public function store(QuizRequest $request)
     {
-        $validated = $request->validate([
-            'lesson_id'  => 'required|exists:lessons,id',
-            'type'       => 'required|in:multiple_choice,typing,listening',
-            'time_limit' => 'nullable|integer|min:0',
-        ], [
-            'lesson_id.required' => 'Pelajaran wajib dipilih',
-            'type.required'      => 'Tipe kuis wajib dipilih',
-            'type.in'            => 'Tipe kuis tidak valid',
-        ]);
-
+        $validated = $request->validated();
         Quiz::create($validated);
-
         return redirect()->back()->with('success', 'Kuis berhasil dibuat');
     }
 

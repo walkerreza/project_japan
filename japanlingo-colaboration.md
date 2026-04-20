@@ -19,17 +19,12 @@ Japanlingo is currently being built as:
 
 Current active focus:
 
-- **Phase 2: Achievement System Implementation**
-- **Phase 5: N3 Certificate Flow**
-- Backend and frontend feedback for newly unlocked achievements
-- Audit history UI for users (Optional/Polishing)
+- **Admin Panel Operations (Phase 4)**: Finalizing full CRUD support for Levels, Quizzes, and Questions, including multimedia upload and proper React UI.
+- **Paywall & Subscriptions (Phase 5)**: Implementing `SubscriptionMiddleware` to restrict premium content access.
+- **Superadmin (Phase 6)**: Actualizing cohort, access key, and payment log logic.
 
 Out of scope for now:
-
 - full N5 to N1 expansion
-- complete payment system
-- advanced superadmin system
-- complex cohort or access-key management
 - SEO refinement
 - non-essential public page polish
 
@@ -37,19 +32,10 @@ Out of scope for now:
 
 ## Phase Goal
 
-The current phase is successful when this loop works reliably:
+The current phase (Phase 4 & 5) is successful when this loop works reliably:
 
-1. backend checks achievements after activity
-2. backend persists unlocks to `user_achievements`
-3. user earns achievement XP automatically
-4. frontend shows the result/alert after unlocking an achievement
-5. certificate eligibility is determined correctly from real progress
-
-Minimum acceptable result for this phase:
-
-- basic achievements unlock correctly (First Lesson, First Quiz Pass, etc.)
-- dashboard/profile shows unlocked achievements
-- N3 certificate can be generated upon full completion
+1. Admin can safely Create, Read, Update, Delete questions (`questions`) through a functioning React UI.
+2. Premium lessons are blocked by a Middleware for non-premium users, prompting them to upgrade.
 
 ---
 
@@ -57,54 +43,42 @@ Minimum acceptable result for this phase:
 
 ✅ **Already implemented and stable:**
 
-- **XP & Level Engine**: Backend source of truth at `XPService.php`.
-- **Streak Logic**: `StreakService.php` with daily validation and milestones (7, 30, 100).
-- **Audit Logging**: `reward_logs` table records every XP transaction (Anti-cheat).
-- **Core Connections**: User Dashboard, Leaderboard, Lesson Lobby, and Quiz Lobby all use **real data**.
-- **Quiz Engine**: Adaptive UI for multiple choice, Kanji cards, and audio questions.
-- **Lock System**: Lessons and Quizzes unlock based on user progress history.
+- **Gamification Mechanics**: `AchievementService.php`, `CertificateService.php`, N3 Certificate generation, XP logs.
+- **Auth & Role Foundations (Phase 3.1)**: `username` validaton used, T&C checkbox added, Profile routing dynamic, redirect logic fixed.
+- **Dynamic Student Flow (Phase 3.2)**: `Lesson.jsx` fetches real DB objects (HTML, PDF, MP3, Video), `Quiz.jsx` connects to real questions and records actual progress to `ProgressController`.
+- **Admin Panel Foundations (Phase 4 partial)**: `ModuleController` & `QuizController` have functioning Validation FormRequests, Pagination, and Search. `QuizBuilder` acts as a preview engine.
 
 ⚠️ **Remaining weak points / Next focus:**
 
-- `AchievementService.php` is still a skeleton/placeholder.
-- `ProcessGamificationRewards` listener does not yet trigger achievement evaluations.
-- N3 Certificate logic is not yet defined or exposed.
-- No user-facing UI to see XP transaction history (*Audit Trail*).
-
----
-
-## Gamification Rules (Active)
-
-### Initial Achievement Set (To be implemented)
-
-- `First Lesson`: Unlock after 1st completed lesson.
-- `First Quiz Pass`: Unlock after 1st passed quiz.
-- `7-Day Streak`: Unlock when streak reaches 7.
-- `Perfect 10`: Unlock after 10 quizzes with 100% score.
-- `N3 Completer`: Unlock after completing all N3 content (linked to Certificate).
+- `Admin/Questions/Index.jsx` and `Create/Edit.jsx` need to be connected cleanly and finalized.
+- Level/Module lock restrictions are partially bypassed by missing `SubscriptionMiddleware`.
+- Superadmin routing and pages (`Users`, `Admins`, `Payments`) exist purely as mockups without controllers.
+- Backend payment tables are missing.
 
 ---
 
 ## Remaining Delivery Order
 
-### Phase 2 - Implement Basic Achievements (CURRENT FOCUS)
+### Phase 4 - Admin Panel Finalization (CURRENT)
 
-1. Complete `AchievementService.php`.
-2. Evaluate accomplishments after lesson/quiz completion events.
-3. Handle concurrent XP awards from achievements.
-4. Show a "Popup/Toast" on frontend when an achievement is unlocked.
+1. Review and finalize `Admin/Questions` React page to ensure questions can be viewed, created, and modified.
+2. Assure `Level` management functionality or solidify it purely as Seeder data.
+3. Attach JSON/CSV bulk import functionality for Quizzes.
 
-### Phase 5 - Finalize N3 Certificate
+### Phase 5 - Subscriptions & Paywall (NEXT)
 
-1. Define N3 completion requirements from real database lessons/quizzes.
-2. Determine eligibility from `progress` table.
-3. Generate and expose certificate in user-facing UI.
+1. Introduce `SubscriptionMiddleware` at the router level for `/lessons` and `/quizzes`.
+2. Build Upgrade CTA pages/modals that trigger when `student` is `free` but clicks a `premium` object.
+
+### Phase 6 - Superadmin & Payments (NEXT)
+
+1. Create backend schemas for `payment_plans` and `transactions`.
+2. Create `SuperAdminController` to manage global Data User & Aktivitas secara real.
 
 ---
 
 ## Instructions for the Next AI Agent
 
-1. **Continue to Phase 2 (Achievements)**.
-2. Do not backtrack into XP/Streak logic unless bugs are found.
-3. Ensure all new logic remains in the Backend.
-4. Maintain the "Solid/Bold" UI design for any new Achievement popups.
+1. **Start at Phase 4 (Admin Finalization) and Phase 5**. Phase 3.1 & 3.2 are complete.
+2. Do not break the pagination logic in Admin controllers.
+3. Keep the React components using the Solid/Neo-Brutalism aesthetics that are currently defining the app.
