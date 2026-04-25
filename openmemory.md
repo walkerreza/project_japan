@@ -143,3 +143,19 @@ export default function Page() {
   - `Activity.jsx`
   - `System.jsx`
 - Route `/superadmin/pricing` sekarang di-redirect ke `/superadmin/activity`.
+
+---
+
+## Memory 2026-04-26 - Student Flow Finalization & Real Data
+
+### Subscription & Paywall
+- Menambah tabel/kolom `is_premium` pada `levels` dan mengaktifkannya di N4-N1.
+- Membuat `SubscriptionMiddleware` (`subscribed`) untuk memblokir akses endpoint `lessons.show` dan `quizzes.show` jika level merupakan premium namun status user masih `free`.
+- Membedakan tombol pada Lobby (LessonLobby & QuizLobby) menjadi "🔒 Premium" (membuka arah Pricing) dan "🔒 Terkunci" (membuka arah progress requirement).
+
+### Progress & Skill Breakdown Riil
+- *Progress Controller* tidak lagi menggunakan *dummy data*.
+- *Skill Breakdown* (Grammar, Kanji, Vocabulary, Listening, Reading) dikalkulasi secara dinamis.
+- Menggunakan pendekatan **Baseline + Keyword Scanning**: 
+  - Setiap Lesson atau Quiz yang diselesaikan menyumbang poin baseline ke seluruh skill.
+  - Tambahan multiplier bonus didapat jika `title` materi memiliki keyword spesifik (contoh: "baca", "dokkai", "grammar", "kanji", dsb).

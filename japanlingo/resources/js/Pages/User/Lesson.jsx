@@ -141,6 +141,18 @@ export default function Lesson({ lesson, lessons = [], is_completed }) {
                                 Buka Dokumen Utama
                             </a>
                         </div>
+                    ) : lesson.type === 'audio' && lesson.audio_url ? (
+                        <div className="w-full bg-indigo-50 rounded-[2rem] overflow-hidden relative shadow-sm mb-8 border border-indigo-100 p-8 flex flex-col items-center justify-center text-center">
+                            <div className="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-4">
+                                <VolumeUpIcon sx={{ fontSize: 40 }} />
+                            </div>
+                            <h3 className="text-lg font-black text-indigo-900 mb-2">Materi Audio Tersedia</h3>
+                            <p className="text-indigo-700 text-sm mb-6">Dengarkan audio berikut dengan saksama.</p>
+                            <audio controls className="w-full max-w-md" controlsList="nodownload">
+                                <source src={lesson.audio_url} type="audio/mpeg" />
+                                Browser Anda tidak mendukung pemutar audio.
+                            </audio>
+                        </div>
                     ) : null}
 
                     {/* Title */}

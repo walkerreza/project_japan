@@ -4,21 +4,24 @@ import { Head } from '@inertiajs/react';
 import Card from '@/Components/UI/Card';
 import StatCard from '@/Components/Dashboard/StatCard';
 
-const stats = [
+const defaultStats = [
     { title: 'Total Student', value: '2,184', icon: '👨‍🎓', change: '8%', changeType: 'up' },
     { title: 'Aktif Mingguan', value: '1,392', icon: '🔥', change: '5%', changeType: 'up' },
     { title: 'Perlu Review', value: '38', icon: '🕵️', change: '3', changeType: 'down' },
     { title: 'Akun Suspended', value: '12', icon: '⛔', change: '1', changeType: 'down' },
 ];
 
-const users = [
+const defaultUsers = [
     { name: 'Takumi N3', email: 'takumi@japanlingo.dev', status: 'Aktif', xp: '1,240', level: 'Lv 6', streak: '9 hari', progress: '78%' },
     { name: 'Rei Kanji', email: 'rei@japanlingo.dev', status: 'Aktif', xp: '1,010', level: 'Lv 5', streak: '6 hari', progress: '64%' },
     { name: 'Aiko Study', email: 'aiko@japanlingo.dev', status: 'Review', xp: '420', level: 'Lv 3', streak: '1 hari', progress: '29%' },
     { name: 'Kenji Focus', email: 'kenji@japanlingo.dev', status: 'Suspended', xp: '190', level: 'Lv 2', streak: '0 hari', progress: '11%' },
 ];
 
-export default function Users() {
+export default function Users({
+    stats = defaultStats,
+    users = defaultUsers,
+}) {
     return (
         <AuthenticatedLayout>
             <Head title="Superadmin - Data User" />

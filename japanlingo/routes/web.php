@@ -11,6 +11,13 @@ use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\LearningController;
 use App\Http\Controllers\User\ProgressController;
 use App\Http\Controllers\User\CertificateController;
+use App\Http\Controllers\SuperAdmin\SuperAdminActivityController;
+use App\Http\Controllers\SuperAdmin\SuperAdminAdminController;
+use App\Http\Controllers\SuperAdmin\SuperAdminContentController;
+use App\Http\Controllers\SuperAdmin\SuperAdminDashboardController;
+use App\Http\Controllers\SuperAdmin\SuperAdminGamificationController;
+use App\Http\Controllers\SuperAdmin\SuperAdminSystemController;
+use App\Http\Controllers\SuperAdmin\SuperAdminUserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -44,14 +51,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Superadmin Routes
     Route::middleware('role:superadmin')->prefix('superadmin')->name('superadmin.')->group(function () {
-        Route::get('/dashboard', fn() => Inertia::render('SuperAdmin/SuperAdminDashboard'))->name('dashboard');
-        Route::get('/users', fn() => Inertia::render('SuperAdmin/Users'))->name('users');
-        Route::get('/admins', fn() => Inertia::render('SuperAdmin/Admins'))->name('admins');
-        Route::get('/content', fn() => Inertia::render('SuperAdmin/Content'))->name('content');
-        Route::get('/gamification', fn() => Inertia::render('SuperAdmin/Gamification'))->name('gamification');
-        Route::get('/activity', fn() => Inertia::render('SuperAdmin/Activity'))->name('activity');
+        Route::get('/dashboard', SuperAdminDashboardController::class)->name('dashboard');
+        Route::get('/users', SuperAdminUserController::class)->name('users');
+        Route::get('/admins', SuperAdminAdminController::class)->name('admins');
+        Route::get('/content', SuperAdminContentController::class)->name('content');
+        Route::get('/gamification', SuperAdminGamificationController::class)->name('gamification');
+        Route::get('/activity', SuperAdminActivityController::class)->name('activity');
         Route::redirect('/pricing', '/superadmin/activity');
-        Route::get('/system', fn() => Inertia::render('SuperAdmin/System'))->name('system');
+        Route::get('/system', SuperAdminSystemController::class)->name('system');
     });
 
     // Admin Routes
@@ -111,10 +118,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/profile', fn() => Inertia::render('User/Profile'))->name('profile');
         
         Route::get('/lessons', [LearningController::class, 'lessonLobby'])->name('lessons.index');
-        Route::get('/lessons/{lesson}', [LearningController::class, 'showLesson'])->name('lessons.show');
+        Route::get('/lessons/{lesson}', [LearningController::class, 'showLesson'])->middleware('subscribed')->name('lessons.show');
         
         Route::get('/quizzes', [LearningController::class, 'quizLobby'])->name('quizzes.index');
-        Route::get('/quizzes/{quiz}', [LearningController::class, 'showQuiz'])->name('quizzes.show');
+        Route::get('/quizzes/{quiz}', [LearningController::class, 'showQuiz'])->middleware('subscribed')->name('quizzes.show');
         
         Route::get('/leaderboard', function () {
             $users = \App\Models\User::where('role', 'user')
@@ -136,7 +143,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->name('leaderboard');
         Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates');
         Route::get('/certificates/{certificate}/download', [CertificateController::class, 'download'])->name('certificates.download');
-        Route::get('/progress', fn() => Inertia::render('User/Progress'))->name('progress');
+        Route::get('/progress', [ProgressController::class, 'index'])->name('progress');
         
         Route::post('/attempts', [ProgressController::class, 'storeAttempt'])->name('attempts.store');
         Route::post('/lessons/complete', [ProgressController::class, 'completeLesson'])->name('lessons.complete');

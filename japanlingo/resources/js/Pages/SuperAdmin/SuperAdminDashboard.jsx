@@ -5,28 +5,43 @@ import StatCard from '@/Components/Dashboard/StatCard';
 import ChartCard from '@/Components/Dashboard/ChartCard';
 import Card from '@/Components/UI/Card';
 
-const metrics = [
+const defaultMetrics = [
     { title: 'Total Student', value: '2,184', icon: '👥', change: '8%', changeType: 'up' },
     { title: 'Learner Aktif', value: '1,392', icon: '🔥', change: '5%', changeType: 'up' },
     { title: 'Total Admin', value: '8', icon: '🛡️', change: '1', changeType: 'up' },
     { title: 'Quiz Attempt', value: '6,420', icon: '❓', change: '11%', changeType: 'up' },
     { title: 'XP Terdistribusi', value: '48,220', icon: '⚡', change: '9%', changeType: 'up' },
-    { title: 'Announcement Aktif', value: '5', icon: '📣', change: '2', changeType: 'up' },
+    { title: 'News Aktif', value: '5', icon: '📣', change: '2', changeType: 'up' },
 ];
 
-const alerts = [
+const defaultAlerts = [
     { tone: 'red', text: '2 alert keamanan butuh review login history.' },
     { tone: 'amber', text: '3 lesson masih menunggu sinkronisasi media.' },
     { tone: 'blue', text: 'Campaign Weekend XP Boost dijadwalkan aktif malam ini.' },
 ];
 
-const activities = [
+const defaultActivities = [
     'Maya Content mem-publish update lesson Listening Bab 3',
     'Root Superadmin reset password admin.yuki',
-    'Announcement Challenge Pekan Kanji dipin ke dashboard student',
+    'News Challenge Pekan Kanji dipin ke dashboard student',
 ];
 
-export default function SuperadminDashboard() {
+const defaultLearningBars = [
+    { label: 'D1', lesson: 42, quiz: 50 },
+    { label: 'D2', lesson: 56, quiz: 64 },
+    { label: 'D3', lesson: 48, quiz: 54 },
+    { label: 'D4', lesson: 68, quiz: 78 },
+    { label: 'D5', lesson: 61, quiz: 70 },
+    { label: 'D6', lesson: 74, quiz: 85 },
+    { label: 'D7', lesson: 79, quiz: 91 },
+];
+
+export default function SuperadminDashboard({
+    metrics = defaultMetrics,
+    alerts = defaultAlerts,
+    activities = defaultActivities,
+    learningBars = defaultLearningBars,
+}) {
     return (
         <AuthenticatedLayout>
             <Head title="Superadmin - Beranda" />
@@ -37,7 +52,7 @@ export default function SuperadminDashboard() {
                         <p className="text-xs font-black uppercase tracking-[0.3em] text-red-600">Superadmin</p>
                         <h1 className="text-2xl font-black text-gray-900">Beranda Platform</h1>
                         <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                            Ringkasan operasional Japanlingo untuk user, konten, gamifikasi, announcement, dan sistem.
+                            Ringkasan operasional Japanlingo untuk user, konten, gamifikasi, news, dan sistem.
                         </p>
                     </div>
                     <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-500">
@@ -54,11 +69,11 @@ export default function SuperadminDashboard() {
                 <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
                     <ChartCard title="Aktivitas Belajar 7 Hari" subtitle="Lesson selesai vs quiz attempt">
                         <div className="flex h-64 items-end gap-2">
-                            {[42, 56, 48, 68, 61, 74, 79].map((value, index) => (
-                                <div key={value} className="flex flex-1 flex-col justify-end gap-1">
-                                    <div className="rounded-t-xl bg-red-200" style={{ height: `${value * 0.45}%` }}></div>
-                                    <div className="rounded-t-xl bg-red-600" style={{ height: `${value * 0.55}%` }}></div>
-                                    <p className="pt-2 text-center text-[11px] font-bold text-gray-400">D{index + 1}</p>
+                            {learningBars.map((item) => (
+                                <div key={item.label} className="flex flex-1 flex-col justify-end gap-1">
+                                    <div className="rounded-t-xl bg-red-200" style={{ height: `${Math.min(item.lesson, 100) * 0.45}%` }}></div>
+                                    <div className="rounded-t-xl bg-red-600" style={{ height: `${Math.min(item.quiz, 100) * 0.55}%` }}></div>
+                                    <p className="pt-2 text-center text-[11px] font-bold text-gray-400">{item.label}</p>
                                 </div>
                             ))}
                         </div>

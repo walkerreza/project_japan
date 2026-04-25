@@ -15,10 +15,10 @@ class LearningController extends Controller
     {
         $user = Auth::user();
         
-        $lessons = Lesson::with('module')->orderBy('module_id')->orderBy('order')->get();
+        $lessons = Lesson::with('module.level')->orderBy('module_id')->orderBy('order')->get();
         $completedLessonIds = $user->progress()->pluck('lesson_id')->toArray();
 
-        $formattedLessons = $lessons->map(function ($lesson, $index) use ($completedLessonIds, $lessons) {
+        $formattedLessons = $lessons->map(function ($lesson, $index) use ($completedLessonIds, $lessons, $user) {
             $isCompleted = in_array($lesson->id, $completedLessonIds);
             
             // Unlocked if it's the first lesson, or if it is completed, or if the previous lesson in the list is completed.
@@ -31,6 +31,9 @@ class LearningController extends Controller
                     $isLocked = false;
                 }
             }
+            
+            $isPremium = $lesson->module && $lesson->module->level ? $lesson->module->level->is_premium : false;
+            $isLockedBySubscription = $isPremium && $user->subscription_status !== 'premium';
 
             return [
                 'id' => $lesson->id,
@@ -38,7 +41,10 @@ class LearningController extends Controller
                 'description' => 'Materi ' . $lesson->type . ' dari modul ' . ($lesson->module ? $lesson->module->title : 'Umum'),
                 'durationEstimate' => $lesson->duration_minutes . ' Menit',
                 'totalPages' => 1,
-                'status' => $isLocked ? 'locked' : 'available',
+                'level' => $lesson->module && $lesson->module->level ? $lesson->module->level->level_name : 'General',
+                'isPremium' => $isPremium,
+                'status' => ($isLocked || $isLockedBySubscription) ? 'locked' : 'available',
+                'lockReason' => $isLockedBySubscription ? 'premium' : ($isLocked ? 'progress' : null),
             ];
         });
 
@@ -51,14 +57,17 @@ class LearningController extends Controller
     {
         $user = Auth::user();
         
-        $quizzes = Quiz::with('lesson')->withCount('questions')->get();
+        $quizzes = Quiz::with('lesson.module.level')->withCount('questions')->get();
         $completedLessonIds = $user->progress()->pluck('lesson_id')->toArray();
 
-        $formattedQuizzes = $quizzes->map(function ($quiz) use ($completedLessonIds) {
+        $formattedQuizzes = $quizzes->map(function ($quiz) use ($completedLessonIds, $user) {
             $isLocked = true;
             if ($quiz->lesson_id === null || in_array($quiz->lesson_id, $completedLessonIds)) {
                 $isLocked = false;
             }
+            
+            $isPremium = $quiz->lesson && $quiz->lesson->module && $quiz->lesson->module->level ? $quiz->lesson->module->level->is_premium : false;
+            $isLockedBySubscription = $isPremium && $user->subscription_status !== 'premium';
 
             return [
                 'id' => $quiz->id,
@@ -67,7 +76,10 @@ class LearningController extends Controller
                 'xpReward' => 50, // Base XP as defined in rules
                 'durationEstimate' => $quiz->time_limit ? $quiz->time_limit . ' Menit' : '10 Menit',
                 'totalQuestions' => $quiz->questions_count,
-                'status' => $isLocked ? 'locked' : 'available',
+                'level' => $quiz->lesson && $quiz->lesson->module && $quiz->lesson->module->level ? $quiz->lesson->module->level->level_name : 'General',
+                'isPremium' => $isPremium,
+                'status' => ($isLocked || $isLockedBySubscription) ? 'locked' : 'available',
+                'lockReason' => $isLockedBySubscription ? 'premium' : ($isLocked ? 'progress' : null),
             ];
         });
 
@@ -120,6 +132,8 @@ class LearningController extends Controller
                 'content'          => $lesson->content,
                 'type'             => $lesson->type,
                 'video_url'        => $lesson->video_url,
+                'file_url'         => $lesson->file_url,
+                'audio_url'        => $lesson->audio_url,
                 'duration_minutes' => $lesson->duration_minutes,
                 'module'           => [
                     'id'    => $lesson->module->id,

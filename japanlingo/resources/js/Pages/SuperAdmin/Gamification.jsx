@@ -4,26 +4,30 @@ import { Head } from '@inertiajs/react';
 import Card from '@/Components/UI/Card';
 import StatCard from '@/Components/Dashboard/StatCard';
 
-const stats = [
+const defaultStats = [
     { title: 'XP Terdistribusi', value: '48,220', icon: '⚡', change: '11%', changeType: 'up' },
     { title: 'Achievement Unlock', value: '1,284', icon: '🏆', change: '7%', changeType: 'up' },
     { title: 'Rata-rata Streak', value: '5.8', icon: '🔥', change: '0.6', changeType: 'up' },
     { title: 'Challenge Aktif', value: '2', icon: '🎯', change: '1', changeType: 'up' },
 ];
 
-const leaderboard = [
+const defaultLeaderboard = [
     { rank: 1, name: 'Takumi N3', xp: '1,240 XP', streak: '9 hari' },
     { rank: 2, name: 'Rei Kanji', xp: '1,010 XP', streak: '6 hari' },
     { rank: 3, name: 'Aiko Study', xp: '920 XP', streak: '5 hari' },
 ];
 
-const campaigns = [
+const defaultCampaigns = [
     { name: 'Weekend XP Boost', status: 'Live', detail: 'Bonus 2x XP untuk quiz perfect score' },
     { name: '7-Day Streak Push', status: 'Scheduled', detail: 'Reminder banner + reward badge ringan' },
     { name: 'Kanji Sprint April', status: 'Draft', detail: 'Challenge 20 soal kanji dalam 7 hari' },
 ];
 
-export default function Gamification() {
+export default function Gamification({
+    stats = defaultStats,
+    leaderboard = defaultLeaderboard,
+    campaigns = defaultCampaigns,
+}) {
     return (
         <AuthenticatedLayout>
             <Head title="Superadmin - Gamifikasi" />

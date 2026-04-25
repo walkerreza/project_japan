@@ -23,6 +23,9 @@ class User extends Authenticatable
         'password',
         'role',
         'subscription_status',
+        'status',
+        'suspended_at',
+        'suspended_reason',
         'xp',
         'level',
         'streak_count',
@@ -49,6 +52,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'last_activity_date' => 'date',
+            'suspended_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -73,5 +77,25 @@ class User extends Authenticatable
         return $this->belongsToMany(Achievement::class, 'user_achievements')
             ->withPivot('unlocked_at')
             ->withTimestamps();
+    }
+
+    public function createdNews(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(News::class, 'created_by');
+    }
+
+    public function activityLogs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ActivityLog::class, 'actor_id');
+    }
+
+    public function loginHistories(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(LoginHistory::class);
+    }
+
+    public function statusHistories(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(UserStatusHistory::class);
     }
 }

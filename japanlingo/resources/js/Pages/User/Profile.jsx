@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,6 +21,18 @@ const MOCK_INVOICES = [
 export default function Profile() {
     const { user } = usePage().props.auth;
     const [activeTab, setActiveTab] = useState('stats');
+    const [themeMode, setThemeMode] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('theme') || 'system';
+        }
+        return 'system';
+    });
+
+    const handleThemeChange = (newTheme) => {
+        setThemeMode(newTheme);
+        localStorage.setItem('theme', newTheme);
+        window.dispatchEvent(new Event('storage'));
+    };
 
     const renderTabContent = () => {
         if (activeTab === 'stats') {
@@ -45,10 +57,34 @@ export default function Profile() {
 
         if (activeTab === 'settings') {
             return (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-8">
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="bg-white dark:bg-gray-900 p-6 md:p-8 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm space-y-8">
+                    {/* Tampilan (Dark Mode) */}
+                    <div>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Penampilan</h3>
+                        <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+                            <div>
+                                <p className="font-bold text-gray-900 dark:text-white">Mode Gelap (Dark Mode)</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Sesuaikan tema dengan sistem Anda.</p>
+                            </div>
+                            <div className="mt-4 md:mt-0 min-w-[200px]">
+                                <select 
+                                    value={themeMode}
+                                    onChange={(e) => handleThemeChange(e.target.value)}
+                                    className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-xl px-4 py-2.5 focus:ring-red-100 focus:border-red-300 font-bold text-sm cursor-pointer transition-colors"
+                                >
+                                    <option value="system">Sistem Default</option>
+                                    <option value="light">Terang</option>
+                                    <option value="dark">Gelap</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr className="border-gray-100 dark:border-gray-800" />
+
                     {/* Alamat Email */}
                     <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-4">Informasi Kontak Dasar</h3>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Informasi Kontak Dasar</h3>
                         <div className="flex flex-col lg:flex-row lg:items-end gap-4">
                             <div className="flex-1">
                                 <label className="block text-sm font-bold text-gray-500 mb-1">Alamat Email</label>
@@ -64,7 +100,7 @@ export default function Profile() {
 
                     {/* Kata Sandi */}
                     <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-4">Keamanan Kata Sandi</h3>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Keamanan Kata Sandi</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
                                 <label className="block text-sm font-bold text-gray-500 mb-1">Sandi Lama</label>
@@ -153,7 +189,7 @@ export default function Profile() {
         <AuthenticatedLayout header={false}>
             <Head title="Profil Pengguna" />
 
-            <div className="min-h-screen bg-[#F8F9FA] pb-24">
+            <div className="min-h-screen bg-[#F8F9FA] dark:bg-gray-950 pb-24 transition-colors duration-300">
                 {/* Header Banner Kolosal - Dinamis Tema Gamifikasi */}
                 <div className={`relative w-full h-64 md:h-80 bg-gradient-to-r ${theme.ctaBg}`}>
                     <div className="absolute inset-0 bg-black/10"></div>
@@ -175,7 +211,7 @@ export default function Profile() {
                     {/* Block Nama Pengguna & Status Premium */}
                     <div className="md:ml-40 lg:ml-56 mb-10 flex flex-col md:flex-row md:items-center gap-4 py-4 md:py-0">
                         <div>
-                            <h1 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-2">
+                            <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight flex items-center gap-2">
                                 {user.username}
                                 <VerifiedUserIcon sx={{ color: '#0ea5e9' }} titleAccess="Terverifikasi" />
                             </h1>

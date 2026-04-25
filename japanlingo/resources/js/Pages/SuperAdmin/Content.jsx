@@ -4,26 +4,30 @@ import { Head } from '@inertiajs/react';
 import Card from '@/Components/UI/Card';
 import StatCard from '@/Components/Dashboard/StatCard';
 
-const stats = [
+const defaultStats = [
     { title: 'Module Aktif', value: '14', icon: '📚', change: '2', changeType: 'up' },
     { title: 'Lesson Publish', value: '76', icon: '📝', change: '6%', changeType: 'up' },
     { title: 'Quiz Siap Pakai', value: '28', icon: '❓', change: '4%', changeType: 'up' },
-    { title: 'Announcement Aktif', value: '5', icon: '📣', change: '1', changeType: 'up' },
+    { title: 'News Aktif', value: '5', icon: '📣', change: '1', changeType: 'up' },
 ];
 
-const announcements = [
+const defaultNews = [
     { title: 'Challenge Pekan Kanji N3', status: 'Pinned', audience: 'Semua student', schedule: 'Publish hari ini' },
     { title: 'Maintenance singkat hari Minggu', status: 'Scheduled', audience: 'Semua role', schedule: 'Besok 22:00' },
     { title: 'Module Bunpou Bab 6 tersedia', status: 'Draft', audience: 'Student N3', schedule: 'Menunggu review' },
 ];
 
-const updates = [
+const defaultUpdates = [
     { item: 'Lesson Listening Bab 3', by: 'Maya Content', state: 'Published' },
     { item: 'Quiz Kanji Drill Set B', by: 'Yuki Quiz', state: 'Review' },
-    { item: 'Announcement Weekend XP Boost', by: 'Rina Backup', state: 'Draft' },
+    { item: 'News Weekend XP Boost', by: 'Rina Backup', state: 'Draft' },
 ];
 
-export default function Content() {
+export default function Content({
+    stats = defaultStats,
+    news = defaultNews,
+    updates = defaultUpdates,
+}) {
     return (
         <AuthenticatedLayout>
             <Head title="Superadmin - Konten" />
@@ -34,7 +38,7 @@ export default function Content() {
                         <p className="text-xs font-black uppercase tracking-[0.3em] text-red-600">Superadmin</p>
                         <h1 className="text-2xl font-black text-gray-900">Konten</h1>
                         <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                            Monitoring materi pembelajaran dan announcement yang tampil di dashboard student.
+                            Monitoring materi pembelajaran dan news yang tampil di dashboard student.
                         </p>
                     </div>
                     <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-500">
@@ -51,11 +55,11 @@ export default function Content() {
                 <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.1fr_0.9fr]">
                     <Card>
                         <div className="flex flex-col gap-1">
-                            <h2 className="text-lg font-black text-gray-900">Announcement & News</h2>
+                            <h2 className="text-lg font-black text-gray-900">News Portal</h2>
                             <p className="text-sm text-gray-500">Berita yang mengisi dashboard student dan notifikasi platform.</p>
                         </div>
                         <div className="mt-5 space-y-4">
-                            {announcements.map((item) => (
+                            {news.map((item) => (
                                 <div key={item.title} className="rounded-2xl border border-gray-100 p-4">
                                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                                         <div>
@@ -79,7 +83,7 @@ export default function Content() {
                                 {[
                                     '3 lesson menunggu sinkronisasi media',
                                     '2 quiz masih belum punya explanation final',
-                                    '1 announcement dijadwalkan untuk akhir pekan',
+                                    '1 news dijadwalkan untuk akhir pekan',
                                 ].map((item) => (
                                     <div key={item} className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700">
                                         {item}

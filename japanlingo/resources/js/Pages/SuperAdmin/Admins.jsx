@@ -4,21 +4,31 @@ import { Head } from '@inertiajs/react';
 import Card from '@/Components/UI/Card';
 import StatCard from '@/Components/Dashboard/StatCard';
 
-const stats = [
+const defaultStats = [
     { title: 'Admin Aktif', value: '8', icon: '🛡️', change: '1', changeType: 'up' },
     { title: 'Editor Konten', value: '5', icon: '✍️', change: '2', changeType: 'up' },
     { title: 'Reviewer', value: '2', icon: '🔎', change: '0', changeType: 'down' },
     { title: 'Aksi Hari Ini', value: '47', icon: '⚙️', change: '12%', changeType: 'up' },
 ];
 
-const admins = [
+const defaultAdmins = [
     { name: 'Maya Content', role: 'Editor', focus: 'Modul & Lesson', updated: '12 menit lalu', status: 'Aktif' },
     { name: 'Yuki Quiz', role: 'Reviewer', focus: 'Quiz & Question', updated: '34 menit lalu', status: 'Aktif' },
     { name: 'Daichi Ops', role: 'Admin', focus: 'Publishing', updated: '1 jam lalu', status: 'Aktif' },
-    { name: 'Rina Backup', role: 'Editor', focus: 'Announcement', updated: 'Kemarin', status: 'Nonaktif' },
+    { name: 'Rina Backup', role: 'Editor', focus: 'News', updated: 'Kemarin', status: 'Nonaktif' },
 ];
 
-export default function Admins() {
+const defaultActivities = [
+    'Maya publish 3 update lesson pagi ini',
+    'Yuki review 24 soal listening N3',
+    'Daichi menjadwalkan 2 news baru',
+];
+
+export default function Admins({
+    stats = defaultStats,
+    admins = defaultAdmins,
+    activities = defaultActivities,
+}) {
     return (
         <AuthenticatedLayout>
             <Head title="Superadmin - Data Admin" />
@@ -29,7 +39,7 @@ export default function Admins() {
                         <p className="text-xs font-black uppercase tracking-[0.3em] text-red-600">Superadmin</p>
                         <h1 className="text-2xl font-black text-gray-900">Data Admin</h1>
                         <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                            Pengawasan admin yang mengelola materi, announcement, dan quality control konten.
+                            Pengawasan admin yang mengelola materi, news, dan quality control konten.
                         </p>
                     </div>
                     <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-500">
@@ -82,11 +92,7 @@ export default function Admins() {
                         <Card>
                             <h2 className="text-lg font-black text-gray-900">Aktivitas Terkini</h2>
                             <div className="mt-4 space-y-3">
-                                {[
-                                    'Maya publish 3 update lesson pagi ini',
-                                    'Yuki review 24 soal listening N3',
-                                    'Daichi menjadwalkan 2 announcement baru',
-                                ].map((item) => (
+                                {activities.map((item) => (
                                     <div key={item} className="rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-700">
                                         {item}
                                     </div>

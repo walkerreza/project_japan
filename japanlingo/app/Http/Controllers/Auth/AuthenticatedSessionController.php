@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\LoginHistory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +35,16 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = Auth::user();
+
+        LoginHistory::create([
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'role' => $user->role,
+            'status' => 'success',
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'logged_in_at' => now(),
+        ]);
 
         if ($user->role === 'superadmin') {
             return redirect()->intended(route('superadmin.dashboard', absolute: false));

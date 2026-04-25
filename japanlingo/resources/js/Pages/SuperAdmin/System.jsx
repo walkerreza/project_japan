@@ -4,14 +4,16 @@ import { Head } from '@inertiajs/react';
 import Card from '@/Components/UI/Card';
 import StatCard from '@/Components/Dashboard/StatCard';
 
-const stats = [
+const defaultStats = [
     { title: 'Status App', value: 'Stabil', icon: '🟢', change: '99.9%', changeType: 'up' },
     { title: 'Queue', value: '12 job', icon: '📬', change: '2', changeType: 'down' },
     { title: 'Cache Health', value: 'Normal', icon: '🧠', change: '0', changeType: 'up' },
     { title: 'Storage Usage', value: '68%', icon: '💾', change: '4%', changeType: 'up' },
 ];
 
-export default function System() {
+export default function System({
+    stats = defaultStats,
+}) {
     return (
         <AuthenticatedLayout>
             <Head title="Superadmin - Sistem" />

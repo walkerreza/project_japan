@@ -4,14 +4,14 @@ import { Head } from '@inertiajs/react';
 import Card from '@/Components/UI/Card';
 import StatCard from '@/Components/Dashboard/StatCard';
 
-const activityStats = [
+const defaultActivityStats = [
     { title: 'Aksi Hari Ini', value: '128', icon: '🧾', change: '14%', changeType: 'up' },
     { title: 'Login Berhasil', value: '96', icon: '🔐', change: '9%', changeType: 'up' },
     { title: 'Perubahan Role', value: '7', icon: '🛡️', change: '3', changeType: 'down' },
     { title: 'Alert Keamanan', value: '2', icon: '🚨', change: '1', changeType: 'down' },
 ];
 
-const timeline = [
+const defaultTimeline = [
     { actor: 'Root Superadmin', action: 'Suspend user', target: 'takumi.n3', time: '08:45', tone: 'red' },
     { actor: 'Maya Admin', action: 'Publish module update', target: 'Kanji N3 Bab 4', time: '08:10', tone: 'amber' },
     { actor: 'Root Superadmin', action: 'Reset password', target: 'admin.yuki', time: '07:52', tone: 'blue' },
@@ -19,14 +19,14 @@ const timeline = [
     { actor: 'System', action: 'Repeated login attempts', target: 'IP 103.14.xx.xx', time: '02:14', tone: 'red' },
 ];
 
-const logins = [
+const defaultLogins = [
     { user: 'rei.student', role: 'Student', status: 'Berhasil', location: 'Jakarta', device: 'Chrome / Android' },
     { user: 'admin.yuki', role: 'Admin', status: 'Berhasil', location: 'Bandung', device: 'Edge / Windows' },
     { user: 'root.superadmin', role: 'Superadmin', status: 'Berhasil', location: 'Tokyo', device: 'Safari / macOS' },
     { user: 'guest-flagged', role: 'Unknown', status: 'Ditolak', location: 'Surabaya', device: 'Firefox / Linux' },
 ];
 
-const riskyEvents = [
+const defaultRiskyEvents = [
     'Admin menghapus 12 soal dalam 10 menit terakhir',
     'Percobaan login gagal berulang dari dua IP baru',
     'Perubahan massal role belum terjadi dalam 24 jam terakhir',
@@ -43,7 +43,12 @@ function toneClasses(tone) {
     return styles[tone] || styles.blue;
 }
 
-export default function Activity() {
+export default function Activity({
+    activityStats = defaultActivityStats,
+    timeline = defaultTimeline,
+    logins = defaultLogins,
+    riskyEvents = defaultRiskyEvents,
+}) {
     return (
         <AuthenticatedLayout>
             <Head title="Superadmin - Aktivitas" />
@@ -110,7 +115,7 @@ export default function Activity() {
                         <Card>
                             <h2 className="text-lg font-black text-gray-900">Aksi yang Dicatat</h2>
                             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-1">
-                                {['Suspend user', 'Reset password', 'Publish announcement', 'Role changes'].map((item) => (
+                                {['Suspend user', 'Reset password', 'Publish news', 'Role changes'].map((item) => (
                                     <div key={item} className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-bold text-gray-700">
                                         {item}
                                     </div>

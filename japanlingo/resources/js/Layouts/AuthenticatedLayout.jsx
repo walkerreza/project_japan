@@ -36,7 +36,33 @@ export default function AuthenticatedLayout({ children }) {
     const { user } = usePage().props.auth;
     const flash = usePage().props.flash || {};
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+    const [notificationOpen, setNotificationOpen] = useState(false);
     const [toastAchievements, setToastAchievements] = useState([]);
+
+    // Theme Mode Logic
+    const [themeMode, setThemeMode] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('theme') || 'system';
+        }
+        return 'system';
+    });
+
+    useEffect(() => {
+        const root = window.document.documentElement;
+        if (themeMode === 'dark' || (themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            root.classList.add('dark');
+        } else {
+            root.classList.remove('dark');
+        }
+        localStorage.setItem('theme', themeMode);
+        
+        // Listen for local storage changes from other tabs/pages
+        const handleStorage = () => {
+            setThemeMode(localStorage.getItem('theme') || 'system');
+        };
+        window.addEventListener('storage', handleStorage);
+        return () => window.removeEventListener('storage', handleStorage);
+    }, [themeMode]);
 
     useEffect(() => {
         if (flash.newAchievements && flash.newAchievements.length > 0) {
@@ -53,6 +79,7 @@ export default function AuthenticatedLayout({ children }) {
         const handleClickOutside = (event) => {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
                 setProfileMenuOpen(false);
+                setNotificationOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -92,10 +119,10 @@ export default function AuthenticatedLayout({ children }) {
     const activeMenu = isSuperadmin ? superadminMenu : (isAdmin ? adminMenu : userMenu);
 
     return (
-        <div className="min-h-screen bg-[#F8F9FA] flex flex-col lg:flex-row w-full overflow-x-hidden">
+        <div className="min-h-screen bg-[#F8F9FA] dark:bg-gray-950 text-gray-900 dark:text-gray-100 flex flex-col lg:flex-row w-full overflow-x-hidden transition-colors duration-300">
             
             {/* ====== HEADER MOBILE ====== */}
-            <div className="lg:hidden flex items-center justify-between bg-white border-b border-gray-200 p-3 sticky top-0 z-30 shadow-sm">
+            <div className="lg:hidden flex items-center justify-between bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 p-3 sticky top-0 z-30 shadow-sm transition-colors duration-300">
                 <div className="flex items-center gap-3">
                     <button type="button" onClick={() => setMobileOpen(true)} className="p-1 text-gray-500 hover:text-gray-900 focus:outline-none transition-colors rounded-lg hover:bg-gray-100">
                         <MenuIcon sx={{ fontSize: 26 }} />
@@ -116,10 +143,10 @@ export default function AuthenticatedLayout({ children }) {
             )}
 
             {/* ====== SIDEBAR VERTIKAL ALA CANVA (MODES: MINI & EXPANDED) ====== */}
-            <aside className={`flex flex-col bg-[#F2F3F5] border-r border-[#E5E7EB] fixed inset-y-0 left-0 z-50 transform transition-all duration-300 ease-in-out ${isExpanded ? 'w-[240px]' : 'w-[88px]'} ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+            <aside className={`flex flex-col bg-[#F2F3F5] dark:bg-gray-900 border-r border-[#E5E7EB] dark:border-gray-800 fixed inset-y-0 left-0 z-50 transform transition-all duration-300 ease-in-out ${isExpanded ? 'w-[240px]' : 'w-[88px]'} ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
                 
                 {/* Logo Singkat & Tombol Tutup Mobile */}
-                <div className="p-3 flex flex-col items-center justify-center border-b border-gray-100 mb-4 gap-3">
+                <div className="p-3 flex flex-col items-center justify-center border-b border-gray-100 dark:border-gray-800 mb-4 gap-3">
                     <button 
                         type="button"
                         onClick={() => setMobileOpen(false)}
@@ -129,7 +156,7 @@ export default function AuthenticatedLayout({ children }) {
                     </button>
                     <div 
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className={`flex items-center hover:bg-white cursor-pointer transition-all hidden lg:flex ${isExpanded ? 'w-full py-2 px-1 gap-3' : 'justify-center w-10 h-10'}`}
+                        className={`flex items-center hover:bg-white dark:hover:bg-gray-800 cursor-pointer transition-all hidden lg:flex ${isExpanded ? 'w-full py-2 px-1 gap-3 rounded-lg' : 'justify-center w-10 h-10 rounded-lg'}`}
                     >
                         <img src="/logo.png" alt="Logo" className={`${isExpanded ? 'w-10 h-10' : 'w-8 h-8'} object-contain transition-all duration-300`} />
                         {isExpanded && (
@@ -157,59 +184,87 @@ export default function AuthenticatedLayout({ children }) {
                 </nav>
 
                 {/* Notifikasi & Profil Pop-up di Bawah */}
-                <div className={`p-3 flex flex-col ${isExpanded ? 'gap-2 px-4' : 'items-center'} mt-auto border-t border-gray-200/60 relative`} ref={menuRef}>
+                <div className={`p-3 flex flex-col ${isExpanded ? 'gap-2 px-4' : 'items-center'} mt-auto border-t border-gray-200/60 dark:border-gray-800 relative`} ref={menuRef}>
                     
                     {/* Lonceng Notifikasi */}
-                    <button className={`w-full flex items-center ${isExpanded ? 'px-3 justify-start' : 'justify-center'} h-10 rounded-xl text-gray-500 hover:bg-gray-200 hover:text-gray-800 transition-colors mb-2 relative group`}>
+                    <button 
+                        onClick={() => { setNotificationOpen(!notificationOpen); setProfileMenuOpen(false); }}
+                        className={`w-full flex items-center ${isExpanded ? 'px-3 justify-start' : 'justify-center'} h-10 rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200 transition-colors mb-2 relative group`}
+                    >
                         <NotificationsOutlinedIcon sx={{ fontSize: 24 }} />
                         {isExpanded && <span className="ml-3 text-sm font-bold animate-in fade-in slide-in-from-left-2">Notifikasi</span>}
                         <span className={`absolute ${isExpanded ? 'left-7 top-2' : 'top-1.5 right-1.5'} w-2 h-2 rounded-full bg-red-500 border-2 border-[#F2F3F5]`}></span>
                     </button>
 
+                    {/* Popup Notifikasi */}
+                    {notificationOpen && (
+                        <div className="absolute bottom-[110px] left-3 right-3 w-auto bg-white dark:bg-gray-900 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.25)] border border-gray-100 dark:border-gray-800 overflow-hidden transform origin-bottom-left animate-in fade-in slide-in-from-bottom-5 duration-200 text-left lg:left-[96px] lg:right-auto lg:w-[320px] z-50">
+                            <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                                <h3 className="font-black text-gray-900 dark:text-white">Notifikasi</h3>
+                                <span className="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded-md cursor-pointer hover:bg-blue-100">Tandai sudah dibaca</span>
+                            </div>
+                            <div className="max-h-[300px] overflow-y-auto">
+                                <div className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-50 dark:border-gray-800 cursor-pointer transition-colors">
+                                    <p className="text-xs font-bold text-gray-900 dark:text-white mb-1">Selamat Datang di Japanlingo!</p>
+                                    <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Mari mulai perjalanan belajarmu dari Level N5. Semangat!</p>
+                                    <p className="text-[9px] font-black text-red-500 mt-2">BARU SAJA</p>
+                                </div>
+                                <div className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-50 dark:border-gray-800 cursor-pointer transition-colors opacity-70">
+                                    <p className="text-xs font-bold text-gray-900 dark:text-white mb-1">Pengaturan Akun Selesai</p>
+                                    <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Akun Anda telah berhasil dibuat. Anda dapat memperbarui profil kapan saja.</p>
+                                    <p className="text-[9px] font-bold text-gray-400 mt-2">2 HARI YANG LALU</p>
+                                </div>
+                            </div>
+                            <div className="p-3 text-center border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer">
+                                <span className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest">Lihat Semua</span>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Avatar Pemicu Popup */}
                     <button 
-                        onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                        className={`w-full flex items-center ${isExpanded ? 'px-2 py-1.5 gap-3 bg-white border border-gray-200 shadow-sm' : 'justify-center h-[42px]'} rounded-2xl transition-all relative overflow-hidden ring-2 ${profileMenuOpen ? 'ring-gray-300 ring-offset-2' : 'ring-transparent'}`}
+                        onClick={() => { setProfileMenuOpen(!profileMenuOpen); setNotificationOpen(false); }}
+                        className={`w-full flex items-center ${isExpanded ? 'px-2 py-1.5 gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm' : 'justify-center h-[42px]'} rounded-2xl transition-all relative overflow-hidden ring-2 ${profileMenuOpen ? 'ring-gray-300 dark:ring-gray-600 ring-offset-2 dark:ring-offset-gray-900' : 'ring-transparent'}`}
                     >
                         <div className={`shrink-0 ${isExpanded ? 'w-8 h-8 text-sm' : 'w-[42px] h-[42px] text-xl'} rounded-full bg-red-600 text-white font-black flex items-center justify-center shadow-sm transition-all`}>
                             {user.username?.charAt(0).toUpperCase()}
                         </div>
                         {isExpanded && (
                             <div className="flex-1 text-left truncate animate-in fade-in slide-in-from-left-2">
-                                <p className="text-xs font-bold text-gray-900 leading-tight">{user.username}</p>
-                                <p className="text-[10px] text-gray-500 truncate mt-0.5">Pengaturan Akun</p>
+                                <p className="text-xs font-bold text-gray-900 dark:text-white leading-tight">{user.username}</p>
+                                <p className="text-[10px] text-gray-500 dark:text-gray-400 truncate mt-0.5">Pengaturan Akun</p>
                             </div>
                         )}
                     </button>
 
                     {/* Pop-up Menu Profil Ala Canva */}
                     {profileMenuOpen && (
-                        <div className="absolute bottom-16 left-3 right-3 w-auto bg-white rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.25)] border border-gray-100 overflow-hidden transform origin-bottom-left animate-in fade-in slide-in-from-bottom-5 duration-200 text-left lg:left-[96px] lg:right-auto lg:w-[300px]">
+                        <div className="absolute bottom-16 left-3 right-3 w-auto bg-white dark:bg-gray-900 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.25)] border border-gray-100 dark:border-gray-800 overflow-hidden transform origin-bottom-left animate-in fade-in slide-in-from-bottom-5 duration-200 text-left lg:left-[96px] lg:right-auto lg:w-[300px]">
                             
                             {/* Header Akun */}
-                            <div className="p-4 hover:bg-gray-50 transition-colors cursor-pointer flex items-center justify-between group">
+                            <div className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer flex items-center justify-between group">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white font-black text-lg shadow-sm">
                                         {user.username?.charAt(0).toUpperCase()}
                                     </div>
                                     <div>
-                                        <p className="text-sm font-bold text-gray-900 leading-tight group-hover:text-blue-600">{user.username}</p>
-                                        <p className="text-xs text-gray-500 truncate mt-0.5">{user.email}</p>
+                                        <p className="text-sm font-bold text-gray-900 dark:text-white leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400">{user.username}</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{user.email}</p>
                                     </div>
                                 </div>
-                                <KeyboardArrowRightIcon sx={{ fontSize: 18 }} className="text-gray-400 group-hover:text-gray-600" />
+                                <KeyboardArrowRightIcon sx={{ fontSize: 18 }} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300" />
                             </div>
 
-                            <div className="h-px bg-gray-100 w-full"></div>
+                            <div className="h-px bg-gray-100 dark:bg-gray-800 w-full"></div>
 
                             {/* Daftar Tautan Menu Aktif */}
                             <div className="py-2">
-                                <Link href={route('profile.edit')} className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 font-medium">
-                                    <div className="flex items-center gap-3"><SettingsOutlinedIcon sx={{ fontSize: 18 }} className="text-gray-500" /> Pengaturan profil</div>
+                                <Link href={user.role === 'user' ? route('user.profile') : route('profile.edit')} className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium">
+                                    <div className="flex items-center gap-3"><SettingsOutlinedIcon sx={{ fontSize: 18 }} className="text-gray-500 dark:text-gray-400" /> Pengaturan profil</div>
                                 </Link>
                             </div>
 
-                            <div className="h-px bg-gray-100 w-full my-1"></div>
+                            <div className="h-px bg-gray-100 dark:bg-gray-800 w-full my-1"></div>
 
                             {/* Aksi Keluar */}
                             <div className="py-1">
@@ -217,7 +272,7 @@ export default function AuthenticatedLayout({ children }) {
                                     href={route('logout')} 
                                     method="post" 
                                     as="button"
-                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 font-bold"
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 font-bold"
                                 >
                                     <LogoutOutlinedIcon sx={{ fontSize: 18 }} /> Keluar Akun
                                 </Link>
@@ -229,7 +284,7 @@ export default function AuthenticatedLayout({ children }) {
             </aside>
 
             <div className={`flex-1 w-full transition-all duration-300 ${isExpanded ? 'lg:ml-[240px]' : 'lg:ml-[88px]'}`}>
-                <main className="min-h-screen bg-white shadow-[-5px_0_30px_-10px_rgba(0,0,0,0.05)] relative z-10">
+                <main className="min-h-screen bg-white dark:bg-gray-950 shadow-[-5px_0_30px_-10px_rgba(0,0,0,0.05)] relative z-10 transition-colors duration-300">
                     {children}
                 </main>
             </div>

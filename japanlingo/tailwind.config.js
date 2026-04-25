@@ -10,6 +10,7 @@ export default {
         './resources/js/**/*.{js,jsx}',
     ],
 
+    darkMode: 'class',
     theme: {
         extend: {
             fontFamily: {

@@ -21,7 +21,7 @@ export default function Leaderboard({ players = [] }) {
     const podiumReady = topThree.length >= 3;
 
     return (
-        <AuthenticatedLayout header={<h2 className="text-xl font-bold text-gray-900 flex items-center gap-2"><EmojiEventsIcon className="text-amber-500" /> Leaderboard</h2>}>
+        <AuthenticatedLayout header={<h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><EmojiEventsIcon className="text-amber-500" /> Leaderboard</h2>}>
             <Head title="Leaderboard - Japanlingo" />
 
             {/* Top 3 Podium */}
@@ -77,31 +77,31 @@ export default function Leaderboard({ players = [] }) {
             </div>
 
             {/* Full Ranking Table */}
-            <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <h3 className="font-black text-gray-900">All Rankings</h3>
+            <div className="bg-white dark:bg-gray-900 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden transition-colors">
+                <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <h3 className="font-black text-gray-900 dark:text-white">All Rankings</h3>
                     <div className="flex flex-wrap gap-2">
                         {['Weekly', 'Monthly', 'All Time'].map((t, i) => (
-                            <button key={i} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${i === 0 ? 'bg-red-600 text-white' : 'text-gray-400 hover:bg-gray-50'}`}>{t}</button>
+                            <button key={i} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${i === 0 ? 'bg-red-600 text-white' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800'}`}>{t}</button>
                         ))}
                     </div>
                 </div>
 
-                <div className="divide-y divide-gray-50">
+                <div className="divide-y divide-gray-50 dark:divide-gray-800">
                     {formattedPlayers.map((p, i) => (
-                        <div key={i} className={`flex flex-wrap items-center gap-4 px-6 py-4 transition-colors hover:bg-gray-50 sm:flex-nowrap ${p.isMe ? 'bg-red-50/60 border-l-4 border-red-600' : ''}`}>
+                        <div key={i} className={`flex flex-wrap items-center gap-4 px-6 py-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 sm:flex-nowrap ${p.isMe ? 'bg-red-50/60 dark:bg-red-900/10 border-l-4 border-red-600' : ''}`}>
                             <span className={`w-8 text-center font-black text-lg ${p.color}`}>{p.rank <= 3 ? p.badge : p.rank}</span>
-                            <img src={`https://ui-avatars.com/api/?name=${p.avatar}&background=random&size=48`} className="w-11 h-11 rounded-full border-2 border-white shadow-sm shrink-0" />
+                            <img src={`https://ui-avatars.com/api/?name=${p.avatar}&background=random&size=48`} className="w-11 h-11 rounded-full border-2 border-white dark:border-gray-800 shadow-sm shrink-0" />
                             <div className="min-w-0 flex-1">
-                                <p className={`font-bold text-sm ${p.isMe ? 'text-red-600' : 'text-gray-900'}`}>{p.name}</p>
-                                <p className="text-xs text-gray-400 font-medium">{p.level}</p>
+                                <p className={`font-bold text-sm ${p.isMe ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'}`}>{p.name}</p>
+                                <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">{p.level}</p>
                             </div>
-                            <div className="flex items-center gap-1.5 text-amber-500 text-xs font-bold sm:ml-auto">
+                            <div className="flex items-center gap-1.5 text-amber-500 dark:text-amber-400 text-xs font-bold sm:ml-auto">
                                 <LocalFireDepartmentIcon sx={{ fontSize: 14 }} />{p.streak}d
                             </div>
                             <div className="w-full text-left sm:w-auto sm:text-right">
-                                <p className="font-black text-gray-900 text-sm">{p.xp.toLocaleString()}</p>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase">XP</p>
+                                <p className="font-black text-gray-900 dark:text-white text-sm">{p.xp.toLocaleString()}</p>
+                                <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase">XP</p>
                             </div>
                         </div>
                     ))}
