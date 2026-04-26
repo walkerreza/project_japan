@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\Admin\LevelController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\ModuleController;
-use App\Http\Controllers\Admin\LessonController;
-use App\Http\Controllers\Admin\QuizController;
-use App\Http\Controllers\Admin\QuestionController;
-use App\Http\Controllers\Admin\AchievementController;
+use App\Http\Controllers\Admin\AdminAchievementController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminLessonController;
+use App\Http\Controllers\Admin\AdminLevelController;
+use App\Http\Controllers\Admin\AdminModuleController;
+use App\Http\Controllers\Admin\AdminQuestionController;
+use App\Http\Controllers\Admin\AdminQuizController;
+use App\Http\Controllers\Admin\AdminUploadController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\LearningController;
 use App\Http\Controllers\User\ProgressController;
@@ -63,60 +64,60 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/activity', SuperAdminActivityController::class)->name('activity');
         Route::redirect('/pricing', '/superadmin/activity');
         Route::get('/system', SuperAdminSystemController::class)->name('system');
-        Route::get('/profile', fn() => Inertia::render('SuperAdmin/Profile'))->name('profile');
+        Route::get('/profile', fn() => Inertia::render('SuperAdmin/SuperAdminProfile'))->name('profile');
     });
 
     // Admin Routes
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/users', fn() => Inertia::render('Admin/Users/Index'))->name('users');
-        Route::get('/gamification', fn() => Inertia::render('Admin/Gamification/Index', [
+        Route::get('/users', fn() => Inertia::render('Admin/Users/AdminUsersIndex'))->name('users');
+        Route::get('/gamification', fn() => Inertia::render('Admin/Gamification/AdminGamificationIndex', [
             'achievements' => \App\Models\Achievement::withCount('users')->orderBy('created_at', 'desc')->get(),
         ]))->name('gamification');
-        Route::post('/achievements', [AchievementController::class, 'store'])->name('achievements.store');
-        Route::put('/achievements/{achievement}', [AchievementController::class, 'update'])->name('achievements.update');
-        Route::delete('/achievements/{achievement}', [AchievementController::class, 'destroy'])->name('achievements.destroy');
-        Route::get('/quizzes/{quiz}/builder', [QuizController::class, 'builder'])->name('quizzes.builder');
-        Route::post('/quizzes/{quiz}/builder', [QuizController::class, 'updateQuestions'])->name('quizzes.builder.update');
+        Route::post('/achievements', [AdminAchievementController::class, 'store'])->name('achievements.store');
+        Route::put('/achievements/{achievement}', [AdminAchievementController::class, 'update'])->name('achievements.update');
+        Route::delete('/achievements/{achievement}', [AdminAchievementController::class, 'destroy'])->name('achievements.destroy');
+        Route::get('/quizzes/{quiz}/builder', [AdminQuizController::class, 'builder'])->name('quizzes.builder');
+        Route::post('/quizzes/{quiz}/builder', [AdminQuizController::class, 'updateQuestions'])->name('quizzes.builder.update');
 
         // Level CRUD
-        Route::apiResource('/levels', LevelController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::apiResource('/levels', AdminLevelController::class)->only(['index', 'store', 'update', 'destroy']);
 
         // Upload Endpoint
-        Route::post('/upload', [\App\Http\Controllers\Admin\UploadController::class, 'store'])->name('upload');
+        Route::post('/upload', [AdminUploadController::class, 'store'])->name('upload');
 
         // Quizzes CRUD (home/index untuk daftar kuis)
-        Route::get('/quizzes', [QuizController::class, 'index'])->name('quizzes.index');
-        Route::post('/quizzes', [QuizController::class, 'store'])->name('quizzes.store');
-        Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('quizzes.destroy');
+        Route::get('/quizzes', [AdminQuizController::class, 'index'])->name('quizzes.index');
+        Route::post('/quizzes', [AdminQuizController::class, 'store'])->name('quizzes.store');
+        Route::delete('/quizzes/{quiz}', [AdminQuizController::class, 'destroy'])->name('quizzes.destroy');
 
         // Module CRUD
-        Route::get('/modules', [ModuleController::class, 'index'])->name('modules.index');
-        Route::post('/modules', [ModuleController::class, 'store'])->name('modules.store');
-        Route::get('/modules/{module}/builder', [ModuleController::class, 'builder'])->name('modules.builder');
-        Route::post('/modules/{module}/builder', [ModuleController::class, 'updateContent'])->name('modules.builder.update');
-        Route::put('/modules/{module}', [ModuleController::class, 'update'])->name('modules.update');
-        Route::delete('/modules/{module}', [ModuleController::class, 'destroy'])->name('modules.destroy');
+        Route::get('/modules', [AdminModuleController::class, 'index'])->name('modules.index');
+        Route::post('/modules', [AdminModuleController::class, 'store'])->name('modules.store');
+        Route::get('/modules/{module}/builder', [AdminModuleController::class, 'builder'])->name('modules.builder');
+        Route::post('/modules/{module}/builder', [AdminModuleController::class, 'updateContent'])->name('modules.builder.update');
+        Route::put('/modules/{module}', [AdminModuleController::class, 'update'])->name('modules.update');
+        Route::delete('/modules/{module}', [AdminModuleController::class, 'destroy'])->name('modules.destroy');
 
         // Lesson CRUD
-        Route::get('/lessons', [LessonController::class, 'index'])->name('lessons.index');
-        Route::get('/lessons/create', [LessonController::class, 'create'])->name('lessons.create');
-        Route::post('/lessons', [LessonController::class, 'store'])->name('lessons.store');
-        Route::get('/lessons/{lesson}/edit', [LessonController::class, 'edit'])->name('lessons.edit');
-        Route::put('/lessons/{lesson}', [LessonController::class, 'update'])->name('lessons.update');
-        Route::delete('/lessons/{lesson}', [LessonController::class, 'destroy'])->name('lessons.destroy');
-        Route::post('/lessons/reorder', [LessonController::class, 'reorder'])->name('lessons.reorder');
+        Route::get('/lessons', [AdminLessonController::class, 'index'])->name('lessons.index');
+        Route::get('/lessons/create', [AdminLessonController::class, 'create'])->name('lessons.create');
+        Route::post('/lessons', [AdminLessonController::class, 'store'])->name('lessons.store');
+        Route::get('/lessons/{lesson}/edit', [AdminLessonController::class, 'edit'])->name('lessons.edit');
+        Route::put('/lessons/{lesson}', [AdminLessonController::class, 'update'])->name('lessons.update');
+        Route::delete('/lessons/{lesson}', [AdminLessonController::class, 'destroy'])->name('lessons.destroy');
+        Route::post('/lessons/reorder', [AdminLessonController::class, 'reorder'])->name('lessons.reorder');
 
         // Question CRUD
-        Route::get('/questions', [QuestionController::class, 'index'])->name('questions.index');
-        Route::get('/questions/create', [QuestionController::class, 'create'])->name('questions.create');
-        Route::post('/questions', [QuestionController::class, 'store'])->name('questions.store');
-        Route::get('/questions/{question}/edit', [QuestionController::class, 'edit'])->name('questions.edit');
-        Route::put('/questions/{question}', [QuestionController::class, 'update'])->name('questions.update');
-        Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
-        Route::post('/questions/reorder', [QuestionController::class, 'reorder'])->name('questions.reorder');
+        Route::get('/questions', [AdminQuestionController::class, 'index'])->name('questions.index');
+        Route::get('/questions/create', [AdminQuestionController::class, 'create'])->name('questions.create');
+        Route::post('/questions', [AdminQuestionController::class, 'store'])->name('questions.store');
+        Route::get('/questions/{question}/edit', [AdminQuestionController::class, 'edit'])->name('questions.edit');
+        Route::put('/questions/{question}', [AdminQuestionController::class, 'update'])->name('questions.update');
+        Route::delete('/questions/{question}', [AdminQuestionController::class, 'destroy'])->name('questions.destroy');
+        Route::post('/questions/reorder', [AdminQuestionController::class, 'reorder'])->name('questions.reorder');
         
-        Route::get('/profile', fn() => Inertia::render('Admin/Profile'))->name('profile');
+        Route::get('/profile', fn() => Inertia::render('Admin/AdminProfile'))->name('profile');
     });
 
     // User Routes

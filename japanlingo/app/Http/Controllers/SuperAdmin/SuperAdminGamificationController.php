@@ -13,7 +13,7 @@ class SuperAdminGamificationController extends SuperAdminBaseController
     {
         $topUsers = User::where('role', 'user')->orderByDesc('xp')->take(5)->get();
 
-        return Inertia::render('SuperAdmin/Gamification', [
+        return Inertia::render('SuperAdmin/SuperAdminGamification', [
             'stats' => [
                 $this->stat('XP Terdistribusi', number_format((int) RewardLog::sum('xp_amount')), '⚡'),
                 $this->stat('Achievement Unlock', number_format(DB::table('user_achievements')->count()), '🏆'),

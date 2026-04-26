@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class UploadController extends Controller
+class AdminUploadController extends Controller
 {
     /**
      * Handle asset upload (image/audio) for admin content building.

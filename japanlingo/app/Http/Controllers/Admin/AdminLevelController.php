@@ -7,11 +7,11 @@ use App\Models\Level;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class LevelController extends Controller
+class AdminLevelController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Admin/Levels/Index', [
+        return Inertia::render('Admin/Levels/AdminLevelsIndex', [
             'levels' => Level::all()
         ]);
     }

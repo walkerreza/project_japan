@@ -12,7 +12,7 @@ class SuperAdminAdminController extends SuperAdminBaseController
     {
         $admins = User::whereIn('role', ['admin', 'superadmin'])->latest()->take(10)->get();
 
-        return Inertia::render('SuperAdmin/Admins', [
+        return Inertia::render('SuperAdmin/SuperAdminAdmins', [
             'stats' => [
                 $this->stat('Admin Aktif', number_format(User::where('role', 'admin')->where('status', 'active')->count()), '🛡️'),
                 $this->stat('Superadmin', number_format(User::where('role', 'superadmin')->count()), '👑'),

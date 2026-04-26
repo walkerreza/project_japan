@@ -9,7 +9,7 @@ use App\Http\Requests\Admin\QuizRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class QuizController extends Controller
+class AdminQuizController extends Controller
 {
     public function index(Request $request)
     {
@@ -35,7 +35,7 @@ class QuizController extends Controller
 
         $lessons = Lesson::orderBy('order')->get(['id', 'title']);
 
-        return Inertia::render('Admin/Quizzes/Index', [
+        return Inertia::render('Admin/Quizzes/AdminQuizzesIndex', [
             'quizzes' => $quizzes,
             'lessons' => $lessons,
             'filters' => $request->only('search', 'lesson_id'),
@@ -59,7 +59,7 @@ class QuizController extends Controller
     {
         $quiz->load(['lesson:id,title', 'questions' => fn($q) => $q->orderBy('order')]);
 
-        return Inertia::render('Admin/Builders/QuizBuilder', [
+        return Inertia::render('Admin/Builders/AdminQuizBuilder', [
             'quiz' => [
                 'id'         => $quiz->id,
                 'type'       => $quiz->type,

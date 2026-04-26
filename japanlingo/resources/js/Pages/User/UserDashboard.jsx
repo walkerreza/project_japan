@@ -20,7 +20,7 @@ const socials = [
 
 // Data statis telah dihapus, sekarang menggunakan props dari backend
 
-export default function UserDashboard({ user = {}, recentProgress = [], availableLevels = [], rewardHistory = [], announcements = [] }) {
+export default function UserDashboard({ user = {}, recentProgress = [], availableLevels = [], rewardHistory = [], news = [] }) {
     return (
         <AuthenticatedLayout header={false}>
             <Head title="Beranda Utama" />
@@ -155,7 +155,7 @@ export default function UserDashboard({ user = {}, recentProgress = [], availabl
                     </section>
 
 
-                    {/* Berita Terkini Jepang Section */}
+                    {/* Portal Berita Jepang Section */}
                     <section>
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
                             <h2 className="text-xl md:text-2xl font-black text-gray-900 dark:text-white">Berita Terkini Jepang</h2>
@@ -165,7 +165,7 @@ export default function UserDashboard({ user = {}, recentProgress = [], availabl
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {announcements && announcements.length > 0 ? announcements.map((item, idx) => (
+                            {news && news.length > 0 ? news.map((item, idx) => (
                                 <div key={idx} className="bg-white dark:bg-gray-900 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-10px_rgba(0,0,0,0.1)] dark:shadow-none dark:hover:border-gray-700 transition-all duration-300 flex flex-col h-full group">
                                     <div className="p-6 flex flex-col flex-grow">
                                         {item.is_pinned && (
@@ -188,7 +188,7 @@ export default function UserDashboard({ user = {}, recentProgress = [], availabl
                                     </div>
                                 </div>
                             )) : (
-                                <p className="text-gray-500 dark:text-gray-400 text-sm col-span-3">Belum ada berita atau pengumuman terbaru.</p>
+                                <p className="text-gray-500 dark:text-gray-400 text-sm col-span-3">Belum ada berita terbaru.</p>
                             )}
                         </div>
                     </section>

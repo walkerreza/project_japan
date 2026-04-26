@@ -13,7 +13,7 @@ class SuperAdminContentController extends SuperAdminBaseController
 {
     public function __invoke()
     {
-        return Inertia::render('SuperAdmin/Content', [
+        return Inertia::render('SuperAdmin/SuperAdminContent', [
             'stats' => [
                 $this->stat('Module Aktif', number_format(LearningModule::count()), '📚'),
                 $this->stat('Lesson Publish', number_format(Lesson::count()), '📝'),

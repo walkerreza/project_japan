@@ -9,7 +9,7 @@ use App\Http\Requests\Admin\QuestionRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class QuestionController extends Controller
+class AdminQuestionController extends Controller
 {
     public function index(Request $request)
     {
@@ -31,7 +31,7 @@ class QuestionController extends Controller
 
         $quizzes = Quiz::with('lesson:id,title')->get(['id', 'lesson_id', 'type']);
 
-        return Inertia::render('Admin/Questions/Index', [
+        return Inertia::render('Admin/Questions/AdminQuestionsIndex', [
             'questions'     => $questions,
             'quizzes'       => $quizzes,
             'selectedQuizId' => $request->quiz_id,
@@ -41,7 +41,7 @@ class QuestionController extends Controller
     public function create(Request $request)
     {
         $quizzes = Quiz::with('lesson:id,title')->get();
-        return Inertia::render('Admin/Questions/Create', [
+        return Inertia::render('Admin/Questions/AdminQuestionsCreate', [
             'quizzes'       => $quizzes,
             'defaultQuizId' => $request->quiz_id,
         ]);
@@ -59,7 +59,7 @@ class QuestionController extends Controller
     public function edit(Question $question)
     {
         $quizzes = Quiz::with('lesson:id,title')->get();
-        return Inertia::render('Admin/Questions/Edit', [
+        return Inertia::render('Admin/Questions/AdminQuestionsEdit', [
             'question' => $question,
             'quizzes'  => $quizzes,
         ]);

@@ -137,14 +137,19 @@ Updated model:
 
 Superadmin pages now accept backend props with fallback mock data:
 - `SuperAdminDashboard.jsx`
-- `Users.jsx`
-- `Admins.jsx`
-- `Content.jsx`
-- `Gamification.jsx`
-- `Activity.jsx`
-- `System.jsx`
+- `SuperAdminUsers.jsx`
+- `SuperAdminAdmins.jsx`
+- `SuperAdminContent.jsx`
+- `SuperAdminGamification.jsx`
+- `SuperAdminActivity.jsx`
+- `SuperAdminSystem.jsx`
+- `SuperAdminProfile.jsx`
 
 This keeps pages usable during development while allowing real data to appear once the new tables have records.
+
+User dashboard news integration:
+- `UserDashboard.jsx` now receives `news` from the backend.
+- `User\DashboardController` reads published rows from the `news` table for the student dashboard news section.
 
 ## Current Data Coverage
 

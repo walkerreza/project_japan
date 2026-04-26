@@ -10,11 +10,11 @@ use App\Models\Question;
 use App\Models\User;
 use Inertia\Inertia;
 
-class DashboardController extends Controller
+class AdminDashboardController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Admin/Dashboard', [
+        return Inertia::render('Admin/AdminDashboard', [
             'totalModules'   => Module::count(),
             'totalLessons'   => Lesson::count(),
             'totalQuizzes'   => Quiz::count(),

@@ -7,7 +7,7 @@ use App\Models\Achievement;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class AchievementController extends Controller
+class AdminAchievementController extends Controller
 {
     public function index()
     {

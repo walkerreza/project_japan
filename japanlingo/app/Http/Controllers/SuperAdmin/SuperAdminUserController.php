@@ -11,7 +11,7 @@ class SuperAdminUserController extends SuperAdminBaseController
     {
         $students = User::where('role', 'user')->latest()->take(10)->get();
 
-        return Inertia::render('SuperAdmin/Users', [
+        return Inertia::render('SuperAdmin/SuperAdminUsers', [
             'stats' => [
                 $this->stat('Total Student', number_format(User::where('role', 'user')->count()), '👨‍🎓'),
                 $this->stat('Aktif Mingguan', number_format(User::where('role', 'user')->whereDate('last_activity_date', '>=', now()->subDays(7)->toDateString())->count()), '🔥'),

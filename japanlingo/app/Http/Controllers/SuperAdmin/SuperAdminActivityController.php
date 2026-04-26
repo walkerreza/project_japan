@@ -10,7 +10,7 @@ class SuperAdminActivityController extends SuperAdminBaseController
 {
     public function __invoke()
     {
-        return Inertia::render('SuperAdmin/Activity', [
+        return Inertia::render('SuperAdmin/SuperAdminActivity', [
             'activityStats' => [
                 $this->stat('Aksi Hari Ini', number_format(ActivityLog::whereDate('created_at', today())->count()), '🧾'),
                 $this->stat('Login Berhasil', number_format(LoginHistory::where('status', 'success')->whereDate('logged_in_at', today())->count()), '🔐'),

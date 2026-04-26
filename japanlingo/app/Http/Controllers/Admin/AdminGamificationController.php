@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 /**
- * GamificationController (Admin)
+ * AdminGamificationController
  *
  * Mengelola sistem gamifikasi platform Japanlingo dari sisi admin.
  * Admin dapat membuat, mengedit, dan menghapus pencapaian (achievements/lencana).
@@ -19,16 +19,16 @@ use Inertia\Inertia;
  *   PUT    /admin/gamification/{id}     → update() : edit achievement yang ada
  *   DELETE /admin/gamification/{id}     → destroy(): hapus achievement
  *
- * Halaman React terkait: resources/js/Pages/Admin/Gamification.jsx
+ * Halaman React terkait: resources/js/Pages/Admin/Gamification/AdminGamificationIndex.jsx
  */
-class GamificationController extends Controller
+class AdminGamificationController extends Controller
 {
     /**
      * Tampilkan halaman daftar semua achievements ke admin.
      */
     public function index()
     {
-        return Inertia::render('Admin/Gamification', [
+        return Inertia::render('Admin/Gamification/AdminGamificationIndex', [
             'achievements' => Achievement::all(),
         ]);
     }

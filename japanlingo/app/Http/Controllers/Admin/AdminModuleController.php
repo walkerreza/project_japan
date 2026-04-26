@@ -9,7 +9,7 @@ use App\Http\Requests\Admin\ModuleRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class ModuleController extends Controller
+class AdminModuleController extends Controller
 {
     public function index(Request $request)
     {
@@ -30,7 +30,7 @@ class ModuleController extends Controller
 
         $levels = Level::orderBy('stage')->get();
 
-        return Inertia::render('Admin/Modules/Index', [
+        return Inertia::render('Admin/Modules/AdminModulesIndex', [
             'modules' => $modules,
             'levels'  => $levels,
             'filters' => $request->only('search'),
@@ -72,7 +72,7 @@ class ModuleController extends Controller
             $q->orderBy('order');
         }]);
 
-        return Inertia::render('Admin/Builders/ContentEditor', [
+        return Inertia::render('Admin/Builders/AdminContentEditor', [
             'module'  => $module,
             'lessons' => $module->lessons,
         ]);

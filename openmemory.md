@@ -136,12 +136,13 @@ export default function Page() {
 ### Implementasi Frontend
 - Halaman `SuperAdmin` sudah diubah dari placeholder menjadi UI operasional statis:
   - `SuperAdminDashboard.jsx`
-  - `Users.jsx`
-  - `Admins.jsx`
-  - `Content.jsx`
-  - `Gamification.jsx`
-  - `Activity.jsx`
-  - `System.jsx`
+  - `SuperAdminUsers.jsx`
+  - `SuperAdminAdmins.jsx`
+  - `SuperAdminContent.jsx`
+  - `SuperAdminGamification.jsx`
+  - `SuperAdminActivity.jsx`
+  - `SuperAdminSystem.jsx`
+  - `SuperAdminProfile.jsx`
 - Route `/superadmin/pricing` sekarang di-redirect ke `/superadmin/activity`.
 
 ---

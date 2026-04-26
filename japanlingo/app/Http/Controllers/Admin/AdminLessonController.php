@@ -8,7 +8,7 @@ use App\Models\Module;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class LessonController extends Controller
+class AdminLessonController extends Controller
 {
     public function index(Request $request)
     {
@@ -29,7 +29,7 @@ class LessonController extends Controller
 
         $modules = Module::orderBy('week_number')->get(['id', 'title', 'level_id']);
 
-        return Inertia::render('Admin/Lessons/Index', [
+        return Inertia::render('Admin/Lessons/AdminLessonsIndex', [
             'lessons'           => $lessons,
             'modules'           => $modules,
             'selectedModuleId'  => $request->module_id,
@@ -39,7 +39,7 @@ class LessonController extends Controller
     public function create(Request $request)
     {
         $modules = Module::orderBy('week_number')->get(['id', 'title', 'level_id']);
-        return Inertia::render('Admin/Lessons/Create', [
+        return Inertia::render('Admin/Lessons/AdminLessonsCreate', [
             'modules'         => $modules,
             'defaultModuleId' => $request->module_id,
         ]);
@@ -68,7 +68,7 @@ class LessonController extends Controller
     public function edit(Lesson $lesson)
     {
         $modules = Module::orderBy('week_number')->get(['id', 'title', 'level_id']);
-        return Inertia::render('Admin/Lessons/Edit', [
+        return Inertia::render('Admin/Lessons/AdminLessonsEdit', [
             'lesson'  => $lesson,
             'modules' => $modules,
         ]);

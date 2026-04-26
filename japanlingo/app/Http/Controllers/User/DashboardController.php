@@ -16,7 +16,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         
-        $announcements = \Illuminate\Support\Facades\DB::table('news')
+        $news = \Illuminate\Support\Facades\DB::table('news')
             ->where('status', 'published')
             ->whereIn('audience', ['all', 'students'])
             ->orderByDesc('published_at')
@@ -28,7 +28,7 @@ class DashboardController extends Controller
             'recentProgress' => $user->progress()->with('lesson.module')->latest()->take(5)->get(),
             'availableLevels' => Level::with('modules')->get(),
             'rewardHistory' => RewardLog::where('user_id', $user->id)->latest()->take(10)->get(),
-            'announcements' => $announcements,
+            'news' => $news,
         ]);
     }
 }

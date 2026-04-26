@@ -36,13 +36,13 @@ export default function Content({
                 <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
                     <div>
                         <p className="text-xs font-black uppercase tracking-[0.3em] text-red-600 dark:text-red-400">Superadmin</p>
-                        <h1 className="text-2xl font-black text-gray-900 dark:text-white">Konten</h1>
+                        <h1 className="text-2xl font-black text-gray-900 dark:text-white">Konten & News Maker</h1>
                         <p className="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
-                            Monitoring materi pembelajaran dan news yang tampil di dashboard student.
+                            Monitoring materi pembelajaran dan berita yang tampil di dashboard student.
                         </p>
                     </div>
                     <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                        Fokus saat ini: materi N3, berita dashboard, dan status publish
+                        Fokus saat ini: materi N3, portal berita, dan status publish
                     </div>
                 </div>
 
@@ -55,8 +55,8 @@ export default function Content({
                 <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.1fr_0.9fr]">
                     <Card>
                         <div className="flex flex-col gap-1">
-                            <h2 className="text-lg font-black text-gray-900 dark:text-white">News Portal</h2>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Berita yang mengisi dashboard student dan notifikasi platform.</p>
+                            <h2 className="text-lg font-black text-gray-900 dark:text-white">News Maker</h2>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Portal berita untuk dashboard student dan notifikasi platform.</p>
                         </div>
                         <div className="mt-5 space-y-4">
                             {news.map((item) => (
