@@ -21,13 +21,13 @@ export default function System({
             <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
                 <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
                     <div>
-                        <p className="text-xs font-black uppercase tracking-[0.3em] text-red-600">Superadmin</p>
-                        <h1 className="text-2xl font-black text-gray-900">Sistem</h1>
-                        <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                        <p className="text-xs font-black uppercase tracking-[0.3em] text-red-600 dark:text-red-400">Superadmin</p>
+                        <h1 className="text-2xl font-black text-gray-900 dark:text-white">Sistem</h1>
+                        <p className="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
                             Ringkasan kesehatan aplikasi, maintenance notice, dan konfigurasi global ringan.
                         </p>
                     </div>
-                    <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-500">
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
                         Environment lokal dipantau sebagai snapshot UI
                     </div>
                 </div>
@@ -40,14 +40,14 @@ export default function System({
 
                 <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_1fr]">
                     <Card>
-                        <h2 className="text-lg font-black text-gray-900">Maintenance Notice</h2>
+                        <h2 className="text-lg font-black text-gray-900 dark:text-white">Maintenance Notice</h2>
                         <div className="mt-4 space-y-3">
                             {[
                                 'Tidak ada maintenance terjadwal hari ini',
                                 'Banner maintenance dapat digunakan untuk pemberitahuan user',
                                 'Mode maintenance penuh belum diaktifkan',
                             ].map((item, index) => (
-                                <div key={item} className={`rounded-2xl px-4 py-3 text-sm font-medium ${index === 0 ? 'border border-emerald-100 bg-emerald-50 text-emerald-700' : 'border border-gray-200 bg-gray-50 text-gray-600'}`}>
+                                <div key={item} className={`rounded-2xl px-4 py-3 text-sm font-medium ${index === 0 ? 'border border-emerald-100 dark:border-emerald-900/30 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400' : 'border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400'}`}>
                                     {item}
                                 </div>
                             ))}
@@ -55,7 +55,7 @@ export default function System({
                     </Card>
 
                     <Card>
-                        <h2 className="text-lg font-black text-gray-900">Konfigurasi Global</h2>
+                        <h2 className="text-lg font-black text-gray-900 dark:text-white">Konfigurasi Global</h2>
                         <div className="mt-4 space-y-3">
                             {[
                                 ['Aplikasi', 'Japanlingo'],
@@ -63,9 +63,9 @@ export default function System({
                                 ['Queue mode', 'database'],
                                 ['Filesystem', 'public'],
                             ].map(([label, value]) => (
-                                <div key={label} className="flex items-center justify-between rounded-2xl border border-gray-100 px-4 py-3 text-sm">
-                                    <span className="font-bold text-gray-500">{label}</span>
-                                    <span className="font-black text-gray-900">{value}</span>
+                                <div key={label} className="flex items-center justify-between rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-3 text-sm">
+                                    <span className="font-bold text-gray-500 dark:text-gray-400">{label}</span>
+                                    <span className="font-black text-gray-900 dark:text-white">{value}</span>
                                 </div>
                             ))}
                         </div>
@@ -73,14 +73,14 @@ export default function System({
                 </div>
 
                 <Card>
-                    <h2 className="text-lg font-black text-gray-900">Catatan Operasional</h2>
+                    <h2 className="text-lg font-black text-gray-900 dark:text-white">Catatan Operasional</h2>
                     <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
                         {[
                             'Audit trail detail belum sepenuhnya tersambung ke backend.',
                             'Queue, cache, dan storage saat ini hanya ditampilkan sebagai summary UI.',
                             'Kontrol sistem berat sengaja belum dibuka agar scope tetap aman.',
                         ].map((item) => (
-                            <div key={item} className="rounded-2xl border border-gray-100 bg-gray-50 p-4 text-sm font-medium text-gray-600">
+                            <div key={item} className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 p-4 text-sm font-medium text-gray-600 dark:text-gray-400">
                                 {item}
                             </div>
                         ))}

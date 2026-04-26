@@ -14,9 +14,9 @@ import HearingIcon from '@mui/icons-material/Hearing';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 const QUIZ_TYPE_LABELS = {
-    multiple_choice: { label: 'Pilihan Ganda', icon: <ChecklistIcon sx={{ fontSize: 12 }} />, color: 'bg-blue-100 text-blue-700' },
+    multiple_choice: { label: 'Pilihan Ganda', icon: <ChecklistIcon sx={{ fontSize: 12 }} />, color: 'bg-blue-100 text-blue-700 dark:text-blue-400' },
     typing:          { label: 'Mengetik',      icon: <KeyboardIcon sx={{ fontSize: 12 }} />,  color: 'bg-purple-100 text-purple-700' },
-    listening:       { label: 'Mendengarkan',  icon: <HearingIcon sx={{ fontSize: 12 }} />,   color: 'bg-green-100 text-green-700' },
+    listening:       { label: 'Mendengarkan',  icon: <HearingIcon sx={{ fontSize: 12 }} />,   color: 'bg-green-100 text-green-700 dark:text-green-400' },
 };
 
 export default function QuestionsIndex({ questions = [], quizzes = [], selectedQuizId = null }) {
@@ -40,23 +40,23 @@ export default function QuestionsIndex({ questions = [], quizzes = [], selectedQ
             <Head title="Manajemen Pertanyaan - Japanlingo" />
             <div className="min-h-screen bg-[#F8F9FB] font-sans">
 
-                <header className="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-40 flex items-center justify-between">
+                <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4 sticky top-0 z-40 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="w-9 h-9 bg-[#E64A19] rounded-xl flex items-center justify-center text-white">
                             <QuizOutlinedIcon sx={{ fontSize: 20 }} />
                         </div>
                         <div>
-                            <h1 className="text-sm font-black text-gray-900">Manajemen Pertanyaan</h1>
-                            <p className="text-[11px] text-gray-400 font-medium">{filtered.length} Pertanyaan</p>
+                            <h1 className="text-sm font-black text-gray-900 dark:text-white">Manajemen Pertanyaan</h1>
+                            <p className="text-[11px] text-gray-400 dark:text-gray-500 font-medium">{filtered.length} Pertanyaan</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
-                            <FilterListIcon sx={{ fontSize: 16 }} className="text-gray-400" />
+                        <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2">
+                            <FilterListIcon sx={{ fontSize: 16 }} className="text-gray-400 dark:text-gray-500" />
                             <select
                                 value={filterQuiz}
                                 onChange={e => setFilterQuiz(e.target.value)}
-                                className="text-sm font-medium text-gray-700 bg-transparent border-none focus:ring-0 outline-none"
+                                className="text-sm font-medium text-gray-700 dark:text-gray-300 bg-transparent border-none focus:ring-0 outline-none"
                             >
                                 <option value="all">Semua Kuis</option>
                                 {quizzes.map(q => (
@@ -70,7 +70,7 @@ export default function QuestionsIndex({ questions = [], quizzes = [], selectedQ
                         {selectedQuiz && (
                             <Link
                                 href={route('admin.quizzes.builder', selectedQuiz.id)}
-                                className="border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl px-4 h-10 text-sm font-bold flex items-center gap-2 transition-colors"
+                                className="border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 rounded-xl px-4 h-10 text-sm font-bold flex items-center gap-2 transition-colors"
                             >
                                 <OpenInNewIcon sx={{ fontSize: 16 }} />
                                 Buka Builder
@@ -89,7 +89,7 @@ export default function QuestionsIndex({ questions = [], quizzes = [], selectedQ
 
                 <main className="max-w-5xl mx-auto p-6">
                     {filtered.length === 0 ? (
-                        <div className="text-center py-24 text-gray-400">
+                        <div className="text-center py-24 text-gray-400 dark:text-gray-500">
                             <QuizOutlinedIcon sx={{ fontSize: 48 }} className="mb-3 opacity-30" />
                             <p className="font-medium">Belum ada pertanyaan.</p>
                             <Link
@@ -103,15 +103,15 @@ export default function QuestionsIndex({ questions = [], quizzes = [], selectedQ
                         <div className="space-y-2">
                             {filtered.map((question, idx) => {
                                 const quizType = question.quiz?.type || 'multiple_choice';
-                                const typeConf = QUIZ_TYPE_LABELS[quizType] || { label: quizType, icon: null, color: 'bg-gray-100 text-gray-600' };
+                                const typeConf = QUIZ_TYPE_LABELS[quizType] || { label: quizType, icon: null, color: 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400' };
 
                                 return (
-                                    <div key={question.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm px-5 py-4 flex items-center gap-4 group hover:border-gray-300 transition-colors">
+                                    <div key={question.id} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm px-5 py-4 flex items-center gap-4 group hover:border-gray-300 dark:border-gray-600 transition-colors">
                                         <div className="text-gray-300 cursor-grab">
                                             <DragIndicatorIcon sx={{ fontSize: 20 }} />
                                         </div>
 
-                                        <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-xs font-black text-gray-400 shrink-0">
+                                        <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs font-black text-gray-400 dark:text-gray-500 shrink-0">
                                             {idx + 1}
                                         </div>
 
@@ -121,13 +121,13 @@ export default function QuestionsIndex({ questions = [], quizzes = [], selectedQ
                                                     {typeConf.icon}{typeConf.label}
                                                 </span>
                                                 {question.audio_url && (
-                                                    <span className="text-[9px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">🔊 Audio</span>
+                                                    <span className="text-[9px] font-bold text-green-600 bg-green-50 dark:bg-green-900/20 px-1.5 py-0.5 rounded">🔊 Audio</span>
                                                 )}
                                             </div>
-                                            <p className="text-sm font-bold text-gray-900 truncate">
+                                            <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
                                                 {question.question_text}
                                             </p>
-                                            <p className="text-[11px] text-gray-400 mt-0.5 truncate">
+                                            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 truncate">
                                                 Jawaban: <span className="font-bold text-green-600">{question.correct_answer}</span>
                                                 {question.options && question.options.length > 0 && (
                                                     <span className="ml-2">• {question.options.length} pilihan</span>
@@ -138,14 +138,14 @@ export default function QuestionsIndex({ questions = [], quizzes = [], selectedQ
                                         <div className="flex items-center gap-2 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <Link
                                                 href={route('admin.questions.edit', question.id)}
-                                                className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                                                className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:bg-blue-900/20 transition-colors"
                                                 title="Edit"
                                             >
                                                 <EditOutlinedIcon sx={{ fontSize: 18 }} />
                                             </Link>
                                             <button
                                                 onClick={() => setDeleteConfirm(question)}
-                                                className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                                className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-red-600 dark:text-red-400 hover:bg-red-50 dark:bg-red-900/20 transition-colors"
                                                 title="Hapus"
                                             >
                                                 <DeleteOutlineIcon sx={{ fontSize: 18 }} />
@@ -161,16 +161,16 @@ export default function QuestionsIndex({ questions = [], quizzes = [], selectedQ
 
             {deleteConfirm && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
+                    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
                         <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <DeleteOutlineIcon sx={{ fontSize: 28 }} className="text-red-600" />
+                            <DeleteOutlineIcon sx={{ fontSize: 28 }} className="text-red-600 dark:text-red-400" />
                         </div>
-                        <h3 className="text-base font-black text-gray-900 mb-2">Hapus Pertanyaan?</h3>
-                        <p className="text-sm text-gray-500 mb-6">
+                        <h3 className="text-base font-black text-gray-900 dark:text-white mb-2">Hapus Pertanyaan?</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
                             Pertanyaan "<strong>{deleteConfirm.question_text?.substring(0, 50)}...</strong>" akan dihapus permanen.
                         </p>
                         <div className="flex gap-3">
-                            <button onClick={() => setDeleteConfirm(null)} className="flex-1 h-11 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors">Batal</button>
+                            <button onClick={() => setDeleteConfirm(null)} className="flex-1 h-11 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-800/50 transition-colors">Batal</button>
                             <button onClick={confirmDelete} className="flex-1 h-11 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-bold transition-colors">Hapus</button>
                         </div>
                     </div>

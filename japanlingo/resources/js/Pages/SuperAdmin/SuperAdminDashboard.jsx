@@ -49,13 +49,13 @@ export default function SuperadminDashboard({
             <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
                 <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
                     <div>
-                        <p className="text-xs font-black uppercase tracking-[0.3em] text-red-600">Superadmin</p>
-                        <h1 className="text-2xl font-black text-gray-900">Beranda Platform</h1>
-                        <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                        <p className="text-xs font-black uppercase tracking-[0.3em] text-red-600 dark:text-red-400">Superadmin</p>
+                        <h1 className="text-2xl font-black text-gray-900 dark:text-white">Beranda Platform</h1>
+                        <p className="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
                             Ringkasan operasional Japanlingo untuk user, konten, gamifikasi, news, dan sistem.
                         </p>
                     </div>
-                    <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-500">
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 text-sm text-gray-500 dark:text-gray-400 transition-colors">
                         Fokus aktif: N3 learning loop + gamification
                     </div>
                 </div>
@@ -73,7 +73,7 @@ export default function SuperadminDashboard({
                                 <div key={item.label} className="flex flex-1 flex-col justify-end gap-1">
                                     <div className="rounded-t-xl bg-red-200" style={{ height: `${Math.min(item.lesson, 100) * 0.45}%` }}></div>
                                     <div className="rounded-t-xl bg-red-600" style={{ height: `${Math.min(item.quiz, 100) * 0.55}%` }}></div>
-                                    <p className="pt-2 text-center text-[11px] font-bold text-gray-400">{item.label}</p>
+                                    <p className="pt-2 text-center text-[11px] font-bold text-gray-400 dark:text-gray-500">{item.label}</p>
                                 </div>
                             ))}
                         </div>
@@ -89,10 +89,10 @@ export default function SuperadminDashboard({
                             ].map(([label, value, color]) => (
                                 <div key={label}>
                                     <div className="mb-2 flex items-center justify-between text-sm">
-                                        <span className="font-bold text-gray-700">{label}</span>
-                                        <span className="font-black text-gray-900">{value}</span>
+                                        <span className="font-bold text-gray-700 dark:text-gray-300">{label}</span>
+                                        <span className="font-black text-gray-900 dark:text-white">{value}</span>
                                     </div>
-                                    <div className="h-3 rounded-full bg-gray-100">
+                                    <div className="h-3 rounded-full bg-gray-100 dark:bg-gray-800">
                                         <div className={`h-3 rounded-full ${color}`} style={{ width: value }}></div>
                                     </div>
                                 </div>
@@ -103,15 +103,15 @@ export default function SuperadminDashboard({
 
                 <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.1fr_0.9fr]">
                     <Card>
-                        <h2 className="text-lg font-black text-gray-900">Recent Alerts</h2>
+                        <h2 className="text-lg font-black text-gray-900 dark:text-white">Recent Alerts</h2>
                         <div className="mt-4 space-y-3">
                             {alerts.map((item) => (
-                                <div key={item.text} className={`rounded-2xl border px-4 py-3 text-sm font-medium ${
+                                <div key={item.text} className={`rounded-2xl border px-4 py-3 text-sm font-medium transition-colors ${
                                     item.tone === 'red'
-                                        ? 'border-red-100 bg-red-50 text-red-700'
+                                        ? 'border-red-100 dark:border-red-900/30 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
                                         : item.tone === 'amber'
-                                        ? 'border-amber-100 bg-amber-50 text-amber-700'
-                                        : 'border-blue-100 bg-blue-50 text-blue-700'
+                                        ? 'border-amber-100 dark:border-amber-900/30 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400'
+                                        : 'border-blue-100 dark:border-blue-900/30 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
                                 }`}>
                                     {item.text}
                                 </div>
@@ -120,10 +120,10 @@ export default function SuperadminDashboard({
                     </Card>
 
                     <Card>
-                        <h2 className="text-lg font-black text-gray-900">Aktivitas Terkini</h2>
+                        <h2 className="text-lg font-black text-gray-900 dark:text-white">Aktivitas Terkini</h2>
                         <div className="mt-4 space-y-3">
                             {activities.map((item) => (
-                                <div key={item} className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700">
+                                <div key={item} className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors">
                                     {item}
                                 </div>
                             ))}

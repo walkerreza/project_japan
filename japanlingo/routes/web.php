@@ -35,9 +35,13 @@ Route::get('/roadmap', fn() => Inertia::render('Roadmap'))->name('roadmap');
 // Authenticated Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     // Profile
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile', fn() => Inertia::render('User/Profile'))->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Notifications
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 
     Route::get('/dashboard', function () {
         $user = auth()->user();
@@ -59,6 +63,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/activity', SuperAdminActivityController::class)->name('activity');
         Route::redirect('/pricing', '/superadmin/activity');
         Route::get('/system', SuperAdminSystemController::class)->name('system');
+        Route::get('/profile', fn() => Inertia::render('SuperAdmin/Profile'))->name('profile');
     });
 
     // Admin Routes
@@ -110,12 +115,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/questions/{question}', [QuestionController::class, 'update'])->name('questions.update');
         Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
         Route::post('/questions/reorder', [QuestionController::class, 'reorder'])->name('questions.reorder');
+        
+        Route::get('/profile', fn() => Inertia::render('Admin/Profile'))->name('profile');
     });
 
     // User Routes
     Route::middleware('role:user')->prefix('user')->name('user.')->group(function () {
         Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/profile', fn() => Inertia::render('User/Profile'))->name('profile');
         
         Route::get('/lessons', [LearningController::class, 'lessonLobby'])->name('lessons.index');
         Route::get('/lessons/{lesson}', [LearningController::class, 'showLesson'])->middleware('subscribed')->name('lessons.show');

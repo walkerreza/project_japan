@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import SidebarLink from '@/Components/Navigation/SidebarLink';
 
-// Ikon Navigasi Umum (Campuran Untuk Semua Role)
+// Ikon Navigasi Umum
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import AddBoxIcon from '@mui/icons-material/AddBox';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
@@ -17,19 +16,13 @@ import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import ShieldIcon from '@mui/icons-material/Shield';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
-import PaymentsIcon from '@mui/icons-material/Payments';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 // Ikon Bawah
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import ContrastOutlinedIcon from '@mui/icons-material/ContrastOutlined';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import AppsIcon from '@mui/icons-material/Apps';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 export default function AuthenticatedLayout({ children }) {
@@ -38,6 +31,23 @@ export default function AuthenticatedLayout({ children }) {
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
     const [notificationOpen, setNotificationOpen] = useState(false);
     const [toastAchievements, setToastAchievements] = useState([]);
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
+    
+    // Notification variables and handlers
+    const notifications = user?.notifications || [];
+    const unreadCount = notifications.length;
+
+    const handleMarkAllAsRead = () => {
+        router.post(route('notifications.readAll'), {}, { preserveScroll: true, preserveState: true });
+    };
+
+    const handleMarkAsRead = (id) => {
+        router.post(route('notifications.read', id), {}, { preserveScroll: true, preserveState: true });
+    };
+
+    // Ref untuk event klik di luar popup
+    const menuRef = useRef(null);
 
     // Theme Mode Logic
     const [themeMode, setThemeMode] = useState(() => {
@@ -56,7 +66,6 @@ export default function AuthenticatedLayout({ children }) {
         }
         localStorage.setItem('theme', themeMode);
         
-        // Listen for local storage changes from other tabs/pages
         const handleStorage = () => {
             setThemeMode(localStorage.getItem('theme') || 'system');
         };
@@ -71,9 +80,6 @@ export default function AuthenticatedLayout({ children }) {
             return () => clearTimeout(timer);
         }
     }, [flash.newAchievements]);
-    const [isExpanded, setIsExpanded] = useState(false);
-    const [mobileOpen, setMobileOpen] = useState(false);
-    const menuRef = useRef();
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -84,9 +90,8 @@ export default function AuthenticatedLayout({ children }) {
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [menuRef]);
+    }, []);
 
-    // Kembalikan Struktur Role-Based Menu (Diadaptasi menjadi Icon Besar Canva Style)
     const adminMenu = [
         { href: '/admin/dashboard', icon: <DashboardIcon sx={{ fontSize: 24 }} />, label: 'Beranda' },
         { href: '/admin/modules', icon: <LibraryBooksIcon sx={{ fontSize: 24 }} />, label: 'Modul' },
@@ -114,8 +119,8 @@ export default function AuthenticatedLayout({ children }) {
         { href: '/superadmin/system', icon: <SettingsIcon sx={{ fontSize: 24 }} />, label: 'Sistem' },
     ];
 
-    const isSuperadmin = user.role === 'superadmin';
-    const isAdmin = user.role === 'admin' || isSuperadmin;
+    const isSuperadmin = user?.role === 'superadmin';
+    const isAdmin = user?.role === 'admin' || isSuperadmin;
     const activeMenu = isSuperadmin ? superadminMenu : (isAdmin ? adminMenu : userMenu);
 
     return (
@@ -130,7 +135,7 @@ export default function AuthenticatedLayout({ children }) {
                     <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400 text-lg tracking-tight">Japanlingo</span>
                 </div>
                 <button type="button" onClick={() => setMobileOpen(true)} className="w-[34px] h-[34px] rounded-full bg-red-600 text-white font-black text-sm flex items-center justify-center shadow-md">
-                    {user.username?.charAt(0).toUpperCase()}
+                    {user?.username?.charAt(0).toUpperCase()}
                 </button>
             </div>
 
@@ -142,10 +147,9 @@ export default function AuthenticatedLayout({ children }) {
                 ></div>
             )}
 
-            {/* ====== SIDEBAR VERTIKAL ALA CANVA (MODES: MINI & EXPANDED) ====== */}
+            {/* ====== SIDEBAR VERTIKAL ====== */}
             <aside className={`flex flex-col bg-[#F2F3F5] dark:bg-gray-900 border-r border-[#E5E7EB] dark:border-gray-800 fixed inset-y-0 left-0 z-50 transform transition-all duration-300 ease-in-out ${isExpanded ? 'w-[240px]' : 'w-[88px]'} ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
                 
-                {/* Logo Singkat & Tombol Tutup Mobile */}
                 <div className="p-3 flex flex-col items-center justify-center border-b border-gray-100 dark:border-gray-800 mb-4 gap-3">
                     <button 
                         type="button"
@@ -167,7 +171,6 @@ export default function AuthenticatedLayout({ children }) {
                     </div>
                 </div>
 
-                {/* Menu Navigasi Tengah */}
                 <nav className="flex-1 px-3 space-y-2 overflow-y-auto hide-scrollbar" onClick={() => setMobileOpen(false)}>
                     {activeMenu.map((item, idx) => (
                         <SidebarLink 
@@ -183,7 +186,6 @@ export default function AuthenticatedLayout({ children }) {
                     ))}
                 </nav>
 
-                {/* Notifikasi & Profil Pop-up di Bawah */}
                 <div className={`p-3 flex flex-col ${isExpanded ? 'gap-2 px-4' : 'items-center'} mt-auto border-t border-gray-200/60 dark:border-gray-800 relative`} ref={menuRef}>
                     
                     {/* Lonceng Notifikasi */}
@@ -193,7 +195,9 @@ export default function AuthenticatedLayout({ children }) {
                     >
                         <NotificationsOutlinedIcon sx={{ fontSize: 24 }} />
                         {isExpanded && <span className="ml-3 text-sm font-bold animate-in fade-in slide-in-from-left-2">Notifikasi</span>}
-                        <span className={`absolute ${isExpanded ? 'left-7 top-2' : 'top-1.5 right-1.5'} w-2 h-2 rounded-full bg-red-500 border-2 border-[#F2F3F5]`}></span>
+                        {unreadCount > 0 && (
+                            <span className={`absolute ${isExpanded ? 'left-7 top-2' : 'top-1.5 right-1.5'} w-2.5 h-2.5 rounded-full bg-red-500 border-2 border-white dark:border-gray-900`}></span>
+                        )}
                     </button>
 
                     {/* Popup Notifikasi */}
@@ -201,22 +205,25 @@ export default function AuthenticatedLayout({ children }) {
                         <div className="absolute bottom-[110px] left-3 right-3 w-auto bg-white dark:bg-gray-900 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.25)] border border-gray-100 dark:border-gray-800 overflow-hidden transform origin-bottom-left animate-in fade-in slide-in-from-bottom-5 duration-200 text-left lg:left-[96px] lg:right-auto lg:w-[320px] z-50">
                             <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
                                 <h3 className="font-black text-gray-900 dark:text-white">Notifikasi</h3>
-                                <span className="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded-md cursor-pointer hover:bg-blue-100">Tandai sudah dibaca</span>
+                                {unreadCount > 0 && (
+                                    <span onClick={handleMarkAllAsRead} className="text-[10px] text-blue-600 font-bold bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-md cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">Tandai semua dibaca</span>
+                                )}
                             </div>
                             <div className="max-h-[300px] overflow-y-auto">
-                                <div className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-50 dark:border-gray-800 cursor-pointer transition-colors">
-                                    <p className="text-xs font-bold text-gray-900 dark:text-white mb-1">Selamat Datang di Japanlingo!</p>
-                                    <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Mari mulai perjalanan belajarmu dari Level N5. Semangat!</p>
-                                    <p className="text-[9px] font-black text-red-500 mt-2">BARU SAJA</p>
-                                </div>
-                                <div className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-50 dark:border-gray-800 cursor-pointer transition-colors opacity-70">
-                                    <p className="text-xs font-bold text-gray-900 dark:text-white mb-1">Pengaturan Akun Selesai</p>
-                                    <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Akun Anda telah berhasil dibuat. Anda dapat memperbarui profil kapan saja.</p>
-                                    <p className="text-[9px] font-bold text-gray-400 mt-2">2 HARI YANG LALU</p>
-                                </div>
-                            </div>
-                            <div className="p-3 text-center border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer">
-                                <span className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest">Lihat Semua</span>
+                                {unreadCount === 0 ? (
+                                    <div className="p-6 text-center text-gray-400 dark:text-gray-500 text-xs">
+                                        Tidak ada notifikasi baru.
+                                    </div>
+                                ) : (
+                                    notifications.map((notif) => (
+                                        <div key={notif.id} onClick={() => handleMarkAsRead(notif.id)} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-50 dark:border-gray-800 cursor-pointer transition-colors relative group">
+                                            <div className="absolute top-4 right-4 w-1.5 h-1.5 bg-blue-500 rounded-full group-hover:scale-150 transition-transform"></div>
+                                            <p className="text-xs font-bold text-gray-900 dark:text-white mb-1 pr-4">{notif.data.title || 'Pemberitahuan Sistem'}</p>
+                                            <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">{notif.data.message || 'Silakan cek pembaruan terbaru di dashboard Anda.'}</p>
+                                            <p className="text-[9px] font-black text-blue-500 dark:text-blue-400 mt-2">{notif.created_at}</p>
+                                        </div>
+                                    ))
+                                )}
                             </div>
                         </div>
                     )}
@@ -227,29 +234,27 @@ export default function AuthenticatedLayout({ children }) {
                         className={`w-full flex items-center ${isExpanded ? 'px-2 py-1.5 gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm' : 'justify-center h-[42px]'} rounded-2xl transition-all relative overflow-hidden ring-2 ${profileMenuOpen ? 'ring-gray-300 dark:ring-gray-600 ring-offset-2 dark:ring-offset-gray-900' : 'ring-transparent'}`}
                     >
                         <div className={`shrink-0 ${isExpanded ? 'w-8 h-8 text-sm' : 'w-[42px] h-[42px] text-xl'} rounded-full bg-red-600 text-white font-black flex items-center justify-center shadow-sm transition-all`}>
-                            {user.username?.charAt(0).toUpperCase()}
+                            {user?.username?.charAt(0).toUpperCase()}
                         </div>
                         {isExpanded && (
                             <div className="flex-1 text-left truncate animate-in fade-in slide-in-from-left-2">
-                                <p className="text-xs font-bold text-gray-900 dark:text-white leading-tight">{user.username}</p>
+                                <p className="text-xs font-bold text-gray-900 dark:text-white leading-tight">{user?.username}</p>
                                 <p className="text-[10px] text-gray-500 dark:text-gray-400 truncate mt-0.5">Pengaturan Akun</p>
                             </div>
                         )}
                     </button>
 
-                    {/* Pop-up Menu Profil Ala Canva */}
                     {profileMenuOpen && (
                         <div className="absolute bottom-16 left-3 right-3 w-auto bg-white dark:bg-gray-900 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.25)] border border-gray-100 dark:border-gray-800 overflow-hidden transform origin-bottom-left animate-in fade-in slide-in-from-bottom-5 duration-200 text-left lg:left-[96px] lg:right-auto lg:w-[300px]">
                             
-                            {/* Header Akun */}
                             <div className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer flex items-center justify-between group">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white font-black text-lg shadow-sm">
-                                        {user.username?.charAt(0).toUpperCase()}
+                                        {user?.username?.charAt(0).toUpperCase()}
                                     </div>
                                     <div>
-                                        <p className="text-sm font-bold text-gray-900 dark:text-white leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400">{user.username}</p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{user.email}</p>
+                                        <p className="text-sm font-bold text-gray-900 dark:text-white leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400">{user?.username}</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{user?.email}</p>
                                     </div>
                                 </div>
                                 <KeyboardArrowRightIcon sx={{ fontSize: 18 }} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300" />
@@ -257,16 +262,14 @@ export default function AuthenticatedLayout({ children }) {
 
                             <div className="h-px bg-gray-100 dark:bg-gray-800 w-full"></div>
 
-                            {/* Daftar Tautan Menu Aktif */}
                             <div className="py-2">
-                                <Link href={user.role === 'user' ? route('user.profile') : route('profile.edit')} className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium">
+                                <Link href={user?.role === 'superadmin' ? route('superadmin.profile') : user?.role === 'admin' ? route('admin.profile') : route('profile.edit')} className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors">
                                     <div className="flex items-center gap-3"><SettingsOutlinedIcon sx={{ fontSize: 18 }} className="text-gray-500 dark:text-gray-400" /> Pengaturan profil</div>
                                 </Link>
                             </div>
 
                             <div className="h-px bg-gray-100 dark:bg-gray-800 w-full my-1"></div>
 
-                            {/* Aksi Keluar */}
                             <div className="py-1">
                                 <Link 
                                     href={route('logout')} 
@@ -280,7 +283,6 @@ export default function AuthenticatedLayout({ children }) {
                         </div>
                     )}
                 </div>
-
             </aside>
 
             <div className={`flex-1 w-full transition-all duration-300 ${isExpanded ? 'lg:ml-[240px]' : 'lg:ml-[88px]'}`}>
@@ -289,7 +291,6 @@ export default function AuthenticatedLayout({ children }) {
                 </main>
             </div>
 
-            {/* Achievement Toast Notification */}
             {toastAchievements.length > 0 && (
                 <div className="fixed top-6 right-6 z-[100] flex flex-col gap-3 animate-in">
                     {toastAchievements.map((ach, i) => (
@@ -308,7 +309,6 @@ export default function AuthenticatedLayout({ children }) {
                 </div>
             )}
 
-            {/* Gaya CSS Helper untuk Hide-Scrollbar dan Animasi pop-up */}
             <style dangerouslySetInnerHTML={{__html:`
                 .hide-scrollbar::-webkit-scrollbar { display: none; }
                 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

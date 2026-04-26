@@ -15,7 +15,7 @@ export default function AdminDashboard({
 }) {
     return (
         <AuthenticatedLayout
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Admin Overview</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800 dark:text-white leading-tight">Admin Overview</h2>}
         >
             <Head title="Admin Dashboard" />
 
@@ -24,7 +24,7 @@ export default function AdminDashboard({
                     {/* Platform Overview */}
                     <div className="mb-8">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-bold text-gray-900 border-l-4 border-red-600 pl-3">Performance Overview</h3>
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white border-l-4 border-red-600 pl-3">Performance Overview</h3>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <StatCard title="Total Murid" value={totalUsers.toLocaleString()} icon="👥" />
@@ -46,9 +46,9 @@ export default function AdminDashboard({
                                     </div>
                                 ))}
                             </div>
-                            <div className="flex justify-center gap-4 mt-4 text-xs text-gray-500">
+                            <div className="flex justify-center gap-4 mt-4 text-xs text-gray-500 dark:text-gray-400">
                                 <span className="flex items-center gap-1"><div className="w-3 h-3 bg-red-600 rounded"></div> New Enrollments</span>
-                                <span className="flex items-center gap-1"><div className="w-3 h-3 bg-red-200 rounded"></div> Returning</span>
+                                <span className="flex items-center gap-1"><div className="w-3 h-3 bg-red-200 dark:bg-red-900/30 rounded"></div> Returning</span>
                             </div>
                         </ChartCard>
 
@@ -63,10 +63,10 @@ export default function AdminDashboard({
                                 ].map((mod, i) => (
                                     <div key={i} className="flex flex-col gap-1">
                                         <div className="flex justify-between text-sm">
-                                            <span className="font-medium text-gray-700">{mod.name}</span>
-                                            <span className="text-gray-500">{mod.students} stds</span>
+                                            <span className="font-medium text-gray-700 dark:text-gray-300">{mod.name}</span>
+                                            <span className="text-gray-500 dark:text-gray-400">{mod.students} stds</span>
                                         </div>
-                                        <div className="w-full bg-gray-100 rounded-full h-2">
+                                        <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2">
                                             <div className="bg-red-500 h-2 rounded-full" style={{ width: `${mod.progress}%` }}></div>
                                         </div>
                                     </div>
