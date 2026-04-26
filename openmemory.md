@@ -160,3 +160,48 @@ export default function Page() {
 - Menggunakan pendekatan **Baseline + Keyword Scanning**: 
   - Setiap Lesson atau Quiz yang diselesaikan menyumbang poin baseline ke seluruh skill.
   - Tambahan multiplier bonus didapat jika `title` materi memiliki keyword spesifik (contoh: "baca", "dokkai", "grammar", "kanji", dsb).
+
+---
+
+## Memory 2026-04-26 - Admin Naming Refactor
+
+### Tujuan
+- Menyamakan struktur penamaan `Admin` dengan pola `SuperAdmin` agar controller dan page Inertia lebih mudah dipahami saat maintenance.
+
+### Backend Admin
+- Semua controller di `japanlingo/app/Http/Controllers/Admin` memakai prefix `Admin`:
+  - `AdminAchievementController`
+  - `AdminDashboardController`
+  - `AdminGamificationController`
+  - `AdminLessonController`
+  - `AdminLevelController`
+  - `AdminModuleController`
+  - `AdminQuestionController`
+  - `AdminQuizController`
+  - `AdminUploadController`
+
+### Frontend Admin
+- Semua page utama di `japanlingo/resources/js/Pages/Admin` diubah ke nama prefiks:
+  - `AdminDashboard.jsx`
+  - `AdminProfile.jsx`
+  - `AdminModulesIndex.jsx`
+  - `AdminLessonsIndex.jsx`
+  - `AdminLessonsCreate.jsx`
+  - `AdminLessonsEdit.jsx`
+  - `AdminQuestionsIndex.jsx`
+  - `AdminQuestionsCreate.jsx`
+  - `AdminQuestionsEdit.jsx`
+  - `AdminQuizzesIndex.jsx`
+  - `AdminUsersIndex.jsx`
+  - `AdminGamificationIndex.jsx`
+  - `AdminContentEditor.jsx`
+  - `AdminQuizBuilder.jsx`
+  - `AdminLevelsIndex.jsx`
+
+### Catatan Teknis
+- Semua `Inertia::render()` dan route admin sudah diarahkan ke nama file baru.
+- Route `admin/levels` sebelumnya mengarah ke page yang belum ada; sekarang sudah dipenuhi oleh `Admin/Levels/AdminLevelsIndex`.
+- Verifikasi yang sudah dijalankan:
+  - `php -l` untuk seluruh controller `Admin`
+  - `php artisan route:list --name=admin`
+  - scan referensi lama untuk memastikan tidak ada path admin lama yang tertinggal
