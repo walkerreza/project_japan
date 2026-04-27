@@ -97,6 +97,7 @@ export default function AuthenticatedLayout({ children }) {
         { href: '/admin/modules', icon: <LibraryBooksIcon sx={{ fontSize: 24 }} />, label: 'Modul' },
         { href: '/admin/quizzes', icon: <PostAddIcon sx={{ fontSize: 24 }} />, label: 'Kuis' },
         { href: '/admin/users', icon: <PeopleIcon sx={{ fontSize: 24 }} />, label: 'Data Murid' },
+        { href: '/admin/analytics', icon: <ShowChartIcon sx={{ fontSize: 24 }} />, label: 'Analitik' },
         { href: '/admin/gamification', icon: <EmojiEventsIcon sx={{ fontSize: 24 }} />, label: 'Aturan Gim' },
     ];
     
@@ -115,6 +116,7 @@ export default function AuthenticatedLayout({ children }) {
         { href: '/superadmin/admins', icon: <ShieldIcon sx={{ fontSize: 24 }} />, label: 'Data Admin' },
         { href: '/superadmin/content', icon: <MonitorHeartIcon sx={{ fontSize: 24 }} />, label: 'Konten' },
         { href: '/superadmin/gamification', icon: <EmojiEventsIcon sx={{ fontSize: 24 }} />, label: 'Gamifikasi' },
+        { href: '/superadmin/payments', icon: <WorkspacePremiumIcon sx={{ fontSize: 24 }} />, label: 'Pemasukan' },
         { href: '/superadmin/activity', icon: <ReceiptLongOutlinedIcon sx={{ fontSize: 24 }} />, label: 'Aktivitas' },
         { href: '/superadmin/system', icon: <SettingsIcon sx={{ fontSize: 24 }} />, label: 'Sistem' },
     ];

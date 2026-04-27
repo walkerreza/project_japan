@@ -15,6 +15,7 @@ class Quiz extends Model
         'lesson_id',
         'type',
         'time_limit',
+        'status',
     ];
 
     public function lesson(): BelongsTo

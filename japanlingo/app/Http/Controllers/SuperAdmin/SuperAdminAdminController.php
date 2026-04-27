@@ -4,23 +4,49 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Models\ActivityLog;
 use App\Models\User;
+use App\Models\UserStatusHistory;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class SuperAdminAdminController extends SuperAdminBaseController
 {
-    public function __invoke()
+    public function __invoke(Request $request)
     {
-        $admins = User::whereIn('role', ['admin', 'superadmin'])->latest()->take(10)->get();
+        $filters = [
+            'search' => (string) $request->string('search'),
+            'status' => $request->string('status')->value() ?: 'all',
+            'role' => $request->string('role')->value() ?: 'all',
+        ];
+
+        $admins = User::query()
+            ->whereIn('role', ['admin', 'superadmin'])
+            ->when($filters['search'], function ($query, $search) {
+                $query->where(function ($inner) use ($search) {
+                    $inner->where('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->when($filters['status'] !== 'all', fn ($query) => $query->where('status', $filters['status']))
+            ->when($filters['role'] !== 'all', fn ($query) => $query->where('role', $filters['role']))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('SuperAdmin/SuperAdminAdmins', [
             'stats' => [
-                $this->stat('Admin Aktif', number_format(User::where('role', 'admin')->where('status', 'active')->count()), '🛡️'),
-                $this->stat('Superadmin', number_format(User::where('role', 'superadmin')->count()), '👑'),
-                $this->stat('Aksi Hari Ini', number_format(ActivityLog::whereDate('created_at', today())->count()), '⚙️'),
-                $this->stat('Nonaktif', number_format(User::whereIn('role', ['admin', 'superadmin'])->where('status', '!=', 'active')->count()), '⛔', '0', 'down'),
+                $this->stat('Admin Aktif', number_format(User::where('role', 'admin')->where('status', 'active')->count()), 'A'),
+                $this->stat('Superadmin', number_format(User::where('role', 'superadmin')->count()), 'S'),
+                $this->stat('Aksi Hari Ini', number_format(ActivityLog::whereDate('created_at', today())->count()), 'L'),
+                $this->stat('Nonaktif', number_format(User::whereIn('role', ['admin', 'superadmin'])->where('status', '!=', 'active')->count()), 'X', '0', 'down'),
             ],
-            'admins' => $admins->map(fn (User $user) => [
+            'admins' => $admins->through(fn (User $user) => [
+                'id' => $user->id,
                 'name' => $user->username,
+                'email' => $user->email,
+                'raw_role' => $user->role,
+                'raw_status' => $user->status,
                 'role' => ucfirst($user->role),
                 'focus' => $user->role === 'superadmin' ? 'Platform oversight' : 'Content operations',
                 'updated' => optional($user->updated_at)->diffForHumans() ?? '-',
@@ -33,6 +59,85 @@ class SuperAdminAdminController extends SuperAdminBaseController
                 ->get()
                 ->map(fn (ActivityLog $log) => $log->description ?: $log->action)
                 ->values(),
+            'filters' => $filters,
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['nullable', 'string', 'min:8'],
+            'role' => ['required', 'in:admin,superadmin'],
+        ]);
+
+        $password = $validated['password'] ?: Str::password(10, true, true, false, false);
+
+        $admin = User::create([
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'password' => Hash::make($password),
+            'role' => $validated['role'],
+            'status' => 'active',
+            'subscription_status' => 'premium',
+        ]);
+
+        $this->logActivity($request, 'admin.created', 'user', $admin->id, "Membuat {$admin->role} {$admin->username}");
+
+        return redirect()->back()->with('generated_password', $validated['password'] ? null : $password);
+    }
+
+    public function updateStatus(Request $request, User $user)
+    {
+        abort_if(! in_array($user->role, ['admin', 'superadmin'], true), 404);
+        abort_if($request->user()->id === $user->id && $request->input('status') === 'suspended', 422, 'Tidak bisa menonaktifkan akun sendiri.');
+
+        $validated = $request->validate([
+            'status' => ['required', 'in:active,suspended'],
+            'reason' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $oldStatus = $user->status ?? 'active';
+
+        $user->update([
+            'status' => $validated['status'],
+            'suspended_at' => $validated['status'] === 'suspended' ? now() : null,
+            'suspended_reason' => $validated['status'] === 'suspended' ? ($validated['reason'] ?? null) : null,
+        ]);
+
+        UserStatusHistory::create([
+            'user_id' => $user->id,
+            'changed_by' => $request->user()->id,
+            'old_status' => $oldStatus,
+            'new_status' => $validated['status'],
+            'reason' => $validated['reason'] ?? null,
+        ]);
+
+        $this->logActivity(
+            $request,
+            'admin.status_changed',
+            'user',
+            $user->id,
+            "Mengubah status {$user->role} {$user->username} dari {$oldStatus} ke {$validated['status']}",
+            ['old_status' => $oldStatus, 'new_status' => $validated['status']]
+        );
+
+        return redirect()->back()->with('success', 'Status admin berhasil diperbarui');
+    }
+
+    public function resetPassword(Request $request, User $user)
+    {
+        abort_if(! in_array($user->role, ['admin', 'superadmin'], true), 404);
+
+        $password = Str::password(10, true, true, false, false);
+
+        $user->update([
+            'password' => Hash::make($password),
+        ]);
+
+        $this->logActivity($request, 'admin.password_reset', 'user', $user->id, "Reset password {$user->role} {$user->username}");
+
+        return redirect()->back()->with('generated_password', $password);
     }
 }

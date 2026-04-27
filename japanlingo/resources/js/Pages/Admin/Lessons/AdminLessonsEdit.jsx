@@ -15,6 +15,7 @@ export default function LessonEdit({ lesson, modules = [] }) {
         content: lesson.content || '',
         order: lesson.order ?? 0,
         duration_minutes: lesson.duration_minutes || '',
+        status: lesson.status || 'published',
     });
 
     const handleSubmit = (e) => {
@@ -89,6 +90,17 @@ export default function LessonEdit({ lesson, modules = [] }) {
                                     className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E64A19]/30 focus:border-[#E64A19]"
                                     placeholder="15"
                                 />
+                            </div>
+                            <div className="col-span-2">
+                                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status Publish</label>
+                                <select
+                                    value={data.status}
+                                    onChange={e => setData('status', e.target.value)}
+                                    className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E64A19]/30 focus:border-[#E64A19]"
+                                >
+                                    <option value="published">Published</option>
+                                    <option value="draft">Draft</option>
+                                </select>
                             </div>
                         </div>
                     </div>

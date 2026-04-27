@@ -23,6 +23,7 @@ class QuizRequest extends FormRequest
             'lesson_id'  => 'required|exists:lessons,id',
             'type'       => 'required|in:multiple_choice,typing,listening',
             'time_limit' => 'nullable|integer|min:0',
+            'status'     => 'nullable|in:draft,published',
         ];
     }
 

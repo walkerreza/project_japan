@@ -23,6 +23,7 @@ class AdminLessonController extends Controller
             'title'            => $l->title,
             'order'            => $l->order,
             'duration_minutes' => $l->duration_minutes,
+            'status'           => $l->status ?? 'published',
             'module'           => $l->module ? ['id' => $l->module->id, 'title' => $l->module->title] : null,
             'quiz_count'       => $l->quizzes()->count(),
         ]);
@@ -53,6 +54,7 @@ class AdminLessonController extends Controller
             'content'          => 'nullable|string',
             'order'            => 'required|integer|min:0',
             'duration_minutes' => 'nullable|integer|min:1',
+            'status'           => 'nullable|in:draft,published',
         ], [
             'module_id.required' => 'Modul wajib dipilih',
             'module_id.exists'   => 'Modul tidak ditemukan',
@@ -82,6 +84,7 @@ class AdminLessonController extends Controller
             'content'          => 'nullable|string',
             'order'            => 'required|integer|min:0',
             'duration_minutes' => 'nullable|integer|min:1',
+            'status'           => 'nullable|in:draft,published',
         ], [
             'module_id.required' => 'Modul wajib dipilih',
             'title.required'     => 'Judul pelajaran wajib diisi',

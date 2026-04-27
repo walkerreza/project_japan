@@ -24,6 +24,7 @@ class AdminModuleController extends Controller
                 'title'        => $m->title,
                 'description'  => $m->description,
                 'week_number'  => $m->week_number,
+                'status'       => $m->status ?? 'published',
                 'level'        => $m->level,
                 'lesson_count' => $m->lessons->count(),
             ]);
@@ -93,6 +94,7 @@ class AdminModuleController extends Controller
                 'video_url'        => $data['video_url'] ?? null,
                 'order'            => $index,
                 'duration_minutes' => $data['duration_minutes'] ?? 5,
+                'status'           => $data['status'] ?? 'published',
             ];
 
             // Cari file yang diunggah untuk index ini

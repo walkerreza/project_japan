@@ -20,6 +20,7 @@ class Lesson extends Model
         'file_url',
         'order',
         'duration_minutes',
+        'status',
     ];
 
     public function module(): BelongsTo

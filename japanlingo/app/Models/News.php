@@ -41,4 +41,36 @@ class News extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+    public function attachments()
+    {
+        return $this->hasMany(NewsAttachment::class)->orderBy('sort_order');
+    }
+
+    public function thumbnailUrl(): ?string
+    {
+        $attachment = $this->relationLoaded('attachments')
+            ? $this->attachments->firstWhere('file_type', 'image')
+            : $this->attachments()->where('file_type', 'image')->first();
+
+        if ($attachment?->file_path) {
+            return asset("storage/{$attachment->file_path}");
+        }
+
+        if (! $this->body || ! preg_match('/<img[^>]+src=["\']([^"\']+)["\']/i', $this->body, $matches)) {
+            return null;
+        }
+
+        $src = html_entity_decode($matches[1]);
+
+        if (str_starts_with($src, 'http://') || str_starts_with($src, 'https://')) {
+            return $src;
+        }
+
+        if (str_starts_with($src, 'data:image')) {
+            return null;
+        }
+
+        return url($src);
+    }
 }

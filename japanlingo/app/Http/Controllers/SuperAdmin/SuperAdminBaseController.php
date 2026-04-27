@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
+use Illuminate\Http\Request;
 
 abstract class SuperAdminBaseController extends Controller
 {
@@ -18,5 +20,25 @@ abstract class SuperAdminBaseController extends Controller
             'suspended' => 'Suspended',
             default => ucfirst($status),
         };
+    }
+
+    protected function logActivity(
+        Request $request,
+        string $action,
+        ?string $targetType = null,
+        ?int $targetId = null,
+        ?string $description = null,
+        array $metadata = []
+    ): void {
+        ActivityLog::create([
+            'actor_id' => $request->user()?->id,
+            'action' => $action,
+            'target_type' => $targetType,
+            'target_id' => $targetId,
+            'description' => $description,
+            'metadata' => $metadata ?: null,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
     }
 }

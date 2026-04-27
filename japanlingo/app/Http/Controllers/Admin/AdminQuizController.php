@@ -29,6 +29,7 @@ class AdminQuizController extends Controller
             'id'             => $q->id,
             'type'           => $q->type,
             'time_limit'     => $q->time_limit,
+            'status'         => $q->status ?? 'published',
             'question_count' => $q->questions_count,
             'lesson'         => $q->lesson,
         ]);
@@ -49,6 +50,17 @@ class AdminQuizController extends Controller
         return redirect()->back()->with('success', 'Kuis berhasil dibuat');
     }
 
+    public function updateStatus(Request $request, Quiz $quiz)
+    {
+        $validated = $request->validate([
+            'status' => ['required', 'in:draft,published'],
+        ]);
+
+        $quiz->update($validated);
+
+        return redirect()->back()->with('success', 'Status kuis berhasil diperbarui');
+    }
+
     public function destroy(Quiz $quiz)
     {
         $quiz->delete();
@@ -64,6 +76,7 @@ class AdminQuizController extends Controller
                 'id'         => $quiz->id,
                 'type'       => $quiz->type,
                 'time_limit' => $quiz->time_limit,
+                'status'     => $quiz->status ?? 'published',
                 'lesson'     => $quiz->lesson,
             ],
             'questions' => $quiz->questions->map(fn($q) => [

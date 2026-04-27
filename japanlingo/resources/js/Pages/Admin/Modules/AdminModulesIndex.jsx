@@ -24,6 +24,7 @@ export default function ModulesIndex({ modules, levels = [], filters = {} }) {
         title: '',
         week_number: '',
         description: '',
+        status: 'published',
     });
 
     const moduleItems = modules?.data || modules || [];
@@ -54,6 +55,7 @@ export default function ModulesIndex({ modules, levels = [], filters = {} }) {
             title: module.title,
             week_number: module.week_number,
             description: module.description || '',
+            status: module.status || 'published',
         });
         setShowModuleModal(true);
     };
@@ -147,6 +149,9 @@ export default function ModulesIndex({ modules, levels = [], filters = {} }) {
                                             {module.level?.level_name || '—'}
                                         </span>
                                         <span className="text-[11px] text-gray-400 dark:text-gray-500 font-medium">Minggu {module.week_number}</span>
+                                        <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${module.status === 'draft' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300'}`}>
+                                            {module.status || 'published'}
+                                        </span>
                                     </div>
                                     <h2 className="text-base font-black text-gray-900 dark:text-white truncate">{module.title}</h2>
                                 </div>
@@ -246,6 +251,17 @@ export default function ModulesIndex({ modules, levels = [], filters = {} }) {
                                     className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E64A19]/30 focus:border-[#E64A19]"
                                     required
                                 />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status Publish</label>
+                                <select
+                                    value={data.status}
+                                    onChange={e => setData('status', e.target.value)}
+                                    className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E64A19]/30 focus:border-[#E64A19]"
+                                >
+                                    <option value="published">Published</option>
+                                    <option value="draft">Draft</option>
+                                </select>
                             </div>
                             <div className="flex gap-3 pt-2">
                                 <button type="button" onClick={() => setShowModuleModal(false)} className="flex-1 h-11 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-bold text-gray-600 dark:text-gray-400">Batal</button>

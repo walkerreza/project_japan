@@ -16,6 +16,7 @@ class Module extends Model
         'title',
         'week_number',
         'description',
+        'status',
     ];
 
     public function level(): BelongsTo

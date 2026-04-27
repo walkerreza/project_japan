@@ -74,6 +74,76 @@ Important columns:
 
 Successful login is now recorded from `AuthenticatedSessionController`.
 
+### `news_attachments`
+
+Purpose: file attachments and video embed entries for `news`.
+
+Primary key:
+- `id`
+
+Foreign keys:
+- `news_id` references `news.id`, `cascadeOnDelete`
+
+Important columns:
+- `file_name`
+- `file_path`
+- `file_type`
+- `mime_type`
+- `file_size`
+- `video_embed_url`
+- `sort_order`
+
+### `payment_plans`
+
+Purpose: master data paket langganan premium.
+
+Important columns:
+- `name`
+- `slug`
+- `price`
+- `duration_days`
+- `features`
+- `is_active`
+
+### `subscriptions`
+
+Purpose: status langganan premium per user.
+
+Important columns:
+- `user_id`
+- `payment_plan_id`
+- `status`
+- `start_date`
+- `end_date`
+- `auto_renew`
+
+### `transactions`
+
+Purpose: manual payment records with `pending/success/failed/expired` flow.
+
+Important columns:
+- `transaction_code`
+- `user_id`
+- `payment_plan_id`
+- `subscription_id`
+- `amount`
+- `payment_method`
+- `status`
+- `proof_of_payment_path`
+- `notes`
+- `processed_at`
+
+### `transaction_logs`
+
+Purpose: audit trail perubahan status transaksi pembayaran.
+
+Important columns:
+- `transaction_id`
+- `changed_by`
+- `old_status`
+- `new_status`
+- `notes`
+
 ### `user_status_histories`
 
 Purpose: audit trail for future suspend/activate user workflows.
@@ -121,6 +191,23 @@ Routes now point to controller methods:
 - `/superadmin/activity`
 - `/superadmin/system`
 
+Operational routes added:
+- `PATCH /superadmin/users/{user}/status`
+- `POST /superadmin/users/{user}/reset-password`
+- `POST /superadmin/admins`
+- `PATCH /superadmin/admins/{user}/status`
+- `POST /superadmin/admins/{user}/reset-password`
+- `POST /superadmin/content/news`
+- `PUT /superadmin/content/news/{news}`
+- `DELETE /superadmin/content/news/{news}`
+- `POST /superadmin/content/news/{news}/attachments`
+- `DELETE /superadmin/content/news/{news}/attachments/{attachment}`
+- `GET /superadmin/payments`
+- `POST /superadmin/payments/plans`
+- `POST /superadmin/payments/transactions`
+- `PATCH /superadmin/payments/transactions/{transaction}/approve`
+- `PATCH /superadmin/payments/transactions/{transaction}/reject`
+
 Legacy route:
 - `/superadmin/pricing` redirects to `/superadmin/activity`
 
@@ -132,20 +219,31 @@ New models:
 
 Updated model:
 - `User`
+- `News`
+
+Auth behavior:
+- Suspended accounts are blocked after credential validation.
+- Blocked login attempts are recorded in `login_histories` with `status = failed`.
+- Generated passwords from superadmin reset/create operations are shared to Inertia through `flash.generated_password`.
 
 ## Frontend Changes
 
-Superadmin pages now accept backend props with fallback mock data:
+Superadmin pages now accept backend props:
 - `SuperAdminDashboard.jsx`
 - `SuperAdminUsers.jsx`
 - `SuperAdminAdmins.jsx`
 - `SuperAdminContent.jsx`
+- `SuperAdminPayments.jsx`
 - `SuperAdminGamification.jsx`
 - `SuperAdminActivity.jsx`
 - `SuperAdminSystem.jsx`
 - `SuperAdminProfile.jsx`
 
-This keeps pages usable during development while allowing real data to appear once the new tables have records.
+Operational UI added:
+- `SuperAdminUsers.jsx`: search, status filter, pagination, suspend/activate, reset password
+- `SuperAdminAdmins.jsx`: search, role/status filters, pagination, create admin, suspend/activate, reset password
+- `SuperAdminContent.jsx`: search/status/audience/pinned filters, pagination, rich text news editor, attachment upload, video embed, pending review status
+- `SuperAdminPayments.jsx`: plan creation, manual transaction creation, pending approval, reject flow
 
 User dashboard news integration:
 - `UserDashboard.jsx` now receives `news` from the backend.
@@ -164,11 +262,10 @@ Real data now available for:
 - activity logs once records are inserted
 
 Still pending:
-- CRUD UI for news
-- explicit create/update helpers for activity logs
-- failed login logging
-- suspend/activate workflows
-- payment/subscription tables
+- broader activity logging outside the newly implemented superadmin actions
+- payment export/reporting
+- automated subscription expiry jobs
+- user-submitted payment proof flow from the student side
 - cohort/kloter tables
 
 ## Relationship Notes

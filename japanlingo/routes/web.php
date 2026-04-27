@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminAchievementController;
+use App\Http\Controllers\Admin\AdminAnalyticsController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminLessonController;
 use App\Http\Controllers\Admin\AdminLevelController;
@@ -8,8 +9,10 @@ use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AdminQuestionController;
 use App\Http\Controllers\Admin\AdminQuizController;
 use App\Http\Controllers\Admin\AdminUploadController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\LearningController;
+use App\Http\Controllers\User\NewsController;
 use App\Http\Controllers\User\ProgressController;
 use App\Http\Controllers\User\CertificateController;
 use App\Http\Controllers\SuperAdmin\SuperAdminActivityController;
@@ -17,6 +20,7 @@ use App\Http\Controllers\SuperAdmin\SuperAdminAdminController;
 use App\Http\Controllers\SuperAdmin\SuperAdminContentController;
 use App\Http\Controllers\SuperAdmin\SuperAdminDashboardController;
 use App\Http\Controllers\SuperAdmin\SuperAdminGamificationController;
+use App\Http\Controllers\SuperAdmin\SuperAdminPaymentController;
 use App\Http\Controllers\SuperAdmin\SuperAdminSystemController;
 use App\Http\Controllers\SuperAdmin\SuperAdminUserController;
 use App\Http\Controllers\ProfileController;
@@ -58,11 +62,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('role:superadmin')->prefix('superadmin')->name('superadmin.')->group(function () {
         Route::get('/dashboard', SuperAdminDashboardController::class)->name('dashboard');
         Route::get('/users', SuperAdminUserController::class)->name('users');
+        Route::patch('/users/{user}/status', [SuperAdminUserController::class, 'updateStatus'])->name('users.status');
+        Route::post('/users/{user}/reset-password', [SuperAdminUserController::class, 'resetPassword'])->name('users.reset-password');
         Route::get('/admins', SuperAdminAdminController::class)->name('admins');
+        Route::post('/admins', [SuperAdminAdminController::class, 'store'])->name('admins.store');
+        Route::patch('/admins/{user}/status', [SuperAdminAdminController::class, 'updateStatus'])->name('admins.status');
+        Route::post('/admins/{user}/reset-password', [SuperAdminAdminController::class, 'resetPassword'])->name('admins.reset-password');
         Route::get('/content', SuperAdminContentController::class)->name('content');
+        Route::post('/content/news', [SuperAdminContentController::class, 'store'])->name('content.news.store');
+        Route::put('/content/news/{news}', [SuperAdminContentController::class, 'update'])->name('content.news.update');
+        Route::delete('/content/news/{news}', [SuperAdminContentController::class, 'destroy'])->name('content.news.destroy');
+        Route::post('/content/news/editor-images', [SuperAdminContentController::class, 'storeEditorImage'])->name('content.news.editor-images.store');
+        Route::post('/content/news/{news}/attachments', [SuperAdminContentController::class, 'storeAttachment'])->name('content.news.attachments.store');
+        Route::delete('/content/news/{news}/attachments/{attachment}', [SuperAdminContentController::class, 'destroyAttachment'])->name('content.news.attachments.destroy');
         Route::get('/gamification', SuperAdminGamificationController::class)->name('gamification');
         Route::get('/activity', SuperAdminActivityController::class)->name('activity');
-        Route::redirect('/pricing', '/superadmin/activity');
+        Route::get('/payments', SuperAdminPaymentController::class)->name('payments');
+        Route::post('/payments/plans', [SuperAdminPaymentController::class, 'storePlan'])->name('payments.plans.store');
+        Route::post('/payments/transactions', [SuperAdminPaymentController::class, 'storeTransaction'])->name('payments.transactions.store');
+        Route::patch('/payments/transactions/{transaction}/approve', [SuperAdminPaymentController::class, 'approve'])->name('payments.transactions.approve');
+        Route::patch('/payments/transactions/{transaction}/reject', [SuperAdminPaymentController::class, 'reject'])->name('payments.transactions.reject');
+        Route::redirect('/pricing', '/superadmin/payments');
         Route::get('/system', SuperAdminSystemController::class)->name('system');
         Route::get('/profile', fn() => Inertia::render('SuperAdmin/SuperAdminProfile'))->name('profile');
     });
@@ -70,7 +90,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Admin Routes
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/users', fn() => Inertia::render('Admin/Users/AdminUsersIndex'))->name('users');
+        Route::get('/users', [AdminUserController::class, 'index'])->name('users');
+        Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
+        Route::get('/analytics', AdminAnalyticsController::class)->name('analytics');
         Route::get('/gamification', fn() => Inertia::render('Admin/Gamification/AdminGamificationIndex', [
             'achievements' => \App\Models\Achievement::withCount('users')->orderBy('created_at', 'desc')->get(),
         ]))->name('gamification');
@@ -89,6 +111,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Quizzes CRUD (home/index untuk daftar kuis)
         Route::get('/quizzes', [AdminQuizController::class, 'index'])->name('quizzes.index');
         Route::post('/quizzes', [AdminQuizController::class, 'store'])->name('quizzes.store');
+        Route::patch('/quizzes/{quiz}/status', [AdminQuizController::class, 'updateStatus'])->name('quizzes.status');
         Route::delete('/quizzes/{quiz}', [AdminQuizController::class, 'destroy'])->name('quizzes.destroy');
 
         // Module CRUD
@@ -123,6 +146,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // User Routes
     Route::middleware('role:user')->prefix('user')->name('user.')->group(function () {
         Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/news', [NewsController::class, 'index'])->name('news.index');
+        Route::get('/news/{news}', [NewsController::class, 'show'])->name('news.show');
         
         Route::get('/lessons', [LearningController::class, 'lessonLobby'])->name('lessons.index');
         Route::get('/lessons/{lesson}', [LearningController::class, 'showLesson'])->middleware('subscribed')->name('lessons.show');

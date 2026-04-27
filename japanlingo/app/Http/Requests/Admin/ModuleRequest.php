@@ -26,6 +26,7 @@ class ModuleRequest extends FormRequest
             'title'       => 'required|string|max:255',
             'week_number' => 'required|integer|min:1',
             'description' => 'nullable|string',
+            'status'      => 'nullable|in:draft,published',
         ];
     }
 

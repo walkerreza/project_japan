@@ -15,7 +15,12 @@ class LearningController extends Controller
     {
         $user = Auth::user();
         
-        $lessons = Lesson::with('module.level')->orderBy('module_id')->orderBy('order')->get();
+        $lessons = Lesson::with('module.level')
+            ->where('status', 'published')
+            ->whereHas('module', fn ($query) => $query->where('status', 'published'))
+            ->orderBy('module_id')
+            ->orderBy('order')
+            ->get();
         $completedLessonIds = $user->progress()->pluck('lesson_id')->toArray();
 
         $formattedLessons = $lessons->map(function ($lesson, $index) use ($completedLessonIds, $lessons, $user) {
@@ -57,7 +62,11 @@ class LearningController extends Controller
     {
         $user = Auth::user();
         
-        $quizzes = Quiz::with('lesson.module.level')->withCount('questions')->get();
+        $quizzes = Quiz::with('lesson.module.level')
+            ->withCount('questions')
+            ->where('status', 'published')
+            ->whereHas('lesson', fn ($query) => $query->where('status', 'published')->whereHas('module', fn ($query) => $query->where('status', 'published')))
+            ->get();
         $completedLessonIds = $user->progress()->pluck('lesson_id')->toArray();
 
         $formattedQuizzes = $quizzes->map(function ($quiz) use ($completedLessonIds, $user) {
@@ -91,8 +100,11 @@ class LearningController extends Controller
     public function showLesson($id)
     {
         $lesson = Lesson::with(['module.lessons' => function ($q) {
-            $q->orderBy('order');
-        }])->find($id);
+            $q->where('status', 'published')->orderBy('order');
+        }])
+            ->where('status', 'published')
+            ->whereHas('module', fn ($query) => $query->where('status', 'published'))
+            ->find($id);
 
         if (!$lesson) {
             abort(404, 'Lesson tidak ditemukan.');
@@ -147,7 +159,10 @@ class LearningController extends Controller
 
     public function showQuiz($id)
     {
-        $quiz = Quiz::with(['lesson', 'questions'])->find($id);
+        $quiz = Quiz::with(['lesson.module', 'questions'])
+            ->where('status', 'published')
+            ->whereHas('lesson', fn ($query) => $query->where('status', 'published')->whereHas('module', fn ($query) => $query->where('status', 'published')))
+            ->find($id);
 
         if (!$quiz) {
             abort(404, 'Quiz tidak ditemukan.');

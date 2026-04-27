@@ -29,6 +29,7 @@ export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
         lesson_id: '',
         type: 'multiple_choice',
         time_limit: '',
+        status: 'published',
     });
 
     const quizItems = quizzes?.data || quizzes || [];
@@ -56,6 +57,12 @@ export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
                 createForm.reset();
             },
         });
+    };
+
+    const toggleStatus = (quiz) => {
+        router.patch(route('admin.quizzes.status', quiz.id), {
+            status: quiz.status === 'draft' ? 'published' : 'draft',
+        }, { preserveScroll: true });
     };
 
     return (
@@ -137,6 +144,9 @@ export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
                                                         {Math.floor(quiz.time_limit / 60)} menit
                                                     </span>
                                                 )}
+                                                <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${quiz.status === 'draft' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300'}`}>
+                                                    {quiz.status || 'published'}
+                                                </span>
                                             </div>
                                             <p className="text-sm font-black text-gray-900 dark:text-white truncate">
                                                 {quiz.lesson?.title || <span className="text-gray-400 dark:text-gray-500 italic">Pelajaran tidak ditemukan</span>}
@@ -160,6 +170,12 @@ export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
                                             >
                                                 <EditOutlinedIcon sx={{ fontSize: 18 }} />
                                             </Link>
+                                            <button
+                                                onClick={() => toggleStatus(quiz)}
+                                                className="rounded-lg border border-gray-200 px-3 py-2 text-[10px] font-black uppercase text-gray-500 transition-colors hover:border-[#E64A19] hover:text-[#E64A19] dark:border-gray-700 dark:text-gray-400"
+                                            >
+                                                {quiz.status === 'draft' ? 'Publish' : 'Draft'}
+                                            </button>
                                             <button
                                                 onClick={() => setDeleteConfirm(quiz)}
                                                 className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-red-600 dark:text-red-400 hover:bg-red-50 dark:bg-red-900/20 transition-colors"
@@ -235,6 +251,17 @@ export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
                                     className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E64A19]/30 focus:border-[#E64A19]"
                                     placeholder="Kosongkan jika tanpa batas"
                                 />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status Publish</label>
+                                <select
+                                    value={createForm.data.status}
+                                    onChange={e => createForm.setData('status', e.target.value)}
+                                    className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E64A19]/30 focus:border-[#E64A19]"
+                                >
+                                    <option value="published">Published</option>
+                                    <option value="draft">Draft</option>
+                                </select>
                             </div>
                             <div className="flex gap-3 pt-2">
                                 <button type="button" onClick={() => setShowCreateModal(false)} className="flex-1 h-11 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-800/50 transition-colors">Batal</button>

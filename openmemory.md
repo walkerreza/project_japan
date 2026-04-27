@@ -205,3 +205,72 @@ export default function Page() {
   - `php -l` untuk seluruh controller `Admin`
   - `php artisan route:list --name=admin`
   - scan referensi lama untuk memastikan tidak ada path admin lama yang tertinggal
+
+---
+
+## Memory 2026-04-26 - SuperAdmin Operational Actions
+
+### Implementasi
+- `SuperAdminContent` sekarang memiliki CRUD dasar untuk `news`:
+  - create
+  - edit
+  - delete
+  - status `draft/published/archived`
+  - audience `students/admins/all`
+  - pinned news
+- `SuperAdminUsers` sekarang bisa:
+  - suspend / activate student
+  - reset password student
+  - mencatat perubahan ke `user_status_histories`
+  - mencatat aksi ke `activity_logs`
+- `SuperAdminAdmins` sekarang bisa:
+  - create admin / superadmin
+  - suspend / activate admin
+  - reset password admin
+  - mencatat aksi ke `activity_logs`
+- Login untuk akun `suspended` sekarang diblokir dan dicatat sebagai failed login di `login_histories`.
+
+### Catatan Pending
+- News belum memakai rich text editor package.
+- News belum punya attachment/media schema untuk `doc`, `docx`, `pdf`, image, atau video.
+- SuperAdmin users/admins/news belum punya pagination, search, dan filter penuh.
+- Payment/subscription management tetap belum masuk implementasi aktif.
+
+---
+
+## Memory 2026-04-26 - SuperAdmin Pending Implementation
+
+### News & Attachments
+- `news` sekarang mendukung status `pending` selain `draft`, `published`, dan `archived`.
+- Ditambahkan tabel `news_attachments` untuk image, document, dan `video_embed`.
+- `SuperAdminContent` sekarang memakai editor rich text `QuillEditor`.
+- Attachment upload dikelola setelah news tersimpan karena membutuhkan `news_id`.
+
+### Users & Admins
+- `SuperAdminUsers` dan `SuperAdminAdmins` sekarang punya:
+  - search
+  - filter
+  - pagination
+  - aksi suspend/activate
+  - reset password
+- `SuperAdminAdmins` juga sekarang bisa membuat akun admin/superadmin baru.
+
+### Payments MVP
+- Ditambahkan tabel:
+  - `payment_plans`
+  - `subscriptions`
+  - `transactions`
+  - `transaction_logs`
+- Ditambahkan page `SuperAdminPayments`.
+- Flow manual payment aktif:
+  - create transaction
+  - approve pending transaction
+  - reject transaction
+  - create subscription saat approve/success
+  - update `users.subscription_status` ke `premium`
+
+### Masih Pending
+- student-side payment submission
+- export/report payment
+- automated expiry/reminder subscription
+- cohort/kloter

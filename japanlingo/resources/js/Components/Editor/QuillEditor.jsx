@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -12,9 +12,38 @@ const TOOLBAR_OPTIONS = [
     ['clean'],
 ];
 
-export default function QuillEditor({ value, onChange, placeholder = 'Tulis konten di sini...' }) {
+export default function QuillEditor({ value, onChange, placeholder = 'Tulis konten di sini...', editorMinHeight = '200px', uploadImageUrl = null }) {
     // Karena di-lazy load lewat React.lazy di file pemanggil, 
     // komponen ini hanya akan dijalankan di sisi client (browser).
+    const quillRef = useRef(null);
+
+    const uploadImage = () => {
+        if (!uploadImageUrl) return;
+
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/jpeg,image/png,image/webp');
+        input.click();
+
+        input.onchange = async () => {
+            const file = input.files?.[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            const response = await window.axios.post(uploadImageUrl, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+
+            const editor = quillRef.current?.getEditor();
+            const range = editor?.getSelection(true);
+
+            if (editor && response.data?.url) {
+                editor.insertEmbed(range?.index ?? editor.getLength(), 'image', response.data.url, 'user');
+            }
+        };
+    };
     
     return (
         <div className="quill-wrapper">
@@ -25,7 +54,7 @@ export default function QuillEditor({ value, onChange, placeholder = 'Tulis kont
                     border-color: #e5e7eb;
                     font-family: inherit;
                     font-size: 14px;
-                    min-height: 200px;
+                    min-height: ${editorMinHeight};
                 }
                 .quill-wrapper .ql-toolbar {
                     border-top-left-radius: 12px;
@@ -38,7 +67,7 @@ export default function QuillEditor({ value, onChange, placeholder = 'Tulis kont
                     border-color: #E64A19;
                 }
                 .quill-wrapper .ql-editor {
-                    min-height: 200px;
+                    min-height: ${editorMinHeight};
                 }
                 .quill-wrapper .ql-editor.ql-blank::before {
                     color: #9ca3af;
@@ -46,11 +75,17 @@ export default function QuillEditor({ value, onChange, placeholder = 'Tulis kont
                 }
             `}</style>
             <ReactQuill
+                ref={quillRef}
                 theme="snow"
                 value={value || ''}
                 onChange={onChange}
                 placeholder={placeholder}
-                modules={{ toolbar: TOOLBAR_OPTIONS }}
+                modules={{
+                    toolbar: {
+                        container: TOOLBAR_OPTIONS,
+                        handlers: uploadImageUrl ? { image: uploadImage } : {},
+                    },
+                }}
             />
         </div>
     );

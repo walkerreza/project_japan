@@ -159,34 +159,49 @@ export default function UserDashboard({ user = {}, recentProgress = [], availabl
                     <section>
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
                             <h2 className="text-xl md:text-2xl font-black text-gray-900 dark:text-white">Berita Terkini Jepang</h2>
-                            <Link href="#" className="text-red-500 font-bold text-sm hover:underline">
+                            <Link href={route('user.news.index')} className="text-red-500 font-bold text-sm hover:underline">
                                 Lihat semua berita
                             </Link>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             {news && news.length > 0 ? news.map((item, idx) => (
-                                <div key={idx} className="bg-white dark:bg-gray-900 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-10px_rgba(0,0,0,0.1)] dark:shadow-none dark:hover:border-gray-700 transition-all duration-300 flex flex-col h-full group">
+                                <Link href={route('user.news.show', item.id)} key={item.id || idx} className="bg-white dark:bg-gray-900 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-10px_rgba(0,0,0,0.1)] dark:shadow-none dark:hover:border-gray-700 transition-all duration-300 flex flex-col h-full group">
+                                    <div className="aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-800">
+                                        {item.thumbnail_url || item.cover_url ? (
+                                            <img src={item.thumbnail_url || item.cover_url} alt={item.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                        ) : (
+                                            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-red-50 to-gray-100 text-3xl font-black text-red-200 dark:from-gray-800 dark:to-gray-900 dark:text-gray-700">
+                                                JP
+                                            </div>
+                                        )}
+                                    </div>
                                     <div className="p-6 flex flex-col flex-grow">
                                         {item.is_pinned && (
                                             <div className="mb-3">
                                                 <span className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[10px] font-bold px-2 py-1 rounded-md tracking-wider uppercase">
-                                                    📌 Disematkan
+                                                    PIN Disematkan
                                                 </span>
                                             </div>
                                         )}
                                         <div className="flex items-center gap-1.5 text-gray-400 text-xs font-medium mb-3">
                                             <AccessTimeIcon sx={{ fontSize: 14 }} />
-                                            {new Date(item.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                            {item.published_at
+                                                ? new Date(item.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+                                                : 'Japanlingo News'}
                                         </div>
                                         <h3 className="font-extrabold text-gray-900 dark:text-white text-lg leading-snug mb-3 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
                                             {item.title}
                                         </h3>
                                         <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6 flex-grow line-clamp-3">
-                                            {item.excerpt || item.body.substring(0, 100) + '...'}
+                                            {item.excerpt || (item.body ? item.body.replace(/<[^>]*>/g, '').substring(0, 100) + '...' : 'Baca update terbaru dari Japanlingo.')}
                                         </p>
+                                        <div className="mt-auto flex items-center gap-2 text-sm font-black text-red-600 dark:text-red-400">
+                                            Baca selengkapnya
+                                            <ArrowRightAltIcon sx={{ fontSize: 20 }} />
+                                        </div>
                                     </div>
-                                </div>
+                                </Link>
                             )) : (
                                 <p className="text-gray-500 dark:text-gray-400 text-sm col-span-3">Belum ada berita terbaru.</p>
                             )}

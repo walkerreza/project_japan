@@ -20,7 +20,7 @@ const QuillEditor = lazy(() => import('@/Components/Editor/QuillEditor'));
 export default function ContentEditor({ module, lessons: initialLessons = [] }) {
     const { data, setData, post, processing, recentlySuccessful } = useForm({
         lessons: initialLessons.length > 0 ? initialLessons : [
-            { id: null, type: 'text', title: 'Pelajaran Baru', content: '', video_url: '', file_url: '', order: 0 }
+            { id: null, type: 'text', title: 'Pelajaran Baru', content: '', video_url: '', file_url: '', order: 0, status: 'published' }
         ],
     });
 
@@ -42,6 +42,7 @@ export default function ContentEditor({ module, lessons: initialLessons = [] }) 
             video_url: '',
             file_url: '',
             order: data.lessons.length,
+            status: 'published',
         };
         setData('lessons', [...data.lessons, newBlock]);
         setActiveBlockId(data.lessons.length);
@@ -121,6 +122,15 @@ export default function ContentEditor({ module, lessons: initialLessons = [] }) 
                                             <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded ${lesson.type === 'text' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : lesson.type === 'video_yt' ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400' : 'bg-green-50 dark:bg-green-900/20 text-green-600'}`}>
                                                 {lesson.type}
                                             </span>
+                                            <select
+                                                value={lesson.status || 'published'}
+                                                onChange={(e) => updateBlock(idx, 'status', e.target.value)}
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-[10px] font-black uppercase text-gray-600 focus:ring-[#E64A19] dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                                            >
+                                                <option value="published">Published</option>
+                                                <option value="draft">Draft</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <input type="text" value={lesson.title} onChange={(e) => updateBlock(idx, 'title', e.target.value)} className="w-full text-lg font-black text-gray-900 dark:text-white border-none p-0 mb-6 focus:ring-0 placeholder-gray-300" placeholder="Judul blok..." />
