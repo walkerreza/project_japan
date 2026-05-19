@@ -4,10 +4,28 @@
 //   'spring' | 'autumn' | 'winter' | 'summer'
 // ============================================================
 
-export const ACTIVE_THEME = 'spring';
+export const DEFAULT_THEME = 'spring';
 
+const getGlobalThemeConfig = () => {
+    if (typeof window === 'undefined') {
+        return { activeTheme: DEFAULT_THEME, customTheme: {} };
+    }
 
-const themes = {
+    return window.__JAPANLINGO_THEME__ || { activeTheme: DEFAULT_THEME, customTheme: {} };
+};
+
+const getGlobalThemeName = () => {
+    if (typeof window === 'undefined') return DEFAULT_THEME;
+
+    return getGlobalThemeConfig().activeTheme || DEFAULT_THEME;
+};
+
+const getGlobalCustomTheme = () => {
+    const customTheme = getGlobalThemeConfig().customTheme;
+    return customTheme && typeof customTheme === 'object' ? customTheme : {};
+};
+
+export const THEME_PRESETS = {
 
     // 🌸 SPRING (Sakura)
     spring: {
@@ -155,4 +173,10 @@ const themes = {
     },
 };
 
-export default themes[ACTIVE_THEME];
+const storedThemeName = getGlobalThemeName();
+export const ACTIVE_THEME = THEME_PRESETS[storedThemeName] ? storedThemeName : DEFAULT_THEME;
+
+export default {
+    ...(THEME_PRESETS[ACTIVE_THEME] || THEME_PRESETS[DEFAULT_THEME]),
+    ...getGlobalCustomTheme(),
+};

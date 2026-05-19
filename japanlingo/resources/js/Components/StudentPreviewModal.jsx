@@ -17,22 +17,22 @@ export default function StudentPreviewModal({ show, onClose, lessons, moduleTitl
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4 lg:p-8 animate-in fade-in duration-200">
-            <div className="bg-[#F8F9FA] w-full max-w-5xl h-full rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden relative border border-white/20 animate-in zoom-in-95 duration-300">
+            <div className="bg-[#F8F9FA] dark:bg-gray-950 w-full max-w-5xl h-full rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden relative border border-white/20 dark:border-gray-800 animate-in zoom-in-95 duration-300">
                 
                 {/* Header Preview */}
-                <header className="h-16 bg-white border-b border-gray-100 px-8 flex items-center justify-between shrink-0">
+                <header className="h-16 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-8 flex items-center justify-between shrink-0">
                     <div className="flex items-center gap-3">
-                        <div className="px-3 py-1 bg-red-100 text-red-600 text-[10px] font-black uppercase tracking-widest rounded-full">
+                        <div className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300 text-[10px] font-black uppercase tracking-widest rounded-full">
                             Student Preview Mode
                         </div>
-                        <span className="text-gray-300">/</span>
-                        <h3 className="text-sm font-bold text-gray-900 truncate max-w-[300px]">
+                        <span className="text-gray-300 dark:text-gray-700">/</span>
+                        <h3 className="text-sm font-bold text-gray-900 dark:text-white truncate max-w-[300px]">
                             {moduleTitle}
                         </h3>
                     </div>
                     <button 
                         onClick={onClose}
-                        className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-colors"
+                        className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
                     >
                         <CloseIcon />
                     </button>
@@ -44,22 +44,22 @@ export default function StudentPreviewModal({ show, onClose, lessons, moduleTitl
                         
                         {/* Judul & Deskripsi Modul */}
                         <div className="text-center">
-                            <h1 className="text-4xl font-black text-gray-900 mb-4">{moduleTitle}</h1>
-                            <p className="text-gray-500 font-medium italic">Anda sedang melihat simulasi materi sebagai murid.</p>
+                            <h1 className="text-4xl font-black text-gray-900 dark:text-white mb-4">{moduleTitle}</h1>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium italic">Anda sedang melihat simulasi materi sebagai murid.</p>
                         </div>
 
                         {/* Rendering Blok Pelajaran */}
                         {lessons.map((lesson, idx) => (
                             <section key={idx} className="space-y-6">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-2xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-red-600 font-black text-lg">
+                                    <div className="w-12 h-12 rounded-2xl bg-white dark:bg-gray-900 shadow-sm border border-gray-100 dark:border-gray-800 flex items-center justify-center text-red-600 dark:text-red-400 font-black text-lg">
                                         {String(idx + 1).padStart(2, '0')}
                                     </div>
-                                    <h2 className="text-2xl font-black text-gray-900">{lesson.title}</h2>
+                                    <h2 className="text-2xl font-black text-gray-900 dark:text-white">{lesson.title}</h2>
                                 </div>
 
                                 {/* Konten Materi */}
-                                <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
+                                <div className="bg-white dark:bg-gray-900 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
                                     
                                     {/* Video Youtube */}
                                     {lesson.type === 'video_yt' && (
@@ -85,13 +85,13 @@ export default function StudentPreviewModal({ show, onClose, lessons, moduleTitl
                                     {lesson.type === 'text' && (
                                         <div className="p-8 lg:p-10">
                                             <div className="flex items-center gap-3 mb-6">
-                                                <div className="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
+                                                <div className="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-500 dark:text-red-300 flex items-center justify-center">
                                                     <SchoolIcon />
                                                 </div>
-                                                <h4 className="text-lg font-black text-gray-900">Materi Pelajaran</h4>
+                                                <h4 className="text-lg font-black text-gray-900 dark:text-white">Materi Pelajaran</h4>
                                             </div>
                                             <div 
-                                                className="prose prose-red max-w-none prose-headings:font-black prose-p:text-gray-600 prose-p:leading-relaxed font-medium"
+                                                className="prose prose-red max-w-none prose-headings:font-black prose-headings:text-gray-900 prose-p:text-gray-600 prose-p:leading-relaxed prose-strong:text-gray-900 font-medium dark:prose-invert dark:prose-headings:text-white dark:prose-p:text-gray-300 dark:prose-strong:text-white"
                                                 dangerouslySetInnerHTML={{ __html: lesson.content || '<p class="text-gray-400 italic">Belum ada konten teks...</p>' }}
                                             />
                                         </div>
@@ -99,13 +99,13 @@ export default function StudentPreviewModal({ show, onClose, lessons, moduleTitl
 
                                     {/* File PDF/DOC */}
                                     {lesson.type === 'file' && (
-                                        <div className="p-8 lg:p-10 bg-gray-50/50">
-                                            <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-gray-200 rounded-3xl bg-white group hover:border-green-400 transition-colors">
-                                                <div className="w-16 h-16 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
+                                        <div className="p-8 lg:p-10 bg-gray-50/50 dark:bg-gray-950/40">
+                                            <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-3xl bg-white dark:bg-gray-900 group hover:border-green-400 dark:hover:border-green-600 transition-colors">
+                                                <div className="w-16 h-16 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-300 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
                                                     <PictureAsPdfOutlinedIcon sx={{ fontSize: 32 }} />
                                                 </div>
-                                                <h4 className="text-lg font-black text-gray-900 mb-2">Dokumen Pendukung</h4>
-                                                <p className="text-sm text-gray-500 mb-6 text-center max-w-xs">
+                                                <h4 className="text-lg font-black text-gray-900 dark:text-white mb-2">Dokumen Pendukung</h4>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 text-center max-w-xs">
                                                     Klik tombol di bawah untuk mengunduh materi dalam format PDF atau Word.
                                                 </p>
                                                 
@@ -119,7 +119,7 @@ export default function StudentPreviewModal({ show, onClose, lessons, moduleTitl
                                                         Unduh Materi
                                                     </a>
                                                 ) : (
-                                                    <button disabled className="px-8 h-12 bg-gray-100 text-gray-400 rounded-xl font-bold cursor-not-allowed">
+                                                    <button disabled className="px-8 h-12 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 rounded-xl font-bold cursor-not-allowed">
                                                         Belum ada file diunggah
                                                     </button>
                                                 )}
@@ -134,7 +134,7 @@ export default function StudentPreviewModal({ show, onClose, lessons, moduleTitl
                         <div className="text-center pb-20">
                             <button 
                                 onClick={onClose}
-                                className="px-8 h-12 bg-gray-900 hover:bg-black text-white rounded-xl font-bold transition-all shadow-xl shadow-gray-900/20 active:scale-95"
+                                className="px-8 h-12 bg-gray-900 hover:bg-black dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 rounded-xl font-bold transition-all shadow-xl shadow-gray-900/20 active:scale-95"
                             >
                                 Tutup Preview & Kembali Edit
                             </button>

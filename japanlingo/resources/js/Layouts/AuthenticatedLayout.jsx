@@ -96,6 +96,7 @@ export default function AuthenticatedLayout({ children }) {
         { href: '/admin/dashboard', icon: <DashboardIcon sx={{ fontSize: 24 }} />, label: 'Beranda' },
         { href: '/admin/modules', icon: <LibraryBooksIcon sx={{ fontSize: 24 }} />, label: 'Modul' },
         { href: '/admin/quizzes', icon: <PostAddIcon sx={{ fontSize: 24 }} />, label: 'Kuis' },
+        { href: '/admin/kanji', icon: <AutoStoriesIcon sx={{ fontSize: 24 }} />, label: 'Kanji Bank' },
         { href: '/admin/users', icon: <PeopleIcon sx={{ fontSize: 24 }} />, label: 'Data Murid' },
         { href: '/admin/analytics', icon: <ShowChartIcon sx={{ fontSize: 24 }} />, label: 'Analitik' },
         { href: '/admin/gamification', icon: <EmojiEventsIcon sx={{ fontSize: 24 }} />, label: 'Aturan Gim' },

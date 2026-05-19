@@ -17,6 +17,7 @@ import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import HeadsetIcon from '@mui/icons-material/Headset';
 import rawTheme from '@/Components/theme/themes';
 import FallEffect from '@/Components/theme/FallEffect';
+import heroStaticImage from '@/../../resources/Images/Mount-Fuji-New.jpg';
 
 // Map theme keys ke format yang dipakai landingPage
 const theme = {
@@ -58,7 +59,14 @@ const LandingPage = () => {
 
       {/* Hero */}
       <section className={`relative flex flex-col lg:flex-row items-center justify-between px-6 lg:px-24 py-16 lg:py-32 ${theme.heroBg} gap-12 lg:gap-16 overflow-hidden`}>
-        <div className="absolute inset-x-0 top-0 h-full w-full opacity-[0.03] pointer-events-none"
+        <img
+          src={heroStaticImage}
+          alt="Mount Fuji Japanlingo"
+          className="absolute inset-0 h-full w-full object-cover opacity-65"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-white/88 via-white/62 to-white/25" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/45 via-transparent to-white/78" />
+        <div className="absolute inset-x-0 top-0 h-full w-full opacity-[0.04] pointer-events-none"
           style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '32px 32px' }}>
         </div>
 

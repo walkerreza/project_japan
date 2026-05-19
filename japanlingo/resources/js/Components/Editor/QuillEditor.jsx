@@ -73,6 +73,31 @@ export default function QuillEditor({ value, onChange, placeholder = 'Tulis kont
                     color: #9ca3af;
                     font-style: normal;
                 }
+                .dark .quill-wrapper .ql-container {
+                    border-color: #374151;
+                    background: #030712;
+                    color: #f9fafb;
+                }
+                .dark .quill-wrapper .ql-toolbar {
+                    border-color: #374151;
+                    background: #111827;
+                }
+                .dark .quill-wrapper .ql-toolbar .ql-stroke {
+                    stroke: #d1d5db;
+                }
+                .dark .quill-wrapper .ql-toolbar .ql-fill {
+                    fill: #d1d5db;
+                }
+                .dark .quill-wrapper .ql-toolbar .ql-picker {
+                    color: #d1d5db;
+                }
+                .dark .quill-wrapper .ql-picker-options {
+                    border-color: #374151;
+                    background: #111827;
+                }
+                .dark .quill-wrapper .ql-editor.ql-blank::before {
+                    color: #6b7280;
+                }
             `}</style>
             <ReactQuill
                 ref={quillRef}

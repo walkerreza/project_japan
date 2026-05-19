@@ -4,7 +4,7 @@ import { Head, Link } from '@inertiajs/react';
 import Card from '@/Components/UI/Card';
 import StatCard from '@/Components/Dashboard/StatCard';
 
-export default function AdminAnalyticsIndex({ summary = {}, lowScoreQuizzes = [], popularModules = [], inactiveStudents = [], recentAttempts = [] }) {
+export default function AdminAnalyticsIndex({ summary = {}, lowScoreQuizzes = [], popularModules = [], inactiveStudents = [], recentAttempts = [], questionPerformance = [] }) {
     return (
         <AuthenticatedLayout>
             <Head title="Admin - Analitik Sensei" />
@@ -59,6 +59,49 @@ export default function AdminAnalyticsIndex({ summary = {}, lowScoreQuizzes = []
                         </div>
                     </Card>
                 </div>
+
+                <Card>
+                    <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                        <div>
+                            <h2 className="text-lg font-black text-gray-900 dark:text-white">Performa Soal</h2>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Soal dengan persentase benar terendah muncul paling atas.</p>
+                        </div>
+                    </div>
+                    <div className="mt-4 overflow-x-auto">
+                        <table className="w-full min-w-[760px] text-sm">
+                            <thead>
+                                <tr className="border-b border-gray-100 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:border-gray-800">
+                                    <th className="py-3 pr-4">Soal</th>
+                                    <th className="px-4 py-3">Materi</th>
+                                    <th className="px-4 py-3 text-center">Attempt</th>
+                                    <th className="px-4 py-3 text-center">Benar</th>
+                                    <th className="py-3 pl-4 text-right">Akurasi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {questionPerformance.map((item) => (
+                                    <tr key={item.id} className="border-b border-gray-50 dark:border-gray-800/70">
+                                        <td className="max-w-[320px] py-4 pr-4 font-bold text-gray-900 dark:text-white">
+                                            <span className="line-clamp-2">{item.question_text}</span>
+                                        </td>
+                                        <td className="px-4 py-4 text-gray-500 dark:text-gray-400">
+                                            <p className="font-bold text-gray-700 dark:text-gray-300">{item.lesson || item.quiz_type || 'Tanpa lesson'}</p>
+                                            <p className="text-xs">{item.module || 'Tanpa modul'}</p>
+                                        </td>
+                                        <td className="px-4 py-4 text-center font-black text-gray-700 dark:text-gray-300">{item.attempts_count}</td>
+                                        <td className="px-4 py-4 text-center font-black text-green-600 dark:text-green-400">{item.correct_count}</td>
+                                        <td className="py-4 pl-4 text-right">
+                                            <span className={`rounded-full px-3 py-1 text-xs font-black ${item.correct_rate < 50 ? 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-300' : 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-300'}`}>
+                                                {item.correct_rate}%
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        {questionPerformance.length === 0 && <p className="py-6 text-sm text-gray-500 dark:text-gray-400">Belum ada data jawaban per soal. Data akan muncul setelah user mengerjakan kuis terbaru.</p>}
+                    </div>
+                </Card>
 
                 <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
                     <Card>

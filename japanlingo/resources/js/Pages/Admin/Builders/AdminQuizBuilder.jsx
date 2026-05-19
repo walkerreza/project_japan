@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
+import React, { useRef, useState } from 'react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -13,6 +13,7 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
 import TimerOutlinedIcon from '@mui/icons-material/TimerOutlined';
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -42,11 +43,20 @@ const emptyQuestion = (type = 'multiple_choice') => ({
 export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) {
     const [activeIndex, setActiveIndex] = useState(0);
     const [activeTab, setActiveTab] = useState('questions');
+    const [importProcessing, setImportProcessing] = useState(false);
+    const [showKanjiGenerate, setShowKanjiGenerate] = useState(false);
+    const importInputRef = useRef(null);
 
     const { data, setData, post, processing, recentlySuccessful } = useForm({
         questions: initialQuestions.length > 0
             ? initialQuestions.map(q => ({ ...q, type: q.type || quiz?.type || 'multiple_choice' }))
             : [emptyQuestion(quiz?.type || 'multiple_choice')],
+    });
+    const kanjiForm = useForm({
+        jlpt_level: 'N3',
+        count: 10,
+        mode: 'meaning',
+        status: 'published',
     });
 
     const activeQ = data.questions[activeIndex] || data.questions[0];
@@ -100,6 +110,34 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
         post(route('admin.quizzes.builder.update', quiz.id));
     };
 
+    const handleImportQuestions = (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const payload = new FormData();
+        payload.append('import_file', file);
+        setImportProcessing(true);
+
+        router.post(route('admin.quizzes.questions.import', quiz.id), payload, {
+            forceFormData: true,
+            preserveScroll: true,
+            preserveState: false,
+            onFinish: () => {
+                setImportProcessing(false);
+                event.target.value = '';
+            },
+        });
+    };
+
+    const handleGenerateKanjiQuestions = (event) => {
+        event.preventDefault();
+        kanjiForm.post(route('admin.quizzes.questions.generate-kanji', quiz.id), {
+            preserveScroll: true,
+            preserveState: false,
+            onSuccess: () => setShowKanjiGenerate(false),
+        });
+    };
+
     const totalPoints = data.questions.length * 10;
 
     // ─── RENDER: QUESTION EDITOR (by type) ──────────────────
@@ -109,7 +147,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
         return (
             <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 border-l-4 border-l-[#E64A19] overflow-hidden">
                 {/* Editor Header */}
-                <div className="flex items-center justify-between p-4 border-b border-gray-50 bg-gray-50 dark:bg-gray-800/50/30">
+                <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-gray-50 dark:border-gray-800 dark:bg-gray-800/50">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
                             <svg className="w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
@@ -146,7 +184,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                                 value={activeQ.audio_url || ''}
                                 onChange={(e) => updateQuestion(activeIndex, 'audio_url', e.target.value)}
                                 placeholder="https://example.com/audio.mp3"
-                                className="w-full bg-gray-50 dark:bg-gray-800/50 border-transparent rounded-xl p-4 text-sm font-medium text-gray-900 dark:text-white focus:bg-white dark:bg-gray-900 focus:border-red-100 dark:border-red-900/30 focus:ring-4 focus:ring-red-500/10 transition-all outline-none"
+                                className="w-full rounded-xl border border-transparent bg-gray-50 p-4 text-sm font-medium text-gray-900 outline-none transition-all focus:border-red-100 focus:bg-white focus:ring-4 focus:ring-red-500/10 dark:bg-gray-800/50 dark:text-white dark:focus:border-red-900/30 dark:focus:bg-gray-950"
                             />
                             {activeQ.audio_url && (
                                 <div className="mt-3 bg-green-50 dark:bg-green-900/20 border border-green-200 rounded-xl p-3 flex items-center gap-3">
@@ -178,7 +216,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                                         ? 'e.g. 音声で言っていることは何ですか？'
                                         : 'e.g. Choose the correct reading for: 経済'
                                 }
-                                className="w-full min-h-[100px] bg-gray-50 dark:bg-gray-800/50 border-transparent rounded-xl p-4 text-base font-medium text-gray-900 dark:text-white focus:bg-white dark:bg-gray-900 focus:border-red-100 dark:border-red-900/30 focus:ring-4 focus:ring-red-500/10 transition-all resize-none outline-none"
+                                className="w-full min-h-[100px] rounded-xl border border-transparent bg-gray-50 p-4 text-base font-medium text-gray-900 outline-none transition-all resize-none focus:border-red-100 focus:bg-white focus:ring-4 focus:ring-red-500/10 dark:bg-gray-800/50 dark:text-white dark:focus:border-red-900/30 dark:focus:bg-gray-950"
                             />
                             <div className="absolute right-4 bottom-4 flex gap-2">
                                 <button className="p-1.5 bg-white dark:bg-gray-900 shadow-sm rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:text-gray-400 transition-colors"><ImageOutlinedIcon sx={{ fontSize: 18 }} /></button>
@@ -204,7 +242,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                                             placeholder={`Opsi ${optLabels[optIdx]}`}
                                             className={`w-full h-14 rounded-xl pl-14 pr-12 text-sm font-medium focus:outline-none ${
                                                 isCorrect
-                                                    ? 'bg-green-50 dark:bg-green-900/20/50 border border-green-500 text-green-900 font-bold focus:ring-4 focus:ring-green-500/20'
+                                                    ? 'bg-green-50 dark:bg-green-900/20 border border-green-500 text-green-900 dark:text-green-200 font-bold focus:ring-4 focus:ring-green-500/20'
                                                     : 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 focus:border-gray-400'
                                             }`}
                                         />
@@ -224,7 +262,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                     {/* ─── Fill in Blank: Answer Input ─── */}
                     {qType === 'fill_blank' && (
                         <div className="space-y-4">
-                            <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
+                            <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 dark:bg-purple-900/20 dark:border-purple-900/40">
                                 <p className="text-[10px] font-black text-purple-500 uppercase tracking-widest mb-3">Preview Soal</p>
                                 <p className="text-lg font-bold text-gray-900 dark:text-white leading-relaxed">
                                     {activeQ.question_text
@@ -232,7 +270,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                                             <React.Fragment key={i}>
                                                 {part}
                                                 {i < arr.length - 1 && (
-                                                    <span className="inline-block mx-1 px-4 py-1 bg-white dark:bg-gray-900 border-2 border-dashed border-purple-400 rounded-lg text-purple-600 font-black text-sm">
+                                                    <span className="inline-block mx-1 px-4 py-1 bg-white dark:bg-gray-950 border-2 border-dashed border-purple-400 dark:border-purple-700 rounded-lg text-purple-600 dark:text-purple-300 font-black text-sm">
                                                         {activeQ.correct_answer || '?'}
                                                     </span>
                                                 )}
@@ -249,7 +287,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                                     value={activeQ.correct_answer}
                                     onChange={(e) => updateQuestion(activeIndex, 'correct_answer', e.target.value)}
                                     placeholder="e.g. 学校"
-                                    className="w-full h-14 bg-white dark:bg-gray-900 border-2 border-purple-300 rounded-xl px-4 text-lg font-bold text-purple-900 focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500"
+                                    className="w-full h-14 bg-white dark:bg-gray-950 border-2 border-purple-300 dark:border-purple-800 rounded-xl px-4 text-lg font-bold text-purple-900 dark:text-purple-200 focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500"
                                 />
                             </div>
                             <div>
@@ -263,7 +301,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                                         setData('questions', updated);
                                     }}
                                     placeholder="e.g. がっこう (petunjuk membaca)"
-                                    className="w-full h-12 bg-gray-50 dark:bg-gray-800/50 border-transparent rounded-xl px-4 text-sm font-medium text-gray-600 dark:text-gray-400 focus:bg-white dark:bg-gray-900 focus:border-gray-300 dark:border-gray-600 focus:ring-4 focus:ring-gray-500/10 outline-none"
+                                    className="w-full h-12 rounded-xl border border-transparent bg-gray-50 px-4 text-sm font-medium text-gray-600 outline-none focus:border-gray-300 focus:bg-white focus:ring-4 focus:ring-gray-500/10 dark:bg-gray-800/50 dark:text-gray-300 dark:focus:border-gray-600 dark:focus:bg-gray-950"
                                 />
                             </div>
                         </div>
@@ -279,7 +317,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                                     value={activeQ.correct_answer}
                                     onChange={(e) => updateQuestion(activeIndex, 'correct_answer', e.target.value)}
                                     placeholder="e.g. 天気予報"
-                                    className="w-full h-14 bg-white dark:bg-gray-900 border-2 border-green-300 rounded-xl px-4 text-lg font-bold text-green-900 focus:outline-none focus:ring-4 focus:ring-green-500/20 focus:border-green-500"
+                                    className="w-full h-14 bg-white dark:bg-gray-950 border-2 border-green-300 dark:border-green-800 rounded-xl px-4 text-lg font-bold text-green-900 dark:text-green-200 focus:outline-none focus:ring-4 focus:ring-green-500/20 focus:border-green-500"
                                 />
                             </div>
                             <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 rounded-xl p-4 flex items-center gap-3">
@@ -299,7 +337,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                             value={activeQ.explanation || ''}
                             onChange={(e) => updateQuestion(activeIndex, 'explanation', e.target.value)}
                             placeholder="e.g. 経済 (Keizai) means economy."
-                            className="w-full min-h-[80px] bg-gray-50 dark:bg-gray-800/50 border-transparent rounded-xl p-4 text-sm font-medium text-gray-500 dark:text-gray-400 focus:bg-white dark:bg-gray-900 focus:border-red-100 dark:border-red-900/30 focus:ring-4 focus:ring-red-500/10 transition-all resize-none outline-none"
+                            className="w-full min-h-[80px] rounded-xl border border-transparent bg-gray-50 p-4 text-sm font-medium text-gray-500 outline-none transition-all resize-none focus:border-red-100 focus:bg-white focus:ring-4 focus:ring-red-500/10 dark:bg-gray-800/50 dark:text-gray-300 dark:focus:border-red-900/30 dark:focus:bg-gray-950"
                         />
                     </div>
                 </div>
@@ -316,18 +354,18 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                 <div className="grid grid-cols-2 gap-6">
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">Passing Score (%)</label>
-                        <input type="number" min="0" max="100" defaultValue="60" className="w-full h-12 bg-gray-50 dark:bg-gray-800/50 border-transparent rounded-xl px-4 text-sm font-bold text-gray-900 dark:text-white focus:bg-white dark:bg-gray-900 focus:border-red-100 dark:border-red-900/30 focus:ring-4 focus:ring-red-500/10 outline-none" />
+                        <input type="number" min="0" max="100" defaultValue="60" className="w-full h-12 rounded-xl border border-transparent bg-gray-50 px-4 text-sm font-bold text-gray-900 outline-none focus:border-red-100 focus:bg-white focus:ring-4 focus:ring-red-500/10 dark:bg-gray-800/50 dark:text-white dark:focus:border-red-900/30 dark:focus:bg-gray-950" />
                         <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-1">Skor minimum untuk lulus kuis</p>
                     </div>
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-1"><TimerOutlinedIcon sx={{ fontSize: 12 }} /> Batas Waktu (detik)</label>
-                        <input type="number" min="0" defaultValue={quiz?.time_limit || ''} className="w-full h-12 bg-gray-50 dark:bg-gray-800/50 border-transparent rounded-xl px-4 text-sm font-bold text-gray-900 dark:text-white focus:bg-white dark:bg-gray-900 focus:border-red-100 dark:border-red-900/30 focus:ring-4 focus:ring-red-500/10 outline-none" placeholder="Kosong = tanpa batas" />
+                        <input type="number" min="0" defaultValue={quiz?.time_limit || ''} className="w-full h-12 rounded-xl border border-transparent bg-gray-50 px-4 text-sm font-bold text-gray-900 outline-none focus:border-red-100 focus:bg-white focus:ring-4 focus:ring-red-500/10 dark:bg-gray-800/50 dark:text-white dark:focus:border-red-900/30 dark:focus:bg-gray-950" placeholder="Kosong = tanpa batas" />
                     </div>
                 </div>
 
                 <div className="border-t border-gray-100 dark:border-gray-800 pt-6 space-y-4">
                     <h3 className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Opsi Pengacakan</h3>
-                    <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl cursor-pointer hover:bg-gray-100 dark:bg-gray-800 transition-colors">
+                    <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                         <div className="flex items-center gap-3">
                             <ShuffleIcon className="text-blue-500" sx={{ fontSize: 20 }} />
                             <div>
@@ -337,7 +375,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                         </div>
                         <input type="checkbox" defaultChecked className="w-5 h-5 rounded text-[#E64A19] focus:ring-[#E64A19]/30 border-gray-300 dark:border-gray-600" />
                     </label>
-                    <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl cursor-pointer hover:bg-gray-100 dark:bg-gray-800 transition-colors">
+                    <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                         <div className="flex items-center gap-3">
                             <ShuffleIcon className="text-purple-500" sx={{ fontSize: 20 }} />
                             <div>
@@ -354,11 +392,11 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                     <div className="grid grid-cols-2 gap-6">
                         <div>
                             <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">Maks. Percobaan</label>
-                            <input type="number" min="1" defaultValue="3" className="w-full h-12 bg-gray-50 dark:bg-gray-800/50 border-transparent rounded-xl px-4 text-sm font-bold text-gray-900 dark:text-white focus:bg-white dark:bg-gray-900 focus:border-red-100 dark:border-red-900/30 focus:ring-4 focus:ring-red-500/10 outline-none" />
+                            <input type="number" min="1" defaultValue="3" className="w-full h-12 rounded-xl border border-transparent bg-gray-50 px-4 text-sm font-bold text-gray-900 outline-none focus:border-red-100 focus:bg-white focus:ring-4 focus:ring-red-500/10 dark:bg-gray-800/50 dark:text-white dark:focus:border-red-900/30 dark:focus:bg-gray-950" />
                         </div>
                         <div>
                             <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">Tampilkan Penjelasan?</label>
-                            <select className="w-full h-12 bg-gray-50 dark:bg-gray-800/50 border-transparent rounded-xl px-4 text-sm font-bold text-gray-900 dark:text-white focus:bg-white dark:bg-gray-900 focus:border-red-100 dark:border-red-900/30 outline-none">
+                            <select className="w-full h-12 rounded-xl border border-transparent bg-gray-50 px-4 text-sm font-bold text-gray-900 outline-none focus:border-red-100 focus:bg-white dark:bg-gray-800/50 dark:text-white dark:focus:border-red-900/30 dark:focus:bg-gray-950">
                                 <option value="after_submit">Setelah Submit</option>
                                 <option value="after_all">Setelah Semua Selesai</option>
                                 <option value="never">Tidak Ditampilkan</option>
@@ -432,8 +470,12 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                                         <td className="px-5 py-3 font-black text-gray-400 dark:text-gray-500">Q{i + 1}</td>
                                         <td className="px-5 py-3"><span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded ${typeColor}`}>{typeConf}</span></td>
                                         <td className="px-5 py-3 font-medium text-gray-700 dark:text-gray-300 truncate max-w-[200px]">{q.question_text || <span className="text-gray-300 italic">Kosong</span>}</td>
-                                        <td className="px-5 py-3 text-center text-gray-300 font-bold">—</td>
-                                        <td className="px-5 py-3 text-center text-gray-300 font-bold">—</td>
+                                        <td className="px-5 py-3 text-center font-bold text-gray-600 dark:text-gray-300">
+                                            {q.correct_rate === null || q.correct_rate === undefined ? '—' : `${q.correct_rate}%`}
+                                        </td>
+                                        <td className="px-5 py-3 text-center font-bold text-gray-600 dark:text-gray-300">
+                                            {q.attempts_count ? `${q.correct_count}/${q.attempts_count}` : '—'}
+                                        </td>
                                         <td className="px-5 py-3 text-center">
                                             {isFilled
                                                 ? <span className="text-[10px] font-black text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-0.5 rounded">Siap</span>
@@ -530,14 +572,14 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
 
     return (
         <AuthenticatedLayout>
-            <div className="min-h-screen bg-[#F8F9FB] flex flex-col font-sans">
+            <div className="min-h-screen bg-[#F8F9FB] dark:bg-gray-950 flex flex-col font-sans">
             <Head title="Quiz Builder - Japanlingo" />
 
             {/* Top Nav */}
             <header className="sticky top-0 z-40 shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 lg:h-16 lg:px-6 lg:py-0">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-0 items-center gap-4">
-                    <Link href={route('admin.quizzes.index')} className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:text-white transition-colors">
+                    <Link href={route('admin.quizzes.index')} className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     </Link>
                     <div className="h-6 w-px bg-gray-200"></div>
@@ -556,7 +598,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`px-4 h-9 rounded-lg text-sm font-bold transition-colors flex items-center gap-2 ${
-                                activeTab === tab ? 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-800/50 hover:text-gray-900 dark:text-white'
+                                activeTab === tab ? 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-white'
                             }`}
                         >
                             {tab === 'questions' && <><FormatListBulletedIcon sx={{ fontSize: 16 }} /> Questions</>}
@@ -568,6 +610,29 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
 
                 <div className="flex flex-wrap items-center gap-3 lg:justify-end">
                     {recentlySuccessful && <span className="text-xs font-bold text-green-600 animate-pulse">Tersimpan!</span>}
+                    <input
+                        ref={importInputRef}
+                        type="file"
+                        accept=".csv,.txt,.xlsx"
+                        className="hidden"
+                        onChange={handleImportQuestions}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => importInputRef.current?.click()}
+                        disabled={importProcessing}
+                        className="h-9 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-600 transition-colors hover:border-red-200 hover:text-red-600 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                    >
+                        <UploadFileIcon sx={{ fontSize: 18 }} className="mr-1 align-[-4px]" />
+                        {importProcessing ? 'Import...' : 'Import CSV/Excel'}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setShowKanjiGenerate(true)}
+                        className="h-9 rounded-xl border border-orange-200 bg-orange-50 px-4 text-sm font-bold text-orange-700 transition-colors hover:border-orange-300 hover:bg-orange-100 dark:border-orange-900/40 dark:bg-orange-900/20 dark:text-orange-300"
+                    >
+                        Generate Kanji
+                    </button>
                     <button onClick={handleSave} disabled={processing} className="bg-[#E64A19] hover:bg-[#D84315] disabled:opacity-50 text-white rounded-xl px-6 h-9 shadow-md shadow-orange-500/20 text-sm font-bold flex items-center gap-2 transition-colors">
                         <SaveOutlinedIcon sx={{ fontSize: 18 }} />
                         {processing ? 'Menyimpan...' : 'Publish Quiz'}
@@ -596,14 +661,14 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                                         key={i}
                                         onClick={() => setActiveIndex(i)}
                                         className={`w-56 shrink-0 rounded-xl border p-3 text-left transition-all lg:w-full ${
-                                            activeIndex === i ? 'border-red-500 bg-red-50 dark:bg-red-900/20 shadow-sm ring-1 ring-red-500' : 'border-gray-100 dark:border-gray-800 hover:border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:bg-gray-800/50'
+                                            activeIndex === i ? 'border-red-500 bg-red-50 dark:bg-red-900/20 shadow-sm ring-1 ring-red-500' : 'border-gray-100 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
                                         }`}
                                     >
                                         <div className="flex items-center gap-2 mb-1">
                                             <span className={`text-[10px] font-black uppercase tracking-widest ${activeIndex === i ? 'text-red-700 dark:text-red-400' : 'text-gray-400 dark:text-gray-500'}`}>Q{i + 1}</span>
                                             <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded ${tColor}`}>{tLabel}</span>
                                         </div>
-                                        <p className={`text-sm font-bold truncate ${activeIndex === i ? 'text-red-900' : 'text-gray-700 dark:text-gray-300'}`}>
+                                        <p className={`text-sm font-bold truncate ${activeIndex === i ? 'text-red-900 dark:text-red-100' : 'text-gray-700 dark:text-gray-300'}`}>
                                             {q.question_text || 'Pertanyaan baru...'}
                                         </p>
                                     </button>
@@ -613,7 +678,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                         </div>
                         <div className="grid grid-cols-1 gap-2 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-3 sm:grid-cols-3 lg:grid-cols-1">
                             {QUESTION_TYPES.map(t => (
-                                <button key={t.value} onClick={() => addQuestion(t.value)} className="w-full py-2 border border-dashed border-gray-200 dark:border-gray-700 rounded-lg flex items-center justify-center gap-2 text-xs font-bold text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:bg-gray-800/50 hover:border-gray-300 dark:border-gray-600 hover:text-gray-600 dark:text-gray-400 transition-all">
+                                <button key={t.value} onClick={() => addQuestion(t.value)} className="w-full py-2 border border-dashed border-gray-200 dark:border-gray-700 rounded-lg flex items-center justify-center gap-2 text-xs font-bold text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-600 dark:hover:text-gray-300 transition-all">
                                     <AddIcon sx={{ fontSize: 14 }} /> {t.label}
                                 </button>
                             ))}
@@ -656,6 +721,52 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                     </aside>
                 )}
             </main>
+            {showKanjiGenerate && (
+                <div className="fixed inset-0 z-[70] flex items-center justify-center bg-gray-950/50 p-4 backdrop-blur-sm">
+                    <form onSubmit={handleGenerateKanjiQuestions} className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl dark:bg-gray-900">
+                        <div className="mb-5">
+                            <p className="text-xs font-black uppercase tracking-[0.25em] text-orange-600">Kanji Bank</p>
+                            <h2 className="text-xl font-black text-gray-900 dark:text-white">Generate Soal dari Kanji Bank</h2>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Soal baru akan ditambahkan ke akhir quiz ini.</p>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <label className="space-y-1">
+                                <span className="text-xs font-black text-gray-500 dark:text-gray-400">JLPT</span>
+                                <select value={kanjiForm.data.jlpt_level} onChange={(e) => kanjiForm.setData('jlpt_level', e.target.value)} className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+                                    <option value="N5">N5</option>
+                                    <option value="N4">N4</option>
+                                    <option value="N3">N3</option>
+                                </select>
+                            </label>
+                            <label className="space-y-1">
+                                <span className="text-xs font-black text-gray-500 dark:text-gray-400">Jumlah</span>
+                                <input type="number" min="1" max="50" value={kanjiForm.data.count} onChange={(e) => kanjiForm.setData('count', e.target.value)} className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
+                            </label>
+                            <label className="space-y-1 sm:col-span-2">
+                                <span className="text-xs font-black text-gray-500 dark:text-gray-400">Mode Soal</span>
+                                <select value={kanjiForm.data.mode} onChange={(e) => kanjiForm.setData('mode', e.target.value)} className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+                                    <option value="meaning">Apa arti kanji?</option>
+                                    <option value="reading">Apa reading utama?</option>
+                                    <option value="kanji_from_meaning">Pilih kanji dari arti</option>
+                                </select>
+                            </label>
+                            <label className="space-y-1 sm:col-span-2">
+                                <span className="text-xs font-black text-gray-500 dark:text-gray-400">Sumber Data</span>
+                                <select value={kanjiForm.data.status} onChange={(e) => kanjiForm.setData('status', e.target.value)} className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+                                    <option value="published">Published saja</option>
+                                    <option value="draft">Draft saja</option>
+                                    <option value="all">Semua status</option>
+                                </select>
+                            </label>
+                        </div>
+                        {kanjiForm.errors.generate && <p className="mt-3 text-sm font-bold text-red-600">{kanjiForm.errors.generate}</p>}
+                        <div className="mt-6 flex justify-end gap-3">
+                            <button type="button" onClick={() => setShowKanjiGenerate(false)} className="rounded-xl border border-gray-200 px-5 py-3 text-sm font-black text-gray-600 dark:border-gray-700 dark:text-gray-300">Batal</button>
+                            <button disabled={kanjiForm.processing} className="rounded-xl bg-[#E64A19] px-6 py-3 text-sm font-black text-white disabled:opacity-50">{kanjiForm.processing ? 'Generate...' : 'Generate'}</button>
+                        </div>
+                    </form>
+                </div>
+            )}
             </div>
         </AuthenticatedLayout>
     );

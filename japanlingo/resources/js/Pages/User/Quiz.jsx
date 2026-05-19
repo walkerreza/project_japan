@@ -43,6 +43,7 @@ export default function Quiz({ quiz, questions: rawQuestions = [] }) {
     const [showResult, setShowResult] = useState(false);
     
     const submitted = useRef(false);
+    const answerLogRef = useRef([]);
 
     // Animasi state
     const [shakeKey, setShakeKey] = useState(0); // Trigger shake animation
@@ -75,6 +76,15 @@ export default function Quiz({ quiz, questions: rawQuestions = [] }) {
             setShakeKey(prev => prev + 1); // Trigger getaran
             // PUT SOUND EFFECT HERE: playWrongSound()
         }
+
+        answerLogRef.current[currentIndex] = {
+            question_id: currentQ.id,
+            answer_text: currentQ.options[index] || '',
+            answer_payload: {
+                selected_index: index,
+                selected_option: currentQ.options[index] || '',
+            },
+        };
     };
 
     const submitAttempt = (finalScore) => {
@@ -85,6 +95,7 @@ export default function Quiz({ quiz, questions: rawQuestions = [] }) {
             quiz_id: quiz.id,
             score: finalScore,
             xp_earned: xp,
+            answers: answerLogRef.current.filter(Boolean),
         }, { preserveState: true });
     };
 

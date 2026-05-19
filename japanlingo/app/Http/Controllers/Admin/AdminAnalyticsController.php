@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Attempt;
 use App\Models\Module;
+use App\Models\Question;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -84,6 +85,34 @@ class AdminAnalyticsController extends Controller
                 'attempted_at' => optional($attempt->attempted_at)->format('d M Y H:i'),
             ]);
 
+        $questionPerformance = Question::query()
+            ->with('quiz.lesson.module')
+            ->withCount([
+                'attemptAnswers as attempts_count',
+                'attemptAnswers as correct_count' => fn ($query) => $query->where('is_correct', true),
+            ])
+            ->get()
+            ->filter(fn (Question $question) => $question->attempts_count > 0)
+            ->map(function (Question $question) {
+                $correctRate = $question->attempts_count > 0
+                    ? round(($question->correct_count / $question->attempts_count) * 100, 1)
+                    : 0;
+
+                return [
+                    'id' => $question->id,
+                    'question_text' => $question->question_text,
+                    'quiz_type' => $question->quiz?->type,
+                    'lesson' => $question->quiz?->lesson?->title,
+                    'module' => $question->quiz?->lesson?->module?->title,
+                    'attempts_count' => (int) $question->attempts_count,
+                    'correct_count' => (int) $question->correct_count,
+                    'correct_rate' => $correctRate,
+                ];
+            })
+            ->sortBy('correct_rate')
+            ->take(12)
+            ->values();
+
         return Inertia::render('Admin/Analytics/AdminAnalyticsIndex', [
             'summary' => [
                 'total_students' => User::where('role', 'user')->count(),
@@ -95,6 +124,7 @@ class AdminAnalyticsController extends Controller
             'popularModules' => $popularModules,
             'inactiveStudents' => $inactiveStudents,
             'recentAttempts' => $recentAttempts,
+            'questionPerformance' => $questionPerformance,
         ]);
     }
 }

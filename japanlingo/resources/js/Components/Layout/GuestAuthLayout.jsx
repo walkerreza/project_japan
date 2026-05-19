@@ -1,80 +1,68 @@
-//layout untuk halaman login dan register
-
 import { Link } from '@inertiajs/react';
 import fujiImage from '@/../../resources/Images/Mount-Fuji-New.jpg';
 
 export default function GuestAuthLayout({ children }) {
     return (
-        <div className="min-h-screen flex">
-            {/* Left Panel - Branding */}
-            <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-red-700 via-red-800 to-red-950 relative overflow-hidden flex-col justify-between p-12">
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-20 left-10 text-[200px] font-black text-white/5 -rotate-12">文</div>
-                    <div className="absolute bottom-20 right-10 text-[150px] font-black text-white/5 rotate-12">語</div>
-                </div>
+        <div className="flex min-h-screen">
+            <div className="relative hidden overflow-hidden bg-gradient-to-b from-red-700 via-red-800 to-red-950 p-10 lg:flex lg:w-1/2 xl:p-12">
+                <img
+                    src={fujiImage}
+                    className="absolute inset-0 h-full w-full object-cover opacity-75"
+                    alt="Mount Fuji"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-red-950/25 via-red-950/55 to-red-950/95" />
+                <div className="absolute inset-0 bg-gradient-to-r from-red-950/55 via-transparent to-transparent" />
+                <div className="absolute left-10 top-20 text-[200px] font-black text-white/5 -rotate-12">文</div>
+                <div className="absolute bottom-20 right-10 text-[150px] font-black text-white/5 rotate-12">語</div>
 
-                <div className="relative z-10">
-                    <Link href="/" className="flex items-center gap-2 no-underline mb-16">
-                        <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center text-white font-black text-xl border border-white/10">文</div>
+                <div className="relative z-10 flex min-h-full w-full flex-col justify-between">
+                    <Link href="/" className="flex items-center gap-2 no-underline">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/20 text-xl font-black text-white backdrop-blur-sm">文</div>
                         <span className="text-xl font-extrabold text-white">Japanlingo</span>
                     </Link>
-                </div>
 
-                <div className="relative z-10 flex-1 flex items-center">
-                    <div>
-                        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white/90 px-4 py-2 rounded-full text-xs font-semibold mb-6 border border-white/10">
-                            🎌 JLPT N3 STRUCTURED
+                    <div className="max-w-xl pb-8">
+                        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold text-white/90 backdrop-blur-sm">
+                            JLPT N3 STRUCTURED
                         </div>
-
-                        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-2 border border-white/11 mb-9">
-                            <div className="w-full h-80 rounded-xl overflow-hidden shadow-2xl">
-                                <img
-                                    src={fujiImage}
-                                    className="w-full h-full object-cover"
-                                    alt="Mount Fuji"
-                                />
-                            </div>
-                        </div>
-
-                        <h1 className="text-3xl lg:text-4xl font-black text-white leading-tight mb-4">
+                        <h1 className="mb-5 text-4xl font-black leading-[0.95] text-white drop-shadow-xl xl:text-6xl">
                             Master Japanese<br />One Level at a Time.
                         </h1>
-                        <p className="text-base text-white/60 leading-relaxed max-w-md">
+                        <p className="max-w-md text-base leading-relaxed text-white/75 xl:text-lg">
                             Join 20,000+ learners on Japanlingo. Gamified lessons designed to help you pass your N3 exam with confidence.
                         </p>
                     </div>
-                </div>
 
-                <div className="relative z-10 flex items-center gap-3">
-                    <div className="flex -space-x-2">
-                        {['🧑', '👩', '👨'].map((e, i) => (
-                            <span key={i} className="w-8 h-8 rounded-full bg-white/20 border-2 border-red-800 flex items-center justify-center text-xs">{e}</span>
-                        ))}
-                    </div>
-                    <div className="text-white/70 text-sm">
-                        <span className="text-amber-400">★</span> <strong className="text-white">4.9/5</strong> Rating from our community
+                    <div className="flex items-center gap-3">
+                        <div className="flex -space-x-2">
+                            {['A', 'B', 'C'].map((item) => (
+                                <span key={item} className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-red-800 bg-white/20 text-xs font-black text-white">{item}</span>
+                            ))}
+                        </div>
+                        <div className="text-sm text-white/70">
+                            <span className="text-amber-400">*</span> <strong className="text-white">4.9/5</strong> Rating from our community
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Right Panel - Form */}
-            <div className="w-full lg:w-1/2 bg-gray-50 flex flex-col">
-                <div className="lg:hidden p-6">
+            <div className="flex min-h-screen w-full flex-col overflow-y-auto bg-gray-50 lg:w-1/2">
+                <div className="px-5 py-4 sm:p-6 lg:hidden">
                     <Link href="/" className="flex items-center gap-2 no-underline">
-                        <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white font-black text-lg">文</div>
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600 text-lg font-black text-white">文</div>
                         <span className="text-xl font-extrabold text-gray-900">Japanlingo</span>
                     </Link>
                 </div>
 
-                <div className="flex-1 flex items-center justify-center px-6 py-8 lg:px-16">
-                    <div className="w-full max-w-md">
+                <div className="flex flex-1 items-center justify-center px-4 py-4 sm:px-6 sm:py-8 lg:px-16">
+                    <div className="w-full max-w-lg">
                         {children}
                     </div>
                 </div>
 
-                <div className="px-6 py-4 text-center text-xs text-gray-400 flex gap-4 justify-center">
-                    <a href="#" className="hover:text-red-600 transition-colors no-underline">Privacy Policy</a>
-                    <a href="#" className="hover:text-red-600 transition-colors no-underline">Terms of Service</a>
+                <div className="flex justify-center gap-4 px-6 py-4 text-center text-xs text-gray-400">
+                    <a href="#" className="no-underline transition-colors hover:text-red-600">Privacy Policy</a>
+                    <a href="#" className="no-underline transition-colors hover:text-red-600">Terms of Service</a>
                 </div>
             </div>
         </div>

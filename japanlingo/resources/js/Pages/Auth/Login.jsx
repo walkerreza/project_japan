@@ -17,7 +17,7 @@ export default function Login({ status, canResetPassword }) {
         <GuestAuthLayout>
             <Head title="Log in" />
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+            <div className="rounded-2xl border border-white/70 bg-white/85 p-5 shadow-[0_24px_80px_-40px_rgba(127,29,29,0.45)] backdrop-blur-md sm:p-8">
                 {/* Tabs */}
                 <div className="flex border-b border-gray-200 mb-6">
                     <button className="flex-1 pb-3 text-sm font-bold text-red-600 border-b-2 border-red-600">
@@ -85,14 +85,11 @@ export default function Login({ status, canResetPassword }) {
                         <span className="absolute bg-white px-3 text-xs text-gray-400">Or continue with</span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                        <button type="button" className="flex items-center justify-center gap-2 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
+                    <div>
+                        <a href={route('auth.google.redirect')} className="flex items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm font-bold text-gray-700 no-underline transition-all hover:bg-gray-50">
                             <img src="https://img.icons8.com/?size=100&id=V5cGWnc9R4xj&format=png&color=000000" className="w-5 h-5" alt="" />
-                            <span>Google</span>
-                        </button>
-                        <button type="button" className="flex items-center justify-center gap-2 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
-                            <img src="https://img.icons8.com/color/480/facebook-new.png" className="w-5 h-5" alt="Facebook logo" /> Facebook
-                        </button>
+                            <span>Continue with Google</span>
+                        </a>
                     </div>
                 </form>
             </div>

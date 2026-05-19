@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminLessonController;
 use App\Http\Controllers\Admin\AdminLevelController;
 use App\Http\Controllers\Admin\AdminModuleController;
+use App\Http\Controllers\Admin\AdminKanjiController;
 use App\Http\Controllers\Admin\AdminQuestionController;
 use App\Http\Controllers\Admin\AdminQuizController;
 use App\Http\Controllers\Admin\AdminUploadController;
@@ -26,10 +27,6 @@ use App\Http\Controllers\SuperAdmin\SuperAdminUserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-// login register
-Route::get('/login', fn() => Inertia::render('Auth/Login'))->name('login');
-Route::get('/register', fn() => Inertia::render('Auth/Register'))->name('register');
 
 // Guest Routes
 Route::get('/', fn() => Inertia::render('landingPage'))->name('home');
@@ -84,6 +81,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/payments/transactions/{transaction}/reject', [SuperAdminPaymentController::class, 'reject'])->name('payments.transactions.reject');
         Route::redirect('/pricing', '/superadmin/payments');
         Route::get('/system', SuperAdminSystemController::class)->name('system');
+        Route::post('/system/theme', [SuperAdminSystemController::class, 'updateTheme'])->name('system.theme.update');
+        Route::delete('/system/theme', [SuperAdminSystemController::class, 'resetTheme'])->name('system.theme.reset');
         Route::get('/profile', fn() => Inertia::render('SuperAdmin/SuperAdminProfile'))->name('profile');
     });
 
@@ -93,6 +92,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/users', [AdminUserController::class, 'index'])->name('users');
         Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
         Route::get('/analytics', AdminAnalyticsController::class)->name('analytics');
+        Route::get('/kanji', [AdminKanjiController::class, 'index'])->name('kanji.index');
+        Route::post('/kanji', [AdminKanjiController::class, 'store'])->name('kanji.store');
+        Route::put('/kanji/{kanji}', [AdminKanjiController::class, 'update'])->name('kanji.update');
+        Route::delete('/kanji/{kanji}', [AdminKanjiController::class, 'destroy'])->name('kanji.destroy');
+        Route::post('/kanji/import', [AdminKanjiController::class, 'import'])->name('kanji.import');
+        Route::get('/kanji/autofill', [AdminKanjiController::class, 'autofill'])->name('kanji.autofill');
         Route::get('/gamification', fn() => Inertia::render('Admin/Gamification/AdminGamificationIndex', [
             'achievements' => \App\Models\Achievement::withCount('users')->orderBy('created_at', 'desc')->get(),
         ]))->name('gamification');
@@ -101,6 +106,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/achievements/{achievement}', [AdminAchievementController::class, 'destroy'])->name('achievements.destroy');
         Route::get('/quizzes/{quiz}/builder', [AdminQuizController::class, 'builder'])->name('quizzes.builder');
         Route::post('/quizzes/{quiz}/builder', [AdminQuizController::class, 'updateQuestions'])->name('quizzes.builder.update');
+        Route::post('/quizzes/{quiz}/questions/import', [AdminQuizController::class, 'importQuestions'])->name('quizzes.questions.import');
+        Route::post('/quizzes/{quiz}/questions/generate-kanji', [AdminQuizController::class, 'generateKanjiQuestions'])->name('quizzes.questions.generate-kanji');
 
         // Level CRUD
         Route::apiResource('/levels', AdminLevelController::class)->only(['index', 'store', 'update', 'destroy']);
@@ -119,6 +126,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/modules', [AdminModuleController::class, 'store'])->name('modules.store');
         Route::get('/modules/{module}/builder', [AdminModuleController::class, 'builder'])->name('modules.builder');
         Route::post('/modules/{module}/builder', [AdminModuleController::class, 'updateContent'])->name('modules.builder.update');
+        Route::post('/modules/{module}/kanji-lessons/import', [AdminModuleController::class, 'importKanjiLessons'])->name('modules.kanji-lessons.import');
         Route::put('/modules/{module}', [AdminModuleController::class, 'update'])->name('modules.update');
         Route::delete('/modules/{module}', [AdminModuleController::class, 'destroy'])->name('modules.destroy');
 

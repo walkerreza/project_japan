@@ -17,6 +17,30 @@
 
         <!-- Scripts -->
         @routes
+        @php
+            $japanlingoTheme = ['activeTheme' => 'spring', 'customTheme' => []];
+
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('app_settings')) {
+                    $themeSetting = \Illuminate\Support\Facades\DB::table('app_settings')
+                        ->where('key', 'frontend_theme')
+                        ->value('value');
+
+                    if ($themeSetting) {
+                        $decodedTheme = json_decode($themeSetting, true);
+
+                        if (is_array($decodedTheme)) {
+                            $japanlingoTheme = array_merge($japanlingoTheme, $decodedTheme);
+                        }
+                    }
+                }
+            } catch (\Throwable $e) {
+                $japanlingoTheme = ['activeTheme' => 'spring', 'customTheme' => []];
+            }
+        @endphp
+        <script>
+            window.__JAPANLINGO_THEME__ = @json($japanlingoTheme);
+        </script>
         @viteReactRefresh
         @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
         @inertiaHead

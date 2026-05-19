@@ -7,8 +7,10 @@ use App\Models\Attempt;
 use App\Models\Progress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Events\LessonCompleted;
 use App\Events\QuizCompleted;
+use App\Models\Quiz;
 
 class ProgressController extends Controller
 {
@@ -120,17 +122,77 @@ class ProgressController extends Controller
             'quiz_id' => 'required|exists:quizzes,id',
             'score' => 'required|integer',
             'xp_earned' => 'required|integer',
+            'answers' => 'nullable|array',
+            'answers.*.question_id' => 'required_with:answers|exists:questions,id',
+            'answers.*.answer_text' => 'nullable|string',
+            'answers.*.answer_payload' => 'nullable|array',
         ]);
 
-        Attempt::create([
-            'user_id' => Auth::id(),
-            ...$validated,
-            'attempted_at' => now(),
-        ]);
+        $attempt = DB::transaction(function () use ($validated) {
+            $answers = collect($validated['answers'] ?? []);
+            $score = $validated['score'];
 
-        event(new QuizCompleted(Auth::user(), $validated['quiz_id'], $validated['score'], $validated['xp_earned']));
+            if ($answers->isNotEmpty()) {
+                $quiz = Quiz::with('questions')->findOrFail($validated['quiz_id']);
+                $questionMap = $quiz->questions->keyBy('id');
+
+                $score = $answers
+                    ->filter(fn ($answer) => $questionMap->has((int) $answer['question_id']))
+                    ->filter(fn ($answer) => $this->isAnswerCorrect(
+                        $answer['answer_text'] ?? '',
+                        $questionMap->get((int) $answer['question_id'])->correct_answer
+                    ))
+                    ->count();
+            }
+
+            $attempt = Attempt::create([
+                'user_id' => Auth::id(),
+                'quiz_id' => $validated['quiz_id'],
+                'score' => $score,
+                'xp_earned' => $validated['xp_earned'],
+                'attempted_at' => now(),
+            ]);
+
+            if ($answers->isNotEmpty()) {
+                $quiz = Quiz::with('questions')->findOrFail($validated['quiz_id']);
+                $questionMap = $quiz->questions->keyBy('id');
+
+                foreach ($answers as $answer) {
+                    $question = $questionMap->get((int) $answer['question_id']);
+
+                    if (! $question) {
+                        continue;
+                    }
+
+                    $answerText = $answer['answer_text'] ?? null;
+                    $isCorrect = $this->isAnswerCorrect($answerText ?? '', $question->correct_answer);
+
+                    $attempt->answers()->create([
+                        'question_id' => $question->id,
+                        'answer_text' => $answerText,
+                        'answer_payload' => $answer['answer_payload'] ?? null,
+                        'is_correct' => $isCorrect,
+                        'earned_points' => $isCorrect ? 10 : 0,
+                    ]);
+                }
+            }
+
+            return $attempt;
+        });
+
+        event(new QuizCompleted(Auth::user(), $validated['quiz_id'], $attempt->score, $validated['xp_earned']));
 
         return redirect()->back();
+    }
+
+    private function isAnswerCorrect(string $answer, string $correctAnswer): bool
+    {
+        return $this->normalizeAnswer($answer) === $this->normalizeAnswer($correctAnswer);
+    }
+
+    private function normalizeAnswer(string $value): string
+    {
+        return mb_strtolower(trim(preg_replace('/\s+/u', ' ', $value)));
     }
 
     public function completeLesson(Request $request)
