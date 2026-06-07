@@ -31,7 +31,7 @@ class AdminQuestionController extends Controller
 
         $quizzes = Quiz::with('lesson:id,title')->get(['id', 'lesson_id', 'type']);
 
-        return Inertia::render('Admin/Questions/AdminQuestionsIndex', [
+        return Inertia::render('Admin/Kuis/DaftarSoal', [
             'questions'     => $questions,
             'quizzes'       => $quizzes,
             'selectedQuizId' => $request->quiz_id,
@@ -41,7 +41,7 @@ class AdminQuestionController extends Controller
     public function create(Request $request)
     {
         $quizzes = Quiz::with('lesson:id,title')->get();
-        return Inertia::render('Admin/Questions/AdminQuestionsCreate', [
+        return Inertia::render('Admin/Kuis/TambahSoal', [
             'quizzes'       => $quizzes,
             'defaultQuizId' => $request->quiz_id,
         ]);
@@ -59,7 +59,7 @@ class AdminQuestionController extends Controller
     public function edit(Question $question)
     {
         $quizzes = Quiz::with('lesson:id,title')->get();
-        return Inertia::render('Admin/Questions/AdminQuestionsEdit', [
+        return Inertia::render('Admin/Kuis/EditSoal', [
             'question' => $question,
             'quizzes'  => $quizzes,
         ]);

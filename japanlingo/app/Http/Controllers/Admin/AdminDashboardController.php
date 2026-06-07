@@ -23,7 +23,7 @@ class AdminDashboardController extends Controller
             })
             ->count();
 
-        return Inertia::render('Admin/AdminDashboard', [
+        return Inertia::render('Admin/Beranda', [
             'totalModules'   => Module::count(),
             'totalLessons'   => Lesson::count(),
             'totalQuizzes'   => Quiz::count(),

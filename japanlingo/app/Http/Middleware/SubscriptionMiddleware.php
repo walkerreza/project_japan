@@ -20,8 +20,8 @@ class SubscriptionMiddleware
     {
         $user = Auth::user();
 
-        // If user is not logged in, or is an admin, let them pass
-        if (!$user || $user->role !== 'student') {
+        // Only student accounts use paywall checks; admin/superadmin bypass for content review.
+        if (!$user || $user->role !== 'user') {
             return $next($request);
         }
 
@@ -31,9 +31,11 @@ class SubscriptionMiddleware
         $isPremiumContent = false;
 
         // Check for Lesson route
-        if ($request->routeIs('lessons.show')) {
-            $lessonId = $request->route('id');
-            $lesson = Lesson::with('module.level')->find($lessonId);
+        if ($request->routeIs('user.lessons.show')) {
+            $lessonParam = $request->route('lesson');
+            $lesson = $lessonParam instanceof Lesson
+                ? $lessonParam->loadMissing('module.level')
+                : Lesson::with('module.level')->find($lessonParam);
             
             if ($lesson && $lesson->module && $lesson->module->level) {
                 $isPremiumContent = $lesson->module->level->is_premium;
@@ -41,9 +43,11 @@ class SubscriptionMiddleware
         }
 
         // Check for Quiz route
-        if ($request->routeIs('quizzes.show')) {
-            $quizId = $request->route('id');
-            $quiz = Quiz::with('lesson.module.level')->find($quizId);
+        if ($request->routeIs('user.quizzes.show')) {
+            $quizParam = $request->route('quiz');
+            $quiz = $quizParam instanceof Quiz
+                ? $quizParam->loadMissing('lesson.module.level')
+                : Quiz::with('lesson.module.level')->find($quizParam);
             
             if ($quiz && $quiz->lesson && $quiz->lesson->module && $quiz->lesson->module->level) {
                 $isPremiumContent = $quiz->lesson->module->level->is_premium;

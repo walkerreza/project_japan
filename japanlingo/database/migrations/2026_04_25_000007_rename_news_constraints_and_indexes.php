@@ -12,11 +12,11 @@ return new class extends Migration
             return;
         }
 
-        DB::statement('ALTER TABLE news RENAME CONSTRAINT announcements_pkey TO news_pkey');
-        DB::statement('ALTER TABLE news RENAME CONSTRAINT announcements_created_by_foreign TO news_created_by_foreign');
-        DB::statement('ALTER TABLE news RENAME CONSTRAINT announcements_updated_by_foreign TO news_updated_by_foreign');
-        DB::statement('ALTER INDEX announcements_status_is_pinned_index RENAME TO news_status_is_pinned_index');
-        DB::statement('ALTER INDEX announcements_audience_published_at_index RENAME TO news_audience_published_at_index');
+        $this->renameConstraint('announcements_pkey', 'news_pkey');
+        $this->renameConstraint('announcements_created_by_foreign', 'news_created_by_foreign');
+        $this->renameConstraint('announcements_updated_by_foreign', 'news_updated_by_foreign');
+        $this->renameIndex('announcements_status_is_pinned_index', 'news_status_is_pinned_index');
+        $this->renameIndex('announcements_audience_published_at_index', 'news_audience_published_at_index');
     }
 
     public function down(): void
@@ -25,10 +25,41 @@ return new class extends Migration
             return;
         }
 
-        DB::statement('ALTER TABLE news RENAME CONSTRAINT news_pkey TO announcements_pkey');
-        DB::statement('ALTER TABLE news RENAME CONSTRAINT news_created_by_foreign TO announcements_created_by_foreign');
-        DB::statement('ALTER TABLE news RENAME CONSTRAINT news_updated_by_foreign TO announcements_updated_by_foreign');
-        DB::statement('ALTER INDEX news_status_is_pinned_index RENAME TO announcements_status_is_pinned_index');
-        DB::statement('ALTER INDEX news_audience_published_at_index RENAME TO announcements_audience_published_at_index');
+        $this->renameConstraint('news_pkey', 'announcements_pkey');
+        $this->renameConstraint('news_created_by_foreign', 'announcements_created_by_foreign');
+        $this->renameConstraint('news_updated_by_foreign', 'announcements_updated_by_foreign');
+        $this->renameIndex('news_status_is_pinned_index', 'announcements_status_is_pinned_index');
+        $this->renameIndex('news_audience_published_at_index', 'announcements_audience_published_at_index');
+    }
+
+    private function renameConstraint(string $from, string $to): void
+    {
+        if (! $this->constraintExists($from) || $this->constraintExists($to)) {
+            return;
+        }
+
+        DB::statement(sprintf('ALTER TABLE news RENAME CONSTRAINT %s TO %s', $from, $to));
+    }
+
+    private function renameIndex(string $from, string $to): void
+    {
+        if (! $this->indexExists($from) || $this->indexExists($to)) {
+            return;
+        }
+
+        DB::statement(sprintf('ALTER INDEX %s RENAME TO %s', $from, $to));
+    }
+
+    private function constraintExists(string $name): bool
+    {
+        return DB::table('pg_constraint')->where('conname', $name)->exists();
+    }
+
+    private function indexExists(string $name): bool
+    {
+        return DB::table('pg_indexes')
+            ->where('schemaname', 'public')
+            ->where('indexname', $name)
+            ->exists();
     }
 };

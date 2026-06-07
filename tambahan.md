@@ -1,25 +1,34 @@
-# File Catatan Tambahan (Backlog Tersaring)
+# Backlog Tersaring JapanLingo
 
-Berdasarkan audit sebelumnya, **sebagian besar poin kritis (Otentikasi, Resolusi Database, Logika Pembelajaran, Form Validasi, Gamifikasi & Paginasi)** telah **DISELESAIKAN** pada rilis tim sebelumnya. 
+Dokumen ini menyimpan backlog yang masih relevan. Untuk roadmap aktif lihat `japanlingo-colaboration.md`. Untuk mapping teknis lihat `project-structure-map.md`.
 
-Berikut adalah saringan murni untuk **sisa poin yang BENAR-BENAR BELUM diimplementasikan** saat ini:
+## Stabilitas & QA
 
-### Yang Masih Kurang: Backend, Data, & Middleware
-- [ ] Belum ada `SubscriptionMiddleware` untuk restriksi modul Free vs Premium, beserta _upgrade prompt_-nya.
-- [ ] Tabel/payment domain belum dibuat: `payment_plans`, `subscriptions`, `transactions`, `subscription_logs`.
-- [ ] Entitas superadmin pengguna raib: `cohort/kloter`, `key access` massal, `activity logs`, import/export user.
-- [ ] File _Seeder_ belum representatif, `DatabaseSeeder.php` tidak memanggil seeder utuh.
+- [ ] Jalankan QA manual end-to-end memakai `project-qa-checklist.md`.
+- [ ] Pastikan login manual dan Google OAuth tidak mengganggu role redirect.
+- [ ] Pastikan flow admin membuat materi, kuis, dan soal berjalan dari browser.
+- [ ] Pastikan flow user belajar, submit kuis, progress, dan redeem access key berjalan dari browser.
+- [ ] Pastikan superadmin bisa mengelola news, user/admin, payment, access key, theme, dan activity.
 
-### Yang Masih Kurang: Fitur Superadmin (Area Paling Kosong)
-- [ ] Semua rute superadmin (`/superadmin/users`, `/superadmin/activity`, `/superadmin/content`) sekadar me-render UI statis kosong tanpa _Controller_ data.
-- [ ] Tidak ada manajemen untuk memblokir _User_ atau mendaftarkan _Admin_ baru dari Dasbor.
+## UX Yang Masih Perlu Dipoles
 
-### Yang Masih Kurang: Panel Admin
-- [ ] Halaman React untuk **Questions** (`Admin/Questions/Index` dan Edit) belum rapi dirangkai untuk integrasi CRUD soal yang leluasa.
-- [ ] Tidak ada fitur Bulk Import (CSV/JSON) soal ujian secara massal.
-- [ ] Level Management (N5, N4, dst) belum mempunyai UI jika memang dibutuhkan selain _Seeder_.
+- [ ] Upgrade prompt/paywall UI saat user free membuka konten premium.
+- [ ] Viewer dokumen PDF/DOC/PPT perlu keputusan final yang ringan dan stabil.
+- [ ] Admin content workflow: clone lesson, validasi draft sebelum publish, preview, bulk reorder.
+- [ ] Pesan error import CSV/XLSX perlu dibuat lebih mudah dipahami sensei.
 
-### Yang Masih Kurang: Public & Maintenance
-- [ ] SEO publik masih lemah (Belum ada _Open Graph_, _JSON-LD_, Canonical, Sitemap dinamis).
-- [ ] _Forgot Password_ perlu diberi aturan Limit (throttle) 3 email per menit sesuai keamanan standar.
-- [ ] _Test Coverage_ (Pest/PHPUnit) tidak menyentuh flow sistem uang, sertifikat, dan progress siswa sama sekali.
+## Fitur Yang Ditahan
+
+- [ ] OCR/import massal dari PDF/PPT berbasis gambar.
+- [ ] Payment gateway real.
+- [ ] SEO publik lanjutan.
+- [ ] Rename database/migration.
+- [ ] Refactor total builder.
+
+## Testing & Maintenance
+
+- [ ] Tambahkan test untuk role access.
+- [ ] Tambahkan test untuk quiz submit dan attempt answers.
+- [ ] Tambahkan test untuk progress dan certificate.
+- [ ] Tambahkan test untuk access key redemption.
+- [ ] Cek throttle/rate limit forgot password.

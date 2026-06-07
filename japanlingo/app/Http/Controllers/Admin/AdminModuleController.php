@@ -3,54 +3,57 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Module;
-use App\Models\Level;
-use App\Models\Kanji;
 use App\Http\Requests\Admin\ModuleRequest;
+use App\Models\Level;
+use App\Models\Module;
+use App\Services\ExcelTemplateService;
+use App\Services\LessonContentService;
+use App\Services\LessonDocumentService;
+use App\Services\SpreadsheetImportService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class AdminModuleController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Module::with(['level', 'lessons'])->orderBy('level_id')->orderBy('week_number');
+        $query = Module::with('level')
+            ->withCount('lessons')
+            ->orderBy('level_id')
+            ->orderBy('week_number');
 
         if ($request->filled('search')) {
             $query->where('title', 'ilike', '%' . $request->search . '%');
         }
 
-        $modules = $query->paginate(10)->through(fn($m) => [
-                'id'           => $m->id,
-                'title'        => $m->title,
-                'description'  => $m->description,
-                'week_number'  => $m->week_number,
-                'status'       => $m->status ?? 'published',
-                'level'        => $m->level,
-                'lesson_count' => $m->lessons->count(),
-            ]);
+        $modules = $query->paginate(10)->through(fn ($module) => [
+            'id' => $module->id,
+            'title' => $module->title,
+            'description' => $module->description,
+            'week_number' => $module->week_number,
+            'status' => $module->status ?? 'published',
+            'level' => $module->level,
+            'lesson_count' => $module->lessons_count,
+        ]);
 
-        $levels = Level::orderBy('stage')->get();
-
-        return Inertia::render('Admin/Modules/AdminModulesIndex', [
+        return Inertia::render('Admin/ModulMateri/ManajemenModulMateri', [
             'modules' => $modules,
-            'levels'  => $levels,
+            'levels' => Level::orderBy('stage')->get(),
             'filters' => $request->only('search'),
         ]);
     }
 
     public function store(ModuleRequest $request)
     {
-        $validated = $request->validated();
-        Module::create($validated);
+        Module::create($request->validated());
+
         return redirect()->back()->with('success', 'Modul berhasil dibuat');
     }
 
     public function update(ModuleRequest $request, Module $module)
     {
-        $validated = $request->validated();
-        $module->update($validated);
+        $module->update($request->validated());
+
         return redirect()->back()->with('success', 'Modul berhasil diperbarui');
     }
 
@@ -71,67 +74,74 @@ class AdminModuleController extends Controller
 
     public function builder(Module $module)
     {
-        $module->load(['level', 'lessons' => function($q) {
-            $q->orderBy('order');
-        }]);
+        $module->load(['level', 'lessons' => fn ($query) => $query->orderBy('order')]);
 
-        return Inertia::render('Admin/Builders/AdminContentEditor', [
-            'module'  => $module,
+        return Inertia::render('Admin/ModulMateri/BuilderMateri', [
+            'module' => $module,
             'lessons' => $module->lessons,
         ]);
     }
 
-    public function updateContent(Request $request, Module $module)
+    public function updateContent(Request $request, Module $module, LessonDocumentService $documents)
     {
         $lessonsData = $request->input('lessons', []);
         $lessonsFiles = $request->file('lessons', []);
-        
+        $existingLessons = $module->lessons()->get()->keyBy('id');
         $lessonIds = [];
-        
+
+        foreach ($request->input('deleted_files', []) as $path) {
+            $documents->delete($path);
+        }
+
         foreach ($lessonsData as $index => $data) {
+            $existingLesson = $existingLessons->get($data['id'] ?? null);
             $updateData = [
-                'title'            => $data['title'] ?? 'Untitled',
-                'content'          => $data['content'] ?? '',
-                'type'             => $data['type'] ?? 'text',
-                'video_url'        => $data['video_url'] ?? null,
-                'order'            => $index,
+                'title' => $data['title'] ?? 'Untitled',
+                'content' => $data['content'] ?? '',
+                'type' => $data['type'] ?? 'text',
+                'video_url' => $data['video_url'] ?? null,
+                'order' => $index,
                 'duration_minutes' => $data['duration_minutes'] ?? 5,
-                'status'           => $data['status'] ?? 'published',
+                'status' => $data['status'] ?? 'published',
             ];
 
-            // Cari file yang diunggah untuk index ini
             $uploadedFile = $lessonsFiles[$index]['file_uploaded'] ?? null;
 
             if ($uploadedFile) {
-                // Hapus file lama jika ada
-                $existingLesson = $module->lessons()->find($data['id'] ?? null);
-                if ($existingLesson && $existingLesson->file_url) {
-                    \Storage::disk('public')->delete($existingLesson->file_url);
+                if ($existingLesson?->file_url) {
+                    $documents->delete($existingLesson->file_url);
                 }
-                
-                // Simpan file baru
-                $path = $uploadedFile->store('lessons', 'public');
-                $updateData['file_url'] = $path;
+
+                $updateData['file_url'] = $uploadedFile->store('lessons', 'public');
             } else {
-                // Jika tidak ada file baru, tetap gunakan yang lama (jika ada)
                 $updateData['file_url'] = $data['file_url'] ?? null;
+
+                if ($existingLesson?->file_url && empty($updateData['file_url'])) {
+                    $documents->delete($existingLesson->file_url);
+                }
             }
 
             $lesson = $module->lessons()->updateOrCreate(
                 ['id' => $data['id'] ?? null],
                 $updateData
             );
-            
+
             $lessonIds[] = $lesson->id;
         }
 
-        // Hapus pelajaran yang tidak ada dalam request
-        $module->lessons()->whereNotIn('id', $lessonIds)->delete();
+        $lessonsToDelete = empty($lessonIds)
+            ? $module->lessons()->get()
+            : $module->lessons()->whereNotIn('id', $lessonIds)->get();
+
+        foreach ($lessonsToDelete as $lessonToDelete) {
+            $documents->delete($lessonToDelete->file_url);
+            $lessonToDelete->delete();
+        }
 
         return redirect()->back()->with('success', 'Konten modul berhasil disimpan');
     }
 
-    public function importKanjiLessons(Request $request, Module $module)
+    public function importKanjiLessons(Request $request, Module $module, LessonContentService $lessons)
     {
         $validated = $request->validate([
             'jlpt_level' => ['required', 'string', 'max:8'],
@@ -139,68 +149,99 @@ class AdminModuleController extends Controller
             'status' => ['nullable', 'in:draft,published,all'],
         ]);
 
-        $status = $validated['status'] ?? 'published';
-        $query = Kanji::query()
-            ->where('jlpt_level', $validated['jlpt_level'])
-            ->orderBy('kanji');
+        $created = $lessons->createKanjiLessons($module, $validated);
 
-        if ($status !== 'all') {
-            $query->where('status', $status);
-        }
-
-        $kanjiItems = $query
-            ->take($validated['count'])
-            ->get();
-
-        if ($kanjiItems->isEmpty()) {
+        if ($created === 0) {
             return redirect()->back()->withErrors([
                 'kanji_import' => 'Tidak ada Kanji Bank yang cocok. Sync data dulu atau ubah filter status.',
             ]);
         }
 
-        $nextOrder = (int) $module->lessons()->max('order') + 1;
-
-        DB::transaction(function () use ($module, $kanjiItems, $nextOrder) {
-            foreach ($kanjiItems as $index => $kanji) {
-                $module->lessons()->create([
-                    'title' => "Kanji {$kanji->jlpt_level} - {$kanji->kanji}",
-                    'content' => $this->buildKanjiLessonHtml($kanji),
-                    'type' => 'text',
-                    'order' => $nextOrder + $index,
-                    'duration_minutes' => 5,
-                    'status' => 'draft',
-                ]);
-            }
-        });
-
-        return redirect()->back()->with('success', $kanjiItems->count() . ' lesson kanji berhasil dibuat sebagai draft.');
+        return redirect()->back()->with('success', $created . ' lesson kanji berhasil dibuat sebagai draft.');
     }
 
-    private function buildKanjiLessonHtml(Kanji $kanji): string
+    public function importDocument(Request $request, Module $module, LessonDocumentService $documents)
     {
-        $meaning = e($kanji->indonesian_meaning ?: $kanji->meaning ?: '-');
-        $onyomi = e($kanji->onyomi ?: '-');
-        $kunyomi = e($kanji->kunyomi ?: '-');
-        $exampleWord = e($kanji->example_word ?: '-');
-        $exampleReading = e($kanji->example_reading ?: '-');
-        $exampleMeaning = e($kanji->example_meaning ?: '-');
-        $exampleSentence = e($kanji->example_sentence ?: '-');
-        $exampleSentenceReading = e($kanji->example_sentence_reading ?: '-');
-        $exampleSentenceMeaning = e($kanji->example_sentence_meaning ?: '-');
+        $validated = $request->validate([
+            'document' => ['required', 'file', 'mimes:pdf,doc,docx,ppt,pptx', 'max:20480'],
+        ]);
 
-        return <<<HTML
-<h2 style="font-size: 48px; line-height: 1; margin-bottom: 16px;">{$kanji->kanji}</h2>
-<p><strong>JLPT:</strong> {$kanji->jlpt_level}</p>
-<p><strong>Arti:</strong> {$meaning}</p>
-<p><strong>Onyomi:</strong> {$onyomi}</p>
-<p><strong>Kunyomi:</strong> {$kunyomi}</p>
-<hr>
-<p><strong>Contoh kata:</strong> {$exampleWord}</p>
-<p><strong>Reading:</strong> {$exampleReading}</p>
-<p><strong>Arti contoh:</strong> {$exampleMeaning}</p>
-<p><strong>Contoh kalimat:</strong> {$exampleSentence}</p>
-<p><strong>Reading kalimat:</strong> {$exampleSentenceReading}</p>
-<p><strong>Arti kalimat:</strong> {$exampleSentenceMeaning}</p>
-HTML;
+        return response()->json($documents->upload($validated['document']));
+    }
+
+    public function importLessons(
+        Request $request,
+        Module $module,
+        SpreadsheetImportService $spreadsheets,
+        LessonContentService $lessons
+    ) {
+        $validated = $request->validate([
+            'import_file' => ['required', 'file', 'max:4096'],
+        ]);
+
+        $file = $validated['import_file'];
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        if (! in_array($extension, ['csv', 'txt', 'xlsx'], true)) {
+            return redirect()->back()->withErrors([
+                'lesson_import' => 'Format import harus CSV atau XLSX.',
+            ]);
+        }
+
+        $rows = $spreadsheets->rows($file->getRealPath(), $extension);
+
+        if (empty($rows)) {
+            return redirect()->back()->withErrors([
+                'lesson_import' => 'Tidak ada baris materi yang valid atau header tidak sesuai.',
+            ]);
+        }
+
+        $created = $lessons->importRows($module, $rows);
+
+        if ($created === 0) {
+            return redirect()->back()->withErrors([
+                'lesson_import' => 'Tidak ada materi valid. Pastikan kolom lesson_title terisi.',
+            ]);
+        }
+
+        return redirect()->back()->with('success', "{$created} materi berhasil diimport sebagai draft/review.");
+    }
+
+    public function downloadLessonImportTemplate(
+        Module $module,
+        string $format,
+        ExcelTemplateService $templates,
+        LessonContentService $lessons
+    ) {
+        $format = strtolower($format);
+
+        if (! in_array($format, ['csv', 'xlsx'], true)) {
+            abort(404);
+        }
+
+        $headers = [
+            'lesson_title',
+            'lesson_type',
+            'content',
+            'video_url',
+            'file_url',
+            'duration_minutes',
+            'status',
+            'order',
+        ];
+        $rows = $lessons->templateRows();
+        $filename = 'japanlingo-lesson-import-template-v1.' . $format;
+
+        if ($format === 'csv') {
+            return $templates->csvResponse($headers, $rows, $filename);
+        }
+
+        $path = $templates->xlsxPath($headers, $rows, 'Lesson Import', 'japanlingo_lesson_template_');
+
+        return response()
+            ->download($path, $filename, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ])
+            ->deleteFileAfterSend(true);
     }
 }

@@ -2,57 +2,67 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
+use App\Models\Lesson;
 use App\Models\Level;
 use App\Models\Module;
-use App\Models\Lesson;
-use App\Models\Quiz;
 use App\Models\Question;
+use App\Models\Quiz;
+use Illuminate\Database\Seeder;
 
 class N3CourseSeeder extends Seeder
 {
     public function run(): void
     {
-        $level = Level::create([
-            'level_name' => 'JLPT N3',
-            'stage' => 3
-        ]);
+        $level = Level::updateOrCreate(
+            ['level_name' => 'JLPT N3'],
+            ['stage' => 3, 'is_premium' => true]
+        );
 
-        $module1 = Module::create([
-            'level_id' => $level->id,
-            'title' => 'Minggu 1: Lingkungan Sekitar',
-            'week_number' => 1,
-            'description' => 'Mempelajari kanji dan kosakata yang sering ditemui dalam kehidupan sehari-hari (supermarket, jalan, dsb).'
-        ]);
+        $module = Module::updateOrCreate(
+            ['level_id' => $level->id, 'week_number' => 1],
+            [
+                'title' => 'Minggu 1: Lingkungan Sekitar',
+                'description' => 'Mempelajari kanji dan kosakata yang sering ditemui dalam kehidupan sehari-hari.',
+                'status' => 'published',
+            ]
+        );
 
-        $lesson1 = Lesson::create([
-            'module_id' => $module1->id,
-            'title' => 'Hari 1: Di Supermarket',
-            'content' => '<h2>Kosakata dan Kanji</h2><p>Berikut adalah beberapa huruf kanji yang sering kalian temui saat berbelanja...</p>',
-            'order' => 1
-        ]);
+        $lesson = Lesson::updateOrCreate(
+            ['module_id' => $module->id, 'order' => 1],
+            [
+                'title' => 'Hari 1: Di Supermarket',
+                'type' => 'text',
+                'content' => '<h2>Kosakata dan Kanji</h2><p>Berikut adalah beberapa kanji yang sering ditemui saat berbelanja.</p>',
+                'duration_minutes' => 15,
+                'status' => 'published',
+            ]
+        );
 
-        $quiz1 = Quiz::create([
-            'lesson_id' => $lesson1->id,
-            'type' => 'multiple_choice'
-        ]);
+        $quiz = Quiz::updateOrCreate(
+            ['lesson_id' => $lesson->id],
+            ['type' => 'multiple_choice', 'time_limit' => 300, 'status' => 'published']
+        );
 
-        Question::create([
-            'quiz_id' => $quiz1->id,
-            'question_text' => 'Bagaimana cara baca dari kanji 割引?',
-            'correct_answer' => 'waribiki',
-            'options' => ['waribiki', 'katsubiki', 'warihei', 'waribatsu'],
-            'explanation' => 'Waribiki artinya adalah diskon.',
-            'order' => 1
-        ]);
-        
-        Question::create([
-            'quiz_id' => $quiz1->id,
-            'question_text' => 'Apa arti dari 半額?',
-            'correct_answer' => 'Setengah harga',
-            'options' => ['Setengah harga', 'Harga pas', 'Ganda', 'Habis'],
-            'explanation' => 'Han (半) artinya setengah, gaku (額) artinya nominal/harga.',
-            'order' => 2
-        ]);
+        Question::updateOrCreate(
+            ['quiz_id' => $quiz->id, 'order' => 1],
+            [
+                'type' => 'multiple_choice',
+                'question_text' => 'Bagaimana cara baca dari kanji 割引?',
+                'correct_answer' => 'waribiki',
+                'options' => ['waribiki', 'katsubiki', 'warihei', 'waribatsu'],
+                'explanation' => 'Waribiki artinya diskon.',
+            ]
+        );
+
+        Question::updateOrCreate(
+            ['quiz_id' => $quiz->id, 'order' => 2],
+            [
+                'type' => 'multiple_choice',
+                'question_text' => 'Apa arti dari 半額?',
+                'correct_answer' => 'Setengah harga',
+                'options' => ['Setengah harga', 'Harga pas', 'Ganda', 'Habis'],
+                'explanation' => 'Han (半) artinya setengah, gaku (額) artinya nominal atau harga.',
+            ]
+        );
     }
 }

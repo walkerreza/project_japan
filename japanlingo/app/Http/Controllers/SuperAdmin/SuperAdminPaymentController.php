@@ -7,6 +7,7 @@ use App\Models\Subscription;
 use App\Models\Transaction;
 use App\Models\TransactionLog;
 use App\Models\User;
+use App\Models\AccessKey;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -38,7 +39,7 @@ class SuperAdminPaymentController extends SuperAdminBaseController
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('SuperAdmin/SuperAdminPayments', [
+        return Inertia::render('SuperAdmin/Pemasukan/Pemasukan', [
             'stats' => [
                 $this->stat('Pending Payments', number_format(Transaction::where('status', 'pending')->count()), 'P'),
                 $this->stat('Success Transactions', number_format(Transaction::where('status', 'success')->count()), 'S'),
@@ -78,6 +79,21 @@ class SuperAdminPaymentController extends SuperAdminBaseController
                 'id' => $user->id,
                 'label' => "{$user->username} ({$user->email})",
             ]),
+            'accessKeys' => AccessKey::with('paymentPlan:id,name')
+                ->latest()
+                ->take(12)
+                ->get()
+                ->map(fn (AccessKey $key) => [
+                    'id' => $key->id,
+                    'code' => $key->code,
+                    'name' => $key->name,
+                    'plan_name' => $key->paymentPlan?->name ?? 'Access Key Premium',
+                    'duration_days' => $key->duration_days,
+                    'usage' => "{$key->used_count}/{$key->max_uses}",
+                    'status' => $key->status,
+                    'expires_at' => optional($key->expires_at)->format('d M Y H:i'),
+                    'created_at' => optional($key->created_at)->format('d M Y H:i'),
+                ]),
             'filters' => $filters,
         ]);
     }
@@ -212,6 +228,45 @@ class SuperAdminPaymentController extends SuperAdminBaseController
         return redirect()->back()->with('success', 'Transaksi berhasil ditolak');
     }
 
+    public function storeAccessKey(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['nullable', 'string', 'max:255'],
+            'payment_plan_id' => ['nullable', 'exists:payment_plans,id'],
+            'duration_days' => ['required', 'integer', 'min:1', 'max:366'],
+            'max_uses' => ['required', 'integer', 'min:1', 'max:500'],
+            'expires_at' => ['nullable', 'date', 'after:now'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $planId = $validated['payment_plan_id'] ?: $this->accessKeyPlan()->id;
+
+        $accessKey = AccessKey::create([
+            'payment_plan_id' => $planId,
+            'created_by' => $request->user()->id,
+            'code' => $this->generateAccessCode(),
+            'name' => $validated['name'] ?? null,
+            'duration_days' => $validated['duration_days'],
+            'max_uses' => $validated['max_uses'],
+            'expires_at' => $validated['expires_at'] ?? null,
+            'notes' => $validated['notes'] ?? null,
+            'status' => 'active',
+        ]);
+
+        $this->logActivity($request, 'access_key.created', 'access_key', $accessKey->id, "Membuat access key {$accessKey->code}");
+
+        return redirect()->back()->with('success', 'Access key berhasil dibuat');
+    }
+
+    public function revokeAccessKey(Request $request, AccessKey $accessKey)
+    {
+        $accessKey->update(['status' => 'revoked']);
+
+        $this->logActivity($request, 'access_key.revoked', 'access_key', $accessKey->id, "Revoke access key {$accessKey->code}");
+
+        return redirect()->back()->with('success', 'Access key berhasil dinonaktifkan');
+    }
+
     private function activateSubscriptionForTransaction(Transaction $transaction): void
     {
         $plan = $transaction->paymentPlan;
@@ -238,5 +293,29 @@ class SuperAdminPaymentController extends SuperAdminBaseController
         $transaction->user->update([
             'subscription_status' => 'premium',
         ]);
+    }
+
+    private function accessKeyPlan(): PaymentPlan
+    {
+        return PaymentPlan::firstOrCreate(
+            ['slug' => 'access-key-premium'],
+            [
+                'name' => 'Access Key Premium',
+                'description' => 'Akses premium manual via kode akses',
+                'price' => 0,
+                'duration_days' => 30,
+                'features' => ['Premium content via access key'],
+                'is_active' => true,
+            ]
+        );
+    }
+
+    private function generateAccessCode(): string
+    {
+        do {
+            $code = 'JL-' . strtoupper(Str::random(4)) . '-' . strtoupper(Str::random(4));
+        } while (AccessKey::where('code', $code)->exists());
+
+        return $code;
     }
 }

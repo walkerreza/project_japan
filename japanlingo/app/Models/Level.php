@@ -13,6 +13,7 @@ class Level extends Model
     protected $fillable = [
         'level_name',
         'stage',
+        'is_premium',
     ];
 
     public function modules(): HasMany

@@ -34,7 +34,7 @@ class SuperAdminAdminController extends SuperAdminBaseController
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('SuperAdmin/SuperAdminAdmins', [
+        return Inertia::render('SuperAdmin/DataAdmin/DataAdmin', [
             'stats' => [
                 $this->stat('Admin Aktif', number_format(User::where('role', 'admin')->where('status', 'active')->count()), 'A'),
                 $this->stat('Superadmin', number_format(User::where('role', 'superadmin')->count()), 'S'),

@@ -113,7 +113,7 @@ class AdminAnalyticsController extends Controller
             ->take(12)
             ->values();
 
-        return Inertia::render('Admin/Analytics/AdminAnalyticsIndex', [
+        return Inertia::render('Admin/Analitik/Analitik', [
             'summary' => [
                 'total_students' => User::where('role', 'user')->count(),
                 'total_attempts' => Attempt::count(),

@@ -11,7 +11,7 @@ class AdminLevelController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Admin/Levels/AdminLevelsIndex', [
+        return Inertia::render('Admin/Level/ManajemenLevel', [
             'levels' => Level::all()
         ]);
     }

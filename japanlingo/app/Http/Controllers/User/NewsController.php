@@ -20,7 +20,7 @@ class NewsController extends Controller
             ->withQueryString()
             ->through(fn (News $news) => $this->mapNews($news));
 
-        return Inertia::render('User/News/Index', [
+        return Inertia::render('User/Berita/DaftarBerita', [
             'featured' => $featured ? $this->mapNews($featured) : null,
             'news' => $news,
         ]);
@@ -36,7 +36,7 @@ class NewsController extends Controller
             ->get()
             ->map(fn (News $item) => $this->mapNews($item));
 
-        return Inertia::render('User/News/Show', [
+        return Inertia::render('User/Berita/DetailBerita', [
             'newsItem' => $this->mapNews($news->load('attachments')),
             'relatedNews' => $related,
         ]);

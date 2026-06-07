@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             N3CourseSeeder::class,
             AchievementSeeder::class,
+            DemoDataSeeder::class,
         ]);
     }
 }

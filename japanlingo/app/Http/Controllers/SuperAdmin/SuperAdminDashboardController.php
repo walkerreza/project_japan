@@ -21,7 +21,7 @@ class SuperAdminDashboardController extends SuperAdminBaseController
             ->whereDate('last_activity_date', '>=', now()->subDays(7)->toDateString())
             ->count();
 
-        return Inertia::render('SuperAdmin/SuperAdminDashboard', [
+        return Inertia::render('SuperAdmin/Beranda', [
             'metrics' => [
                 $this->stat('Total Student', number_format($studentCount), '👥'),
                 $this->stat('Learner Aktif', number_format($activeLearners), '🔥'),

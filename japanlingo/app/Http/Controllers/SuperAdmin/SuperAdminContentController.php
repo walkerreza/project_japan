@@ -33,7 +33,7 @@ class SuperAdminContentController extends SuperAdminBaseController
             ->withQueryString()
             ->through(fn (News $item) => $this->mapNews($item));
 
-        return Inertia::render('SuperAdmin/SuperAdminContent', [
+        return Inertia::render('SuperAdmin/Konten/Konten', [
             'stats' => [
                 $this->stat('Module Aktif', number_format(LearningModule::count()), 'M'),
                 $this->stat('Lesson Publish', number_format(Lesson::count()), 'L'),

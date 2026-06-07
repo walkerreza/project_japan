@@ -30,7 +30,7 @@ export default function QuillEditor({ value, onChange, placeholder = 'Tulis kont
             if (!file) return;
 
             const formData = new FormData();
-            formData.append('image', file);
+            formData.append('file', file);
 
             const response = await window.axios.post(uploadImageUrl, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },

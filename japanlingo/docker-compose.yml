@@ -1,0 +1,97 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: app
+    image: japanlingo-app:latest
+    restart: unless-stopped
+    env_file:
+      - .env.docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - app_storage:/var/www/html/storage
+      - app_cache:/var/www/html/bootstrap/cache
+    networks:
+      - japanlingo
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: web
+    image: japanlingo-nginx:latest
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "${APP_HTTP_PORT:-80}:80"
+    volumes:
+      - app_storage:/var/www/html/storage:ro
+    networks:
+      - japanlingo
+
+  queue:
+    image: japanlingo-app:latest
+    restart: unless-stopped
+    command: php artisan queue:work database --sleep=3 --tries=3 --timeout=120
+    env_file:
+      - .env.docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      app:
+        condition: service_started
+    volumes:
+      - app_storage:/var/www/html/storage
+      - app_cache:/var/www/html/bootstrap/cache
+    networks:
+      - japanlingo
+
+  scheduler:
+    image: japanlingo-app:latest
+    restart: unless-stopped
+    command: php artisan schedule:work
+    env_file:
+      - .env.docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      app:
+        condition: service_started
+    volumes:
+      - app_storage:/var/www/html/storage
+      - app_cache:/var/www/html/bootstrap/cache
+    networks:
+      - japanlingo
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-japanlingo}
+      POSTGRES_USER: ${DB_USERNAME:-japanlingo}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change-me}
+    ports:
+      - "${DB_FORWARD_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-japanlingo} -d ${DB_DATABASE:-japanlingo}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - japanlingo
+
+networks:
+  japanlingo:
+    driver: bridge
+
+volumes:
+  app_storage:
+  app_cache:
+  postgres_data:
+

@@ -43,7 +43,7 @@ class CertificateController extends Controller
             ];
         });
 
-        return Inertia::render('User/Certificate', [
+        return Inertia::render('User/Sertifikat/Sertifikat', [
             'certificates' => $certificatesData,
         ]);
     }
@@ -54,7 +54,7 @@ class CertificateController extends Controller
             abort(403);
         }
 
-        return Inertia::render('User/CertificateView', [
+        return Inertia::render('User/Sertifikat/DetailSertifikat', [
             'certificate' => $certificate->load('level'),
             'user' => Auth::user(),
         ]);

@@ -10,43 +10,42 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create Admin
-        User::create([
+        User::updateOrCreate(['email' => 'admin@japanlingo.com'], [
             'username' => 'Admin Japanlingo',
-            'email' => 'admin@japanlingo.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
-        ]);
-        //superadmin
-        User::create([
-            'username' => 'SuperAdmin Japanlingo',
-            'email' => 'superadmin@japanlingo.com',
-            'password' => Hash::make('password'),
-            'role'=>'superadmin',
+            'status' => 'active',
         ]);
 
-        // Create Student
-        User::create([
+        User::updateOrCreate(['email' => 'superadmin@japanlingo.com'], [
+            'username' => 'SuperAdmin Japanlingo',
+            'password' => Hash::make('password'),
+            'role' => 'superadmin',
+            'status' => 'active',
+        ]);
+
+        User::updateOrCreate(['email' => 'student@japanlingo.com'], [
             'username' => 'Student Japanlingo',
-            'email' => 'student@japanlingo.com',
             'password' => Hash::make('password'),
             'role' => 'user',
+            'subscription_status' => 'premium',
+            'status' => 'active',
             'xp' => 150,
             'level' => 2,
             'streak_count' => 3,
             'last_activity_date' => now(),
         ]);
 
-        //Create Student 2 
-        User::create([
+        User::updateOrCreate(['email' => 'student2@japanlingo.com'], [
             'username' => 'Student2 Japanlingo',
-            'email' => 'student2@japanlingo.com',
-            'password'=>Hash::make('password'),
-            'role'=>'user',
-            'xp'=>100,
-            'level'=>1,
-            'streak_count'=>1,
-            'last_activity_date'=>now(),
+            'password' => Hash::make('password'),
+            'role' => 'user',
+            'subscription_status' => 'free',
+            'status' => 'active',
+            'xp' => 100,
+            'level' => 1,
+            'streak_count' => 1,
+            'last_activity_date' => now(),
         ]);
     }
 }

@@ -37,7 +37,7 @@ class AdminUserController extends Controller
             ->withQueryString()
             ->through(fn (User $student) => $this->mapStudent($student));
 
-        return Inertia::render('Admin/Users/AdminUsersIndex', [
+        return Inertia::render('Admin/DataUser/DataUser', [
             'students' => $students,
             'filters' => ['search' => $search],
         ]);
@@ -71,7 +71,7 @@ class AdminUserController extends Controller
             ];
         });
 
-        return Inertia::render('Admin/Users/AdminUsersShow', [
+        return Inertia::render('Admin/DataUser/DetailUser', [
             'student' => [
                 'id' => $user->id,
                 'username' => $user->username,

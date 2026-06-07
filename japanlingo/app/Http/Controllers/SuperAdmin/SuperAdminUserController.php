@@ -31,7 +31,7 @@ class SuperAdminUserController extends SuperAdminBaseController
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('SuperAdmin/SuperAdminUsers', [
+        return Inertia::render('SuperAdmin/DataUser/DataUser', [
             'stats' => [
                 $this->stat('Total Student', number_format(User::where('role', 'user')->count()), 'U'),
                 $this->stat('Aktif Mingguan', number_format(User::where('role', 'user')->whereDate('last_activity_date', '>=', now()->subDays(7)->toDateString())->count()), 'A'),

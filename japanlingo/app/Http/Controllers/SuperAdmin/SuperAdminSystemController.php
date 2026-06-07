@@ -12,7 +12,7 @@ class SuperAdminSystemController extends SuperAdminBaseController
 
     public function __invoke()
     {
-        return Inertia::render('SuperAdmin/SuperAdminSystem', [
+        return Inertia::render('SuperAdmin/Sistem/Sistem', [
             'stats' => [
                 $this->stat('Status App', 'Stabil', 'OK'),
                 $this->stat('Queue', number_format(DB::table('jobs')->count()) . ' job', 'Q', '0', 'down'),

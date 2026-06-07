@@ -19,7 +19,7 @@ use Inertia\Inertia;
  *   PUT    /admin/gamification/{id}     → update() : edit achievement yang ada
  *   DELETE /admin/gamification/{id}     → destroy(): hapus achievement
  *
- * Halaman React terkait: resources/js/Pages/Admin/Gamification/AdminGamificationIndex.jsx
+ * Halaman React terkait: resources/js/Pages/Admin/Gamifikasi/Gamifikasi.jsx
  */
 class AdminGamificationController extends Controller
 {
@@ -28,8 +28,8 @@ class AdminGamificationController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Admin/Gamification/AdminGamificationIndex', [
-            'achievements' => Achievement::all(),
+        return Inertia::render('Admin/Gamifikasi/Gamifikasi', [
+            'achievements' => Achievement::withCount('users')->orderBy('created_at', 'desc')->get(),
         ]);
     }
 

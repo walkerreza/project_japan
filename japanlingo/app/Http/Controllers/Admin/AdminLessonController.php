@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Lesson;
 use App\Models\Module;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class AdminLessonController extends Controller
@@ -26,11 +27,12 @@ class AdminLessonController extends Controller
             'status'           => $l->status ?? 'published',
             'module'           => $l->module ? ['id' => $l->module->id, 'title' => $l->module->title] : null,
             'quiz_count'       => $l->quizzes()->count(),
+            'progress_count'   => $l->progress()->count(),
         ]);
 
         $modules = Module::orderBy('week_number')->get(['id', 'title', 'level_id']);
 
-        return Inertia::render('Admin/Lessons/AdminLessonsIndex', [
+        return Inertia::render('Admin/ModulMateri/DaftarMateri', [
             'lessons'           => $lessons,
             'modules'           => $modules,
             'selectedModuleId'  => $request->module_id,
@@ -40,7 +42,7 @@ class AdminLessonController extends Controller
     public function create(Request $request)
     {
         $modules = Module::orderBy('week_number')->get(['id', 'title', 'level_id']);
-        return Inertia::render('Admin/Lessons/AdminLessonsCreate', [
+        return Inertia::render('Admin/ModulMateri/TambahMateri', [
             'modules'         => $modules,
             'defaultModuleId' => $request->module_id,
         ]);
@@ -70,7 +72,7 @@ class AdminLessonController extends Controller
     public function edit(Lesson $lesson)
     {
         $modules = Module::orderBy('week_number')->get(['id', 'title', 'level_id']);
-        return Inertia::render('Admin/Lessons/AdminLessonsEdit', [
+        return Inertia::render('Admin/ModulMateri/EditMateri', [
             'lesson'  => $lesson,
             'modules' => $modules,
         ]);
@@ -95,20 +97,25 @@ class AdminLessonController extends Controller
         return redirect()->back()->with('success', 'Pelajaran berhasil diperbarui');
     }
 
-    public function destroy(Lesson $lesson)
+    public function destroy(Request $request, Lesson $lesson)
     {
-        if ($lesson->quizzes()->count() > 0) {
+        $quizCount = $lesson->quizzes()->count();
+        $progressCount = $lesson->progress()->count();
+        $forceDeleteQuizzes = $request->boolean('force_delete_quizzes');
+
+        if ($quizCount > 0 && ! $forceDeleteQuizzes) {
             return redirect()->back()->withErrors([
-                'delete' => 'Pelajaran tidak dapat dihapus karena masih memiliki kuis',
+                'delete' => "Pelajaran masih memiliki {$quizCount} kuis. Centang konfirmasi hapus kuis terkait untuk melanjutkan.",
             ]);
         }
 
-        if ($lesson->progress()->count() > 0) {
+        if ($progressCount > 0) {
             return redirect()->back()->withErrors([
-                'delete' => 'Pelajaran tidak dapat dihapus karena sudah ada murid yang menyelesaikannya',
+                'delete' => "Pelajaran tidak dapat dihapus karena sudah ada {$progressCount} progress murid. Arsipkan/draft materi lebih aman untuk data belajar.",
             ]);
         }
 
+        $this->deleteLessonFile($lesson->file_url);
         $lesson->delete();
 
         return redirect()->back()->with('success', 'Pelajaran berhasil dihapus');
@@ -127,5 +134,21 @@ class AdminLessonController extends Controller
         }
 
         return response()->json(['message' => 'Urutan berhasil diperbarui']);
+    }
+
+    private function deleteLessonFile(?string $path): void
+    {
+        if (! $path) {
+            return;
+        }
+
+        $path = str_replace('\\', '/', $path);
+        $path = preg_replace('#^/storage/#', '', $path);
+
+        if (! str_starts_with($path, 'lessons/')) {
+            return;
+        }
+
+        Storage::disk('public')->delete($path);
     }
 }

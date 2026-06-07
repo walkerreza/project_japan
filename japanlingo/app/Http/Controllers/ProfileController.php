@@ -18,7 +18,13 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
-        return Inertia::render('Profile/Edit', [
+        $page = match ($request->user()->role) {
+            'superadmin' => 'SuperAdmin/Profil',
+            'admin' => 'Admin/Profil',
+            default => 'User/Profil',
+        };
+
+        return Inertia::render($page, [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
         ]);

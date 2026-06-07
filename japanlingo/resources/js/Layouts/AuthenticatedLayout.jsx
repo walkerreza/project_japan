@@ -11,6 +11,10 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import StyleIcon from '@mui/icons-material/Style';
+import TranslateIcon from '@mui/icons-material/Translate';
+import SlideshowIcon from '@mui/icons-material/Slideshow';
+import GestureIcon from '@mui/icons-material/Gesture';
 import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
@@ -96,6 +100,10 @@ export default function AuthenticatedLayout({ children }) {
         { href: '/admin/dashboard', icon: <DashboardIcon sx={{ fontSize: 24 }} />, label: 'Beranda' },
         { href: '/admin/modules', icon: <LibraryBooksIcon sx={{ fontSize: 24 }} />, label: 'Modul' },
         { href: '/admin/quizzes', icon: <PostAddIcon sx={{ fontSize: 24 }} />, label: 'Kuis' },
+        { href: '/admin/vocabulary', icon: <TranslateIcon sx={{ fontSize: 24 }} />, label: 'Kosakata' },
+        { href: '/admin/flashcards', icon: <StyleIcon sx={{ fontSize: 24 }} />, label: 'Flashcard' },
+        { href: '/admin/presentations', icon: <SlideshowIcon sx={{ fontSize: 24 }} />, label: 'Presentasi' },
+        { href: '/admin/boards', icon: <GestureIcon sx={{ fontSize: 24 }} />, label: 'Board Ajar' },
         { href: '/admin/kanji', icon: <AutoStoriesIcon sx={{ fontSize: 24 }} />, label: 'Kanji Bank' },
         { href: '/admin/users', icon: <PeopleIcon sx={{ fontSize: 24 }} />, label: 'Data Murid' },
         { href: '/admin/analytics', icon: <ShowChartIcon sx={{ fontSize: 24 }} />, label: 'Analitik' },
@@ -106,6 +114,7 @@ export default function AuthenticatedLayout({ children }) {
         { href: '/user/dashboard', icon: <DashboardIcon sx={{ fontSize: 24 }} />, label: 'Beranda' },
         { href: '/user/lessons', icon: <AutoStoriesIcon sx={{ fontSize: 24 }} />, label: 'Pelajaran' },
         { href: '/user/quizzes', icon: <HelpCenterIcon sx={{ fontSize: 24 }} />, label: 'Kuis' },
+        { href: '/user/flashcards', icon: <StyleIcon sx={{ fontSize: 24 }} />, label: 'Review Kosakata' },
         { href: '/user/leaderboard', icon: <EmojiEventsIcon sx={{ fontSize: 24 }} />, label: 'Peringkat' },
         { href: '/user/certificates', icon: <WorkspacePremiumIcon sx={{ fontSize: 24 }} />, label: 'Sertifikat' },
         { href: '/user/progress', icon: <ShowChartIcon sx={{ fontSize: 24 }} />, label: 'Progress' },

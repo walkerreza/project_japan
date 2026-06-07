@@ -37,7 +37,7 @@ class AdminKanjiController extends Controller
             $query->where('jlpt_level', $request->jlpt_level);
         }
 
-        return Inertia::render('Admin/Kanji/AdminKanjiIndex', [
+        return Inertia::render('Admin/KanjiBank/KanjiBank', [
             'kanji' => $query->paginate(12)->withQueryString(),
             'filters' => $request->only('search', 'status', 'jlpt_level'),
         ]);
