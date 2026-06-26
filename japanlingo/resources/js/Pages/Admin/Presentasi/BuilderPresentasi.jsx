@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import BoardCanvas from '@/Components/Board/BoardCanvas';
+import EditableBoardCanvas from '@/Components/Board/EditableBoardCanvas';
 
 const createSlideKey = () => `slide-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
@@ -13,6 +15,8 @@ const emptySlide = {
     background: 'light',
     accent_color: '#E64A19',
     speaker_notes: '',
+    board_data: { strokes: [] },
+    snapshot_data: null,
     _clientKey: createSlideKey(),
 };
 
@@ -24,6 +28,13 @@ const templates = [
     { label: 'Media', layout: 'media', title: 'Gambar / Video', content: 'Tambahkan penjelasan media.', media_url: '' },
     { label: 'Pertanyaan', layout: 'question', title: 'Pertanyaan Pemantik', content: 'Apa arti dari 会議?' },
 ];
+
+const boardTemplate = {
+    label: 'Board',
+    layout: 'board',
+    title: 'Board Diskusi',
+    content: 'Gunakan papan ini untuk menjelaskan kanji, pola kalimat, atau tanya jawab.',
+};
 
 const backgroundClass = {
     light: 'bg-white text-gray-950',
@@ -102,15 +113,32 @@ function SlidePreview({ slide, small = false }) {
                         <p className={`${small ? 'mt-3 text-sm' : 'mt-8 text-2xl'} mx-auto max-w-3xl font-bold opacity-70`}>{slide.content}</p>
                     </div>
                 )}
+                {slide.layout === 'board' && (
+                    <div>
+                        <h2 className={`${small ? 'text-xl' : 'text-4xl'} mb-5 font-black`}>{slide.title || 'Board'}</h2>
+                        <BoardCanvas
+                            strokes={slide.board_data?.strokes || slide.board?.board_data?.strokes || []}
+                            className={small ? 'rounded-xl shadow-none' : 'rounded-3xl'}
+                        />
+                        {!small && <p className="mt-5 text-lg font-bold opacity-70">{slide.content || 'Board interaktif untuk sesi ajar.'}</p>}
+                    </div>
+                )}
             </div>
         </div>
     );
 }
 
 export default function BuilderPresentasi({ deck }) {
-    const [slides, setSlides] = useState((deck.slides || []).map((slide) => ({ ...slide, _clientKey: `slide-id-${slide.id}` })));
+    const [slides, setSlides] = useState((deck.slides || []).map((slide) => ({
+        ...slide,
+        board_data: slide.board?.board_data || slide.board_data || { strokes: [] },
+        snapshot_data: slide.board?.snapshot_data || slide.snapshot_data || null,
+        _clientKey: `slide-id-${slide.id}`,
+    })));
     const [activeIndex, setActiveIndex] = useState(0);
     const [status, setStatus] = useState(deck.status || 'draft');
+    const [pptxFile, setPptxFile] = useState(null);
+    const [isImporting, setIsImporting] = useState(false);
     const activeSlide = slides[activeIndex] || null;
 
     const updateSlide = (field, value) => {
@@ -159,7 +187,36 @@ export default function BuilderPresentasi({ deck }) {
                 background: slide.background || 'light',
                 accent_color: slide.accent_color || '#E64A19',
                 speaker_notes: slide.speaker_notes || '',
+                board_data: slide.board_data || { strokes: [] },
+                snapshot_data: slide.snapshot_data || null,
             })),
+        }, { preserveScroll: true });
+    };
+
+    const importPptx = (event) => {
+        event.preventDefault();
+        if (!pptxFile) return;
+
+        setIsImporting(true);
+        router.post(route('admin.presentations.import-pptx', deck.id), {
+            pptx_file: pptxFile,
+        }, {
+            forceFormData: true,
+            preserveScroll: true,
+            onFinish: () => setIsImporting(false),
+        });
+    };
+
+    const saveActiveBoard = () => {
+        if (!activeSlide?.id || activeSlide.layout !== 'board') {
+            saveSlides();
+            return;
+        }
+
+        router.post(route('admin.presentations.slides.board.save', { presentationDeck: deck.id, presentationSlide: activeSlide.id }), {
+            status,
+            board_data: activeSlide.board_data || { strokes: [] },
+            snapshot_data: activeSlide.snapshot_data || null,
         }, { preserveScroll: true });
     };
 
@@ -179,6 +236,17 @@ export default function BuilderPresentasi({ deck }) {
                                 <option value="draft">Draft</option>
                                 <option value="published">Published</option>
                             </select>
+                            <form onSubmit={importPptx} className="flex flex-wrap items-center gap-2">
+                                <input
+                                    type="file"
+                                    accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                                    onChange={(event) => setPptxFile(event.target.files?.[0] || null)}
+                                    className="max-w-[190px] text-xs font-bold text-gray-600 file:mr-2 file:rounded-xl file:border-0 file:bg-orange-50 file:px-3 file:py-2 file:text-xs file:font-black file:text-orange-700 dark:text-gray-300 dark:file:bg-orange-900/20 dark:file:text-orange-300"
+                                />
+                                <button disabled={!pptxFile || isImporting} className="h-10 rounded-xl border border-orange-200 px-4 text-sm font-black text-orange-700 disabled:opacity-50 dark:border-orange-900/50 dark:text-orange-300">
+                                    {isImporting ? 'Import...' : 'Import PPTX'}
+                                </button>
+                            </form>
                             <Link href={route('admin.presentations.presenter', deck.id)} className="flex h-10 items-center rounded-xl bg-gray-950 px-4 text-sm font-black text-white dark:bg-white dark:text-gray-950">Present</Link>
                             <button onClick={saveSlides} className="h-10 rounded-xl bg-[#E64A19] px-5 text-sm font-black text-white">Simpan</button>
                         </div>
@@ -225,7 +293,7 @@ export default function BuilderPresentasi({ deck }) {
                         <div className="rounded-3xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
                             <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-500">Template</h2>
                             <div className="mt-4 grid grid-cols-2 gap-2">
-                                {templates.map((template) => (
+                                {[...templates, boardTemplate].map((template) => (
                                     <button key={template.label} onClick={() => addSlide(template)} className="rounded-2xl border border-gray-100 bg-gray-50 p-3 text-left text-xs font-black text-gray-700 hover:border-orange-200 hover:bg-orange-50 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-200 dark:hover:bg-orange-900/20">
                                         {template.label}
                                     </button>
@@ -245,9 +313,29 @@ export default function BuilderPresentasi({ deck }) {
                                         <option value="kanji">Kanji</option>
                                         <option value="media">Media</option>
                                         <option value="question">Pertanyaan</option>
+                                        <option value="board">Board</option>
                                     </select>
-                                    <textarea value={activeSlide.content || ''} onChange={(event) => updateSlide('content', event.target.value)} placeholder="Konten slide. Pisahkan poin dengan baris baru." className="min-h-36 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
-                                    <input value={activeSlide.media_url || ''} onChange={(event) => updateSlide('media_url', event.target.value)} placeholder="Media URL opsional" className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
+                                    {activeSlide.layout === 'board' ? (
+                                        <div className="space-y-3">
+                                            <textarea value={activeSlide.content || ''} onChange={(event) => updateSlide('content', event.target.value)} placeholder="Catatan board untuk sensei." className="min-h-24 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
+                                            <EditableBoardCanvas
+                                                initialStrokes={activeSlide.board_data?.strokes || []}
+                                                onChange={({ strokes, snapshot_data }) => {
+                                                    setSlides((current) => current.map((slide, index) => (
+                                                        index === activeIndex ? { ...slide, board_data: { strokes }, snapshot_data } : slide
+                                                    )));
+                                                }}
+                                            />
+                                            <button type="button" onClick={saveActiveBoard} className="w-full rounded-xl bg-gray-950 px-4 py-3 text-sm font-black text-white dark:bg-white dark:text-gray-950">
+                                                {activeSlide.id ? 'Simpan Board Aktif' : 'Simpan Slide Dulu'}
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <textarea value={activeSlide.content || ''} onChange={(event) => updateSlide('content', event.target.value)} placeholder="Konten slide. Pisahkan poin dengan baris baru." className="min-h-36 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
+                                            <input value={activeSlide.media_url || ''} onChange={(event) => updateSlide('media_url', event.target.value)} placeholder="Media URL opsional" className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
+                                        </>
+                                    )}
                                     <div className="grid grid-cols-2 gap-3">
                                         <select value={activeSlide.background} onChange={(event) => updateSlide('background', event.target.value)} className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white">
                                             <option value="light">Light</option>

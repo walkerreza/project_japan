@@ -14,7 +14,6 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import StyleIcon from '@mui/icons-material/Style';
 import TranslateIcon from '@mui/icons-material/Translate';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
-import GestureIcon from '@mui/icons-material/Gesture';
 import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
@@ -103,7 +102,6 @@ export default function AuthenticatedLayout({ children }) {
         { href: '/admin/vocabulary', icon: <TranslateIcon sx={{ fontSize: 24 }} />, label: 'Kosakata' },
         { href: '/admin/flashcards', icon: <StyleIcon sx={{ fontSize: 24 }} />, label: 'Flashcard' },
         { href: '/admin/presentations', icon: <SlideshowIcon sx={{ fontSize: 24 }} />, label: 'Presentasi' },
-        { href: '/admin/boards', icon: <GestureIcon sx={{ fontSize: 24 }} />, label: 'Board Ajar' },
         { href: '/admin/kanji', icon: <AutoStoriesIcon sx={{ fontSize: 24 }} />, label: 'Kanji Bank' },
         { href: '/admin/users', icon: <PeopleIcon sx={{ fontSize: 24 }} />, label: 'Data Murid' },
         { href: '/admin/analytics', icon: <ShowChartIcon sx={{ fontSize: 24 }} />, label: 'Analitik' },

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
+import BoardCanvas from '@/Components/Board/BoardCanvas';
 
 const backgroundClass = {
     light: 'bg-white text-gray-950',
@@ -82,6 +83,22 @@ function PresenterSlide({ slide }) {
                         <p className="text-sm font-black uppercase tracking-[0.45em]" style={{ color: accent }}>Question</p>
                         <h1 className="mt-8 text-6xl font-black sm:text-8xl">{slide.title || 'Pertanyaan'}</h1>
                         <p className="mx-auto mt-10 max-w-5xl text-4xl font-bold leading-relaxed opacity-70">{slide.content}</p>
+                    </div>
+                )}
+
+                {slide.layout === 'board' && (
+                    <div className="my-auto">
+                        <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                            <div>
+                                <p className="text-sm font-black uppercase tracking-[0.45em]" style={{ color: accent }}>Board</p>
+                                <h1 className="mt-3 text-5xl font-black sm:text-6xl">{slide.title || 'Board Presentasi'}</h1>
+                            </div>
+                            <p className="max-w-xl text-base font-bold opacity-70">{slide.content}</p>
+                        </div>
+                        <BoardCanvas
+                            strokes={slide.board?.board_data?.strokes || slide.board_data?.strokes || []}
+                            className="rounded-[2rem] border-4 border-white/70 shadow-2xl"
+                        />
                     </div>
                 )}
             </div>

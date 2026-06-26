@@ -1,0 +1,519 @@
+07/02/26 01.19 - Pesan dan telepon terenkripsi secara end-to-end. Hanya orang di obrolan ini yang bisa membaca, mendengarkan, atau membagikannya. *Pelajari selengkapnya*.
+07/02/26 01.19 - ‎Fuad (Jepang) kini menjadi kontak
+07/02/26 01.19 - Fuad (Jepang): Malem mas, aku fuad kancane huda sng dm Saman. Sesok lek kepepet e aku nggak iso telpon tak chat ngge njelasne sketsa kasar project e ya
+07/02/26 08.33 - Reza: Hooh mas
+07/02/26 08.35 - Reza: Ngene ae mas, Saman kirim spek kebutuhane koyok piye beserta sketsa kasar ngge design e, terus butuh berupa page2 opo ae
+07/02/26 08.35 - Fuad (Jepang): Oke mas
+07/02/26 08.49 - Fuad (Jepang): Sebelum e aku jk minta tech blue print ugong full platform e ya. 
+ 
+Jadi aku perlu web dengan konsep yang sama karo Duolingo. Tapi khusus bahasa jepang.
+
+Duolingo : 
+https://www.duolingo.com/learn
+
+Tapi juga mencakup kelas sng tak jual dan portofolioku.
+
+https://rikijepang.com/
+
+
+Aku perlu homepage nggae referensi homepage e Canva. 
+
+https://www.canva.com/templates
+07/02/26 08.52 - Fuad (Jepang): Jadi mulai dari homepage e sng referensine Canva.
+
+
+Isi konten e riki jepang. 
+
+Terus materi ne Duolingo.
+
+Detail page e
+
+1. Landing Page
+Isi:
+Penjelasan kelas
+Benefit
+Harga
+Testimoni
+Tombol daftar
+2. Pricing Page
+Paket bulanan
+Apa saja yang didapat
+FAQ pembayaran
+3. About / Tentang
+Konsep belajar
+Profil tim
+Metode
+4. Login / Register
+07/02/26 08.53 - Fuad (Jepang): PRIVATE PAGE (SETELAH LOGIN)
+5. Dashboard Murid
+Progress
+Modul terbaru
+Jadwal Zoom
+Quick access quiz
+6. Modul Page
+07/02/26 08.54 - Fuad (Jepang): Semono sek Saman iso entok gambaran jelas nggak?
+07/02/26 08.55 - Reza: Tak pahami sek mas
+07/02/26 08.55 - Fuad (Jepang): Oke mohon bantuannya
+07/02/26 08.58 - Reza: Iki konten Canva ne perlu tak buat apa gimana mas
+07/02/26 08.59 - Fuad (Jepang): Ngge referensi homepage ae mas, isi konten e sng nek riki jepang.
+07/02/26 09.02 - Reza: Oh jadi aku pake referensi homepage e dari Canva
+Terus detail materine pake konsep gamification gitu ya mas?
+07/02/26 09.02 - Fuad (Jepang): Betul mas
+07/02/26 09.03 - Reza: Terus iku kelas jepang koncone pean iku gimana mas
+Tak buat redirect langsung ke link pagenya apa gimana
+07/02/26 09.05 - Reza: Tapi Iki kelas e koncone pean udah ada pricing list e
+Opo dipisah ya mas?, jadi ada 2 pricing?
+07/02/26 09.05 - Reza: Sama boleh minta materi materinya ga mas, buat referensi
+07/02/26 09.20 - Fuad (Jepang): Iya mas, cukup link ke akun Whatsapp ae.
+07/02/26 09.20 - Fuad (Jepang): Belum mas makane jek minta tech blue print.
+07/02/26 09.20 - Fuad (Jepang): Oke tunggu
+07/02/26 09.21 - Fuad (Jepang): File pdf terjemah N3
+https://drive.google.com/drive/folders/1z1aclfH9FQSjGEmVLHjJnHMgz8LvbeGZ
+
+Latihan soal N3
+https://drive.google.com/drive/folders/1-HZtJEHYOUKRHVt1rmzZbsjfIYJEnml7
+07/02/26 09.25 - Fuad (Jepang): Eh sorry web riki jepang itu kah? Iku ngge referensi isi homepage e ae mas. Iku uduk web e kancaku kok.
+07/02/26 09.40 - Reza: Jadi isi web e iku di padakne karo Riki jepang?
+Tapi pola materine koyok Duolingo gitu
+Oke paham2
+07/02/26 09.45 - Fuad (Jepang): Nah iya mas
+07/02/26 09.47 - Reza: Ini cuma buat n3 aja ya mas?
+Apa ga perlu n5 4 nya sekalian 
+Apa itu aja
+07/02/26 09.48 - Reza: Maksudnya buat materi di websitenya
+07/02/26 09.48 - Fuad (Jepang): Sementara n3 dulu mas
+07/02/26 09.49 - Reza: Oalah oke mas
+07/02/26 09.49 - Reza: Sementara tak bikinin designnya dulu, nanti kalo dah jadi tak kabari ya mas
+07/02/26 09.50 - Fuad (Jepang): Oke mas, oiya soal gamifikasi. Aku pengen sng kanji nggae referensi dari aplikasi " kanji senpai"
+07/02/26 09.50 - Fuad (Jepang): ‎IMG-20260207-WA0002.jpg (file terlampir)
+07/02/26 09.51 - Reza: Oalah oke mas
+07/02/26 09.52 - Reza: Oiya, untuk langganannya itu berupa apa saja ya mas?
+Akses premium/ kelas
+07/02/26 09.54 - Fuad (Jepang): Oh iya materi kui sementara premium tapi key access e nggenaku mas. Ugong payment langsung web. Iso nggak koyo ngono?
+07/02/26 09.58 - Reza: Sementara tak bikinin fronetendnya dulu aja mas gimana
+Kayane itu harus buat gateway payment pake stripe/midtrans Dan buat akses ke payment gatewaynya kalo midtrans harus lokal sih mas
+Tapi kalo stripe kurang tau, mungkin tak cobak e nanti
+07/02/26 09.59 - Reza: Soale bagian paymentnya radak sulit buat implementasinya
+07/02/26 10.01 - Reza: Ini ada 3 tier apa gimana mas?
+07/02/26 10.03 - Fuad (Jepang): Sorry tier gimana?
+07/02/26 10.03 - Fuad (Jepang): Gpp front nya dulu mas
+07/02/26 10.03 - Reza: Kaya tingkatan premiumnya
+07/02/26 10.06 - Fuad (Jepang): Oh iya mas, tolong bikin tergantung intesitas mingguannya mas.
+07/02/26 10.07 - Reza: Progress gitu?
+07/02/26 10.11 - Fuad (Jepang): Nek Google drive kan enek program mingguan, nah enek sng moduln2 minggu di recap dadi seminggu iku dijadikan satu tier mas.
+07/02/26 10.20 - Reza: Yang di all bunpo saja apa semuanya mas?
+07/02/26 10.20 - Fuad (Jepang): Semua mas
+07/02/26 10.22 - Reza: Selain itu ada tier lain lagi ga mas
+07/02/26 10.22 - Fuad (Jepang): Itu dulu aja mas
+07/02/26 10.22 - Reza: Ini berdasarkan Drive nya kan materinya?
+07/02/26 10.23 - Fuad (Jepang): Betul mas
+07/02/26 10.25 - Reza: Oke mas, tak kerjain dulu desainnya, nanti kalo jadi tak chat e sampean, sama tanya tanya juga 😅
+07/02/26 10.38 - Fuad (Jepang): Oke mas sorry ya nggak iso kek i detail sng jelas sek jk rodok sibuk
+07/02/26 10.38 - Reza: Hooh mas, santai
+09/02/26 02.03 - Reza: Mas, kapan kapan sampean ada waktu buat zoom/vc singkat?
+Se senggang e aja, aku mau coba presentasi ke masnya soal web nya,sama aku enek beberapa pertanyaan terkait webnya
+Misalnya ga ada waktu gapapa nanti tak kirimi user requirement & flow diagramnya sama design nya
+09/02/26 02.07 - Fuad (Jepang): Lk zoom mungkin sabtu depan mas, atau sekitar jam 9-10 malem seminggu kedepan koyoe aku iso.
+09/02/26 02.12 - Reza: Opo ngene e mas, user requirement, flow diagram &  diagram tak kirim aja, nanti mas e tinggal lihat aja
+09/02/26 02.12 - Reza: Nanti yang tak kirim cuma berupa wireframe (gambaran) aja
+09/02/26 02.14 - Reza: Soale masih kurang riset mendalam soal web, terlebih e yang Riki jepang iku mas hehe 😅
+Takut e design dah jadi tapi nggak sesuai ekspektasi
+09/02/26 02.38 - Fuad (Jepang): Oke oke ngono ae yo kenek mas
+09/02/26 08.02 - Fuad (Jepang): Saman kabari ae yo mas aku kerjo lk enek wektu jk iso ngintip hape kok.
+12/02/26 12.41 - Fuad (Jepang): Siang mas, Saman iso nyebut budget e sek nggak? Aku ugong nyiapne soale.
+12/02/26 12.47 - Reza: Siang, gini ae mas, kan website e gurung jadi kan & websitenya belum tak presentasi ne, mungkin kalo urusan budget sementara bisa nanti aja/nunggu phase 1 dulu, soale belum berani mas nentuin harga 😅
+12/02/26 12.56 - Fuad (Jepang): Oke mas, Saman iso presentasi kapan yo?
+12/02/26 12.56 - Fuad (Jepang): Terus kan aku juga baru kasih materi n3 next lek iki jalan mungkin aku yo pake saman eneh ngge tambah materi.
+12/02/26 12.57 - Fuad (Jepang): Aku weekend iki senggang
+13/02/26 05.43 - Reza: Minggu gimana mas?
+13/02/26 05.44 - Reza: Jam e menyesuaikan sampean
+13/02/26 05.44 - Fuad (Jepang): Lek sore iki pie mas?
+13/02/26 05.44 - Fuad (Jepang): Minggu nggaiso koyoe
+13/02/26 05.45 - Reza: Waduh sore aku ada kuliah mas
+13/02/26 05.46 - Reza: Saman isone hari opo wes,selain hari Jumat
+13/02/26 05.54 - Fuad (Jepang): Lek besok?
+13/02/26 05.54 - Fuad (Jepang): Jam jam 8 wib pagian paling aku ugong mulai kelas
+13/02/26 06.07 - Reza: Sama mas juga ga bisa
+13/02/26 06.07 - Reza: Paling lek aku sore-malem sih mas
+13/02/26 16.16 - Fuad (Jepang): Sore coba tak golek wektu besok mas
+13/02/26 17.15 - Reza: Hooh mas
+15/02/26 09.33 - Reza: Jadi gimana mas, ada waktu senggang?
+15/02/26 10.46 - Fuad (Jepang): 15 mnt lagi mas
+15/02/26 10.46 - Fuad (Jepang): Jam 11 bisa?
+15/02/26 10.47 - Reza: Bisa mas
+15/02/26 10.53 - Fuad (Jepang): Tak telpon sekarang ya?
+15/02/26 11.00 - Reza: Zoom bisa mas
+15/02/26 11.00 - Reza: Bentar tak kirimi link e
+15/02/26 11.00 - Fuad (Jepang): bisa coba dulu ya
+15/02/26 11.03 - Reza: Oke bentar ya
+15/02/26 11.05 - Reza: https://app.zoom.us/wc/87943897609/start?ref_from=launch&fromPWA=1&pwd=JNb9Is4Ze8aWTHo3iLyqZxrDpvXFga.1
+15/02/26 11.05 - Reza: saman cobak
+15/02/26 11.05 - Fuad (Jepang): oke tunggu
+15/02/26 11.06 - Fuad (Jepang): id nya aj mas
+15/02/26 11.06 - Reza: 538 470 1452
+15/02/26 11.07 - Fuad (Jepang): pw nya apa
+15/02/26 11.09 - Fuad (Jepang): mas
+15/02/26 11.09 - Reza: bentar mas
+15/02/26 11.10 - Reza: nggak ada pw nya mas
+15/02/26 11.10 - Fuad (Jepang): Oke bentar
+15/02/26 11.10 - Fuad (Jepang): <Media tidak disertakan>
+15/02/26 11.12 - Reza: bisa ga mas?
+15/02/26 11.12 - Fuad (Jepang): Bentar
+15/02/26 11.12 - Fuad (Jepang): Perlunpasword
+15/02/26 11.13 - Reza: waduh, ntar tak buat room lagi
+15/02/26 11.13 - Reza: M.ANKA REZA_AKN PUTRA SANG FAJAR mengundang Anda untuk bergabung ke rapat Zoom yang terjadwal.
+
+Topik: M.ANKA REZA_AKN PUTRA SANG FAJAR's Personal Meeting Room
+Bergabung ke Rapat Zoom
+https://us05web.zoom.us/j/5384701452?pwd=Ft6nZSLeRSS21ef4a0RS62sT2WtUd6.1
+
+ID Rapat: 538 470 1452
+Kode Sandi: k5MQpy
+15/02/26 11.14 - Fuad (Jepang): Oke tunggu mas
+15/02/26 11.15 - Fuad (Jepang): oke udah mas
+15/02/26 11.16 - Reza: udah join mas?
+15/02/26 11.16 - Fuad (Jepang): Udah
+15/02/26 11.26 - Reza: https://www.notion.so/307f6953c0db80eab8eeec899865f053?v=307f6953c0db808eb922000ceb1b5da6&source=copy_link
+20/02/26 07.23 - Fuad (Jepang): Pagi mas, prospek e udah sejauh apa ya.
+20/02/26 07.45 - Reza: Pagi, proses masih tahap rancangan ulang lagi mas menurut request sampean kemarin
+20/02/26 08.05 - Fuad (Jepang): Oke mas, next sore iki iso nggak yo?
+20/02/26 08.05 - Fuad (Jepang): Koyoe aku luang sekitar jam 5an
+20/02/26 08.10 - Reza: Besok aja gimana mas?, atau Minggu2 kayak kemaren
+20/02/26 08.10 - Reza: Soale aku ada jadwal kuliah full mas
+20/02/26 08.12 - Fuad (Jepang): Kukabarin lagi mas
+20/02/26 12.46 - Reza: ya mas
+21/02/26 21.17 - Reza: Gimana mas bisanya kapan?
+22/02/26 01.52 - Fuad (Jepang): Wah sorry belum bisa minggu ini mas
+22/02/26 01.52 - Fuad (Jepang): Mingdep ya
+22/02/26 03.00 - Reza: Oalah hooh mas
+24/02/26 18.12 - Reza: Bisanya hari apa ya mas?, untuk phase 1 Sudah selesai mas tinggal di review
+24/02/26 19.01 - Fuad (Jepang): Malem ini bisa?
+24/02/26 19.01 - Fuad (Jepang): 1 jam setengah lagi aku luang
+24/02/26 19.12 - Reza: Jam 9nan ya mas?
+24/02/26 20.38 - Fuad (Jepang): Iya
+24/02/26 20.38 - Fuad (Jepang): Sekarang bisa?
+24/02/26 20.38 - Reza: bisa mas
+24/02/26 20.40 - Fuad (Jepang): Oke Saman share link zoom
+24/02/26 20.42 - Reza: oke bentar mas, tak set dulu
+24/02/26 20.43 - Reza: https://us05web.zoom.us/j/89694519345?pwd=erinb4FlW0pKmhT3sbGY9OTuvOYKKR.1
+24/02/26 20.54 - Reza: sebentar mas ada problem di laptop
+24/02/26 20.54 - Fuad (Jepang): oke mas
+24/02/26 20.56 - Reza: https://us05web.zoom.us/j/84317023103?pwd=8yadzVnM3GCfHIwKla0ftugUphlxT9.1
+24/02/26 21.47 - Fuad (Jepang): ‎VID-20260224-WA0085.mp4 (file terlampir)
+Page e ditambah efek kek ngene ribet gak mas
+24/02/26 21.47 - Fuad (Jepang): Pie kemau masalah hosting
+24/02/26 21.50 - Reza: Oalah, gampang Iki mas
+24/02/26 21.50 - Reza: Masalah hosting saranku pake vps yang dari hostinger aja sih mas
+24/02/26 21.52 - Reza: https://www.hostinger.com/vps-hosting#pricing
+24/02/26 21.52 - Reza: Tapi ini kalau kebutuhan hosting bisa di akhir aja si mas
+24/02/26 21.54 - Reza: Selain ini design nya apa lagi mas
+Biar tak edit2 lagi nanti <Pesan ini diedit>
+24/02/26 22.25 - Fuad (Jepang): Design roadmap sng kek nng Duolingo versi dekstop sih mas
+24/02/26 22.25 - Fuad (Jepang): Selain iku gek tak Whatsapp neh
+24/02/26 22.26 - Reza: Iku di taruh mana mas
+24/02/26 22.26 - Fuad (Jepang): Di awal entry modul mas
+24/02/26 22.27 - Reza: Jadi setelah user login kan mas?
+24/02/26 22.27 - Fuad (Jepang): Iya mas
+24/02/26 22.27 - Fuad (Jepang): Koyoe gradasi warnanw jugak Saman padakne iki deh
+24/02/26 22.28 - Fuad (Jepang): Karo ngko tak kek i 4 alternative warna terus Saman kek i comment nek file e Ben aku iso ngganti dewe
+24/02/26 22.28 - Fuad (Jepang): Terlalu ribet nggak?
+24/02/26 22.28 - Reza: Gini mas,Saman buat list aja ,apa aja changenya disini mas ben penak lek liat
+24/02/26 22.29 - Reza: Bisa mas, komposisi warnanya Saman revisi boleh kok
+24/02/26 22.29 - Fuad (Jepang): Oke mas
+24/02/26 22.34 - Fuad (Jepang): - gradasi autumn
+- spring (sakura)
+- winter (salju)
+- summer (festival)
+24/02/26 22.35 - Reza: Ini untuk halaman apa aja mas
+24/02/26 22.39 - Fuad (Jepang): Roadmap Dan homepage ae mas
+24/02/26 22.42 - Reza: Yang roadmap itu page baru ya berarti?
+24/02/26 22.42 - Reza: Soalnya cuma halaman pricing sama about aja
+24/02/26 22.59 - Fuad (Jepang): Iya mas, berarti pricing, Abt, karo roadmap.
+25/02/26 08.55 - Reza: https://stitch.withgoogle.com/preview/8386712636945847737?node-id=4d32f6f282d04460a3441d80154c7274
+25/02/26 08.56 - Reza: ini mas, design roadmapnya gini gimana?
+25/02/26 08.56 - Reza: ‎IMG-20260225-WA0001.jpg (file terlampir)
+25/02/26 15.54 - Reza: Maaf mas, nanti kayak e aku Ndak bisa meeting zoom malam ini, soale buanyak urusan2 kampus, mungkin bisa diganti Jumat malem/Sabtu/minggu
+25/02/26 15.54 - Reza: Padet pol soale mas
+25/02/26 17.30 - Fuad (Jepang): Oke mas
+28/02/26 10.41 - Fuad (Jepang): Siang mas
+28/02/26 10.41 - Fuad (Jepang): Senggang jam berapa
+28/02/26 11.59 - Reza: Senggang mas weekend
+28/02/26 11.59 - Reza: Manut Saman ae
+28/02/26 12.25 - Fuad (Jepang): Progres e sampek mana saiki mas
+28/02/26 12.35 - Reza: Sampek yang sampean request kemaren
+28/02/26 12.36 - Fuad (Jepang): Gamifikasi ne sng jare Saman jk akeh bug wingi wes kenek didelok ugong mas?
+28/02/26 12.37 - Reza: Iku masih di user dashboard mas
+28/02/26 12.37 - Fuad (Jepang): Iku perlu pie
+28/02/26 12.39 - Reza: Paling nanti tak buat fronetendnya dulu, kalo gamifikasinya itu mungkin masuk phase 2/3 gitu mas rencanaku
+Bareng Ama implementasi buat backendnya
+28/02/26 12.39 - Fuad (Jepang): Oo gitu ya mas
+28/02/26 12.39 - Reza: Nanti tak buatin trello Ben Saman bisa liat progressnya
+28/02/26 12.41 - Fuad (Jepang): Oke mas, phase 1 iki koyoe meh kabeh requestku uwes enek deh mas. Soal pricelist dan payment e wi di hold sek ae. Menurut Saman phase 1 kurang opo ae.
+28/02/26 12.42 - Reza: Mungkin tak pikirin nanti kayak e mas, tapi sementara segitu dulu gimana mas?
+28/02/26 12.42 - Fuad (Jepang): Iya nggakpapa mas, masi banyak waktu soalnya.
+28/02/26 12.43 - Fuad (Jepang): Koyoe zoom eneh lek Saman ws siapne materi presentasi phase 2 ne yo mas.
+28/02/26 12.44 - Reza: Hooh mas, kebetulan belum tak buatin ppt ne 😅
+28/02/26 12.44 - Reza: Maaf Lo mas lek progress e rodok lemot 
+Kakean acara soale wkwk
+28/02/26 12.45 - Fuad (Jepang): Hooh mas, referensi ne ws cukup kan? Opo jk perlu aku presentasi disek nggene Saman ngge materi ne?
+28/02/26 12.45 - Fuad (Jepang): Sante banget mas
+28/02/26 12.45 - Fuad (Jepang): Aku yo nggak golek ko web freelance mergo wektuku titik
+28/02/26 12.46 - Reza: Boleh mas
+28/02/26 12.46 - Reza: Siap
+28/02/26 12.47 - Fuad (Jepang): Oke mas sek tak siapne
+28/02/26 12.56 - Fuad (Jepang): Sorry koyoe tak ketik ae Mari ngene enek perlu soale mas.
+
+1. Key access game nk tanganku
+2. Repetasi nggae referensi kanji senpai & Duolingo.
+3. Display admin koyo sng ndek quiziz & Google form untuk tambah modul.
+4. Sisane dashboards Dan grafik
+28/02/26 13.01 - Reza: Anu mas, misal e rolenya tak jadikan 4 gimana?
+
+Jadi 4 role itu ada
+Guest
+User/siswa
+Admin 
+Superadmin
+
+Jadi role ini punya hak akses/tingkat akses sendiri2 gitu mas
+28/02/26 13.03 - Reza: Yang punya hak akses penuh itu yang superadmin mas
+28/02/26 13.05 - Fuad (Jepang): Terlalu kompleks nggak mas? aku jk membatasi budget soale market e jk ugong bener"  tak research.
+28/02/26 13.06 - Reza: Itu mek saranku AE sih mas, tapi lek menurute saman ga perlu Yo gapopo mas
+28/02/26 13.07 - Fuad (Jepang): Tapi masuk akal si mas, nggakpopo coba di run nggae saran e Saman.
+28/02/26 13.09 - Reza: Oke mas
+07/03/26 07.43 - Fuad (Jepang): Pagi mas
+07/03/26 07.43 - Fuad (Jepang): Siang ini bisa?
+07/03/26 09.40 - Reza: Bisa mas
+07/03/26 09.41 - Reza: Tapi maaf mas progress agak sedikit melambat, mungkin tak presentasi sedikit aja sih mas
+07/03/26 09.52 - Fuad (Jepang): Coba video ae bisa nggak mas, aku enek perlu yoan beberapa jam engkas
+07/03/26 09.53 - Reza: Iya mas
+07/03/26 09.54 - Fuad (Jepang): Oke tolong ya
+14/03/26 13.59 - Reza: selamat siang mas, maaf baru ngirim, untuk progressnya sudah sampai tahap setting user panel
+14/03/26 13.59 - Fuad (Jepang): oke mas next kapan lagi ya
+14/03/26 14.00 - Reza: mungkin tak selesaiin backendnya sama page pagenya dulu sih mas
+14/03/26 14.00 - Reza: tak kabari lagi kalo sudah selesai beberapa
+14/03/26 14.01 - Fuad (Jepang): oke mas ini belum kuliat nanti kalo senggang ya
+14/03/26 14.03 - Reza: oke mas
+14/03/26 14.03 - Reza: maaf lo ya mas progressnya agak melambat, tapi insyaallah tak kebut akhir maret ini
+14/03/26 15.08 - Fuad (Jepang): Iya
+23/03/26 12.52 - Reza: Asalamualaikum mas Fuad, selamat siang, minal aidzin walfaizin mas mohon maaf lahir batin 🙏
+Ijin menginfokan untuk websitenya sudah di tahap merancang mvp, untuk frontend Dan backendnya sudah saya rancang mungkin 80% karena masih tahap kasarannya
+23/03/26 12.53 - Reza: Mungkin untuk tahap perancangan fitur untuk user/murid itu apa saja yang perlu ditambahkan, mungkin bisa njenengan list aja mas
+23/03/26 14.29 - Fuad (Jepang): Waalaimusalam mas, maaf nanti malem tak respon.
+23/03/26 14.31 - Reza: Oke mas
+23/03/26 20.45 - Fuad (Jepang): Habis tak review kayaknya cukup mas. Sambil tak pake e tester nanti lek wes trial n error pake user lek enek opopo tak kontak Saman neh.
+23/03/26 20.54 - Reza: Buat sementara sesi tester dibuat belakangan gimana mas?
+Soalnya ada beberapa backend sing belum beres juga
+23/03/26 20.56 - Reza: Gini aja mas, untuk fiturnya sampean List aja, apa yang perlu, terus untuk kebutuhan admin (sensei) itu apa...
+Nanti kedepan e rencana e tak implementasikan sesuai request e sampean gimana
+23/03/26 21.02 - Fuad (Jepang): Iya gapapa
+23/03/26 21.02 - Fuad (Jepang): Oke mas segera ya, maaf aku juga sibuk.
+23/03/26 21.04 - Reza: Oke mas
+24/03/26 12.19 - Fuad (Jepang): ‎IMG-20260324-WA0006.jpg (file terlampir)
+Ini dulu si mas
+24/03/26 12.21 - Reza: Oke mas
+24/03/26 12.21 - Fuad (Jepang): Tapi lek dikasih fitur buat meeting didalem webnya terlalu ribet nggak mas?
+24/03/26 12.22 - Reza: Bisa mas tapi kayak e agak lama mas lek tak tambah fitur itu
+24/03/26 12.22 - Fuad (Jepang): Belakangan ae mas lekno
+24/03/26 12.22 - Fuad (Jepang): Sng sekarang udah ada di list aja dulu
+24/03/26 12.23 - Reza: Oke mas
+30/03/26 19.27 - Fuad (Jepang): Malem mas, progresnya sampek mana ya.
+30/03/26 19.29 - Reza: Malam mas, untuk progress masih pembuatan backend mas
+Untuk frontend masih belum tak update
+30/03/26 19.29 - Reza: Nanti saya kabari kalau sudah jadi
+30/03/26 19.29 - Fuad (Jepang): Oke mas.
+16/04/26 09.09 - Fuad (Jepang): Pagi mas, maaf lama nggak kontak. Progres kita sampe mana ya?
+16/04/26 10.14 - Reza: Pagi mas, untuk progress saat ini sudah ketahap integrasi ke backend
+Untuk page superadmin dan admin sudah saya buat, tapi beberapa ada yang masih belum bisa
+16/04/26 10.34 - Fuad (Jepang): Week end ini bisa presentasi mas?
+16/04/26 10.34 - Fuad (Jepang): Sabtu sorean
+16/04/26 10.38 - Reza: Bisa mas
+16/04/26 11.32 - Fuad (Jepang): Oke mas aku kontak ya
+16/04/26 12.50 - Reza: Ya mas
+18/04/26 18.44 - Fuad (Jepang): Maaf mas hari ini nggak sempet Ada masalah di kerjaan
+18/04/26 18.44 - Fuad (Jepang): Mingdep aku kabarin ya
+18/04/26 18.45 - Reza: Oh iya mas santai aja
+18/04/26 18.45 - Reza: Mingdep hari Sabtu ya?
+18/04/26 18.51 - Fuad (Jepang): Kayaknya mingdep juga belum deh
+18/04/26 18.51 - Fuad (Jepang): Mingdep sabtu malem kayaknya mas
+18/04/26 18.51 - Fuad (Jepang): Iya sabtu malem
+18/04/26 18.51 - Fuad (Jepang): Aku kabarin ya
+18/04/26 18.52 - Reza: Oke mas
+18/04/26 18.52 - Fuad (Jepang): Atau mingdep ini weekdays jam 8 9 an wib bisa kayaknya
+18/04/26 18.53 - Reza: Oke mas, free juga mingdep, nanti tak jelasin arsitektur apa yang udah jadi
+18/04/26 18.57 - Fuad (Jepang): Oke mas aku kabarin
+27/04/26 16.27 - Reza: Misi mas, selamat sore/malam, untuk phase 3  sudah selesai mas dari websitenya, jadi nanti tak presentasiin lagi & untuk presentasinya bisanya pean kapan ya?, soalnya aku juga mau nanya nanya sama evaluasi di websitenya secara keseluruhan <Pesan ini diedit>
+27/04/26 16.39 - Fuad (Jepang): Maaf mas beneran belum ada waktu belakangan ini, bisa Kasi ppt nya aja nggak
+27/04/26 16.40 - Reza: Oalah gitu ya, 
+Gini aja mas nanti tak rekam vidio, terus sampean review gimana?
+Persis kaya yg kemaren
+27/04/26 16.43 - Fuad (Jepang): Oke mas
+28/04/26 15.25 - Reza: <Media tidak disertakan>
+selamat siang mas, ini untuk videonya
+28/04/26 15.25 - Reza: mungkin bisa direview mas, sama kasih saran buat web ini, yang kurang yang mana gitu
+28/04/26 15.26 - Reza: saya juga ada beberapa pertanyaan, jawab singkat ga papa, detail malah lebih bagus mas
+28/04/26 15.27 - Reza: 1.fitur payment (pembayaran premium) ada berapa tier?, terus pakai apa buat pembayarannya, manual dari WhatsApp/bot atau pakai payment gateway (seperti kartu kredit,qris) atau payment internasional 
+2.fitur penambahan materi dan tugas, apakah isi manual atau import doc (nanti view sesuai yang ada di doc
+3.fitur admin dan superadmin sudah sesuai?, adakah tambahan?
+4. apa perlu SEO Search Engine Optimization untuk hasil pencarian website atas sendiri
+5. bagaimana user interface? apakah perlu perombakan ulang untuk layout dan UI/UX nya
+6. apakah masih perlu fitur sertifikat dan poin?
+7. perlukah fitur kamus kaya duolingo?, kamus kanji, hiragana dan katakana
+28/04/26 17.18 - Reza: Untuk phase selanjutnya phase 4 mas, meliputi evaluasi sama optimalisasi web dan beberapa penambahan fitur
+29/04/26 04.07 - Fuad (Jepang): Maaf mas slowrespon aku jawab agak sorean ya
+29/04/26 06.32 - Reza: Oke mas
+30/04/26 05.25 - Fuad (Jepang): 1. Payment gateway.
+2. Isi manual
+3. Jawaban menyusul review
+4. SEO nggak dulu
+5. Jawaban menyusul
+6. Perlu poin, fitur feedback bisa lanjut materi kalau materi sebelumnya lulus materi sebelumnya.
+7. Jawaban menyusul
+30/04/26 07.05 - Reza: Oke mas, tapi kemungkinan untuk payment gatewaynya agak lama, soalnya ada yg berbayar juga, nanti tak Carikan alternatif
+30/04/26 10.28 - Fuad (Jepang): Mmm, gapapa mas sebenernya aku pengen coba tes dulu tanpa fitur payment bisa nggak kira"?
+30/04/26 10.59 - Reza: Bisa banget mas, untuk demo nya nanti sehabis phase 6/5 gitu gimana mas?
+Soale ya masih banyak bug yang masih perlu dibenerin sih mas, tapi mayoritas bug nya dari frontend jadi ya mungkin cepet
+30/04/26 11.34 - Fuad (Jepang): Oke mas pertanyaan yang kosong belum kuisi dulu ya
+30/04/26 11.38 - Reza: Oke mas
+18/05/26 17.28 - Fuad (Jepang): Sore, Maaf ya mas belum ada waktu bg review dll.
+18/05/26 17.30 - Reza: Baik mas Ndak papa, mungkin revisinya saya kerjakan Minggu depan gimana?, soalnya masih full kerjaan sama kuliah, mohon maaf ya 🙏
+18/05/26 17.30 - Fuad (Jepang): Iya mas, aku juga sibuk nggakpapa masnya sante aja.
+18/05/26 17.30 - Reza: Untuk progres sudah menuju 75-80% mas, tinggal benerin bug yang kemarin sama penambahan konten
+18/05/26 17.32 - Reza: oh ya mas untuk konten itu input full manual ya?, sama untuk tampilan konten dan materi itu seperti apa ya mas
+30/05/26 09.49 - Fuad (Jepang): Maaf mas baru bisa bales
+30/05/26 09.50 - Fuad (Jepang): Fast card mas
+30/05/26 09.51 - Fuad (Jepang): ‎IMG-20260530-WA0007.jpg (file terlampir)
+Kaya gini
+30/05/26 09.51 - Reza: Jadi bukan materi full yang di Drive ya mas?
+30/05/26 09.52 - Reza: Maksudnya kayak materi penjelasan gitu
+30/05/26 09.52 - Fuad (Jepang): Bukan, yang di drive itu buat digamifikasi.
+30/05/26 09.52 - Fuad (Jepang): Nggak perlu mas aku ada sesi sendiri buat itu
+30/05/26 09.53 - Reza: Oalah tak kirain input materinya juga
+30/05/26 09.53 - Fuad (Jepang): Kayaknya bakal ada mas tapi belum deh.
+30/05/26 09.54 - Fuad (Jepang): Sekarang perlu apa lagi ya hari ini aku kosong sampek jam 11 wib
+30/05/26 09.54 - Reza: Selain itu perlu apa lagi mas?
+30/05/26 09.55 - Fuad (Jepang): Di quiziz kak ada fitur power point buat presentasi mas, bikin yang kaya gitu lama nggak ya? Kalo lama nggausah.
+30/05/26 09.56 - Reza: Itu nanti import ppt ya mas?
+30/05/26 09.56 - Reza: Sama aku nanya yang zoom meeting itu kaya gimana?
+30/05/26 09.56 - Fuad (Jepang): Maaf gimana?
+30/05/26 09.57 - Fuad (Jepang): Enggak jadi semacam halaman buat diedit sendiri.
+30/05/26 09.57 - Reza: Yang requestan e pean dulu pernah bahas soal zoom meeting, seting jadwal zoom
+30/05/26 09.57 - Reza: Kayak board jam gitu ya
+30/05/26 09.58 - Fuad (Jepang): Iya mas
+30/05/26 09.59 - Fuad (Jepang): Oh itu di skip dulu aja mas waktunya tinggal dikit.
+30/05/26 09.59 - Reza: Oh oke mas
+30/05/26 09.59 - Fuad (Jepang): Jadi makan waktu banyak nggak ya?
+30/05/26 09.59 - Reza: Nanti tak buatin dulu mas, misale ada kesulitan tak konfirmasi pean
+30/05/26 10.00 - Fuad (Jepang): Oke mas kabarin ya, oiya sorry banget waktu ku dikit. Kalo emang perlu di dp tolong kabarin aja.
+30/05/26 10.01 - Reza: Oke mas, selain itu ada yang lain? Apa sudah cukup?
+30/05/26 10.02 - Fuad (Jepang): Itu dulu aja mas.
+30/05/26 10.03 - Reza: Jadi materi nya berupa flash card untuk yang kanji aja ya?
+30/05/26 10.04 - Fuad (Jepang): Enggak, buat materi kosakata juga pake itu, terus itu langsung connect ke gamenya ya.
+30/05/26 10.06 - Reza: Selingan di quis gitu ya?
+30/05/26 10.07 - Fuad (Jepang): Iya mas
+30/05/26 10.11 - Reza: Perlu kamus kosakata/kanji/Katakana/hiragana ga mas, isinya nanti penjelasan huruf/kosakatanya gitu
+Gimana mas?
+30/05/26 10.12 - Reza: Sama yang divideo kemarin apa sudah sesuai desainnya ya
+30/05/26 10.12 - Fuad (Jepang): Cukup kosakata aja mas
+30/05/26 10.12 - Fuad (Jepang): ‎IMG-20260530-WA0009.jpg (file terlampir)
+30/05/26 10.12 - Fuad (Jepang): Maaf mas nggak bisa ku review lagi
+30/05/26 10.13 - Fuad (Jepang): Bisa kirim email nggak?
+30/05/26 10.13 - Reza: Waduh, nanti tak rekam lagi
+30/05/26 10.13 - Fuad (Jepang): Maaf ya
+30/05/26 10.13 - Reza: Tak via gdrive aja gimana mas
+30/05/26 10.13 - Fuad (Jepang): Boleh mas nanti kasih aja aksesnya
+30/05/26 10.13 - Reza: Oke mas
+30/05/26 10.14 - Reza: Soale bingung mas sama desainnya, mikir panjang buat desainnya 😂
+30/05/26 10.14 - Fuad (Jepang): Iya maaf banget ini beneran nggak ada waktu
+30/05/26 10.23 - Reza: Oke mas, nanti tak kirimi link videonya aja kalo gitu sampean tinggal review
+30/05/26 10.24 - Fuad (Jepang): Oke mass
+30/05/26 10.24 - Fuad (Jepang): Tapi maaf ya aku nggak bisa fast respon
+30/05/26 10.24 - Reza: Oke mas
+07/06/26 16.12 - Fuad (Jepang): Sore mas, sampe mana ya progresnya.
+07/06/26 16.16 - Reza: Sore mas, buat yang kemarin sudah tak implementasikan, nanti videonya saya kirim
+07/06/26 16.16 - Fuad (Jepang): Pake GDrive aja ya mas
+07/06/26 16.18 - Reza: Iya mas, maaf ini saya masih ada kuliahan mas, mungkin malem tak upload 🙏
+07/06/26 16.19 - Reza: Nanti tak sekalian tanya tanya juga mas soal finalisasi sama evaluasinya
+07/06/26 16.21 - Fuad (Jepang): Oke mas weekend depan juga nggak papa aku ada kelas juga malem ini
+07/06/26 16.22 - Reza: Oalah ya mas, tapi tak usahakan sekarang kok mas
+07/06/26 16.22 - Reza: Deadline tetap Agustus ya mas?
+07/06/26 16.23 - Fuad (Jepang): Iya mas, tapi kalo bisa akhir bulan ini ada beta test
+07/06/26 16.23 - Reza: Baik mas tak usahakan
+07/06/26 16.23 - Fuad (Jepang): Oke mass
+08/06/26 00.15 - Reza: https://drive.google.com/file/d/1UCOaNq4rlrLeC99xRsfLa-zf7PUMDSBv/view?usp=sharing
+
+oke mas untuk phase ke 4 seperti ini mas, ini saya tunjukkan cuma user saja
+mungkin saya butuh komentar mas nya apa apa yang kurang/ belum sesuai
+08/06/26 00.18 - Reza: pertanyaan lanjutan 
+
+- bagian presentasi (fitur baru), apakah user bisa edit ppt, apakah hanya admin saja yang bisa edit atau user juga bisa edit
+- apakah presentasi perlu menu untuk share (apakah admin/user yang share) atau semacam zoom
+- bagian flashcard (fitur baru) apakah ada semacam fitur seperti library kosakata untuk flashcard atau hanya di dalam kuis saja
+- perlukah diadakan fitur Kelas? mirip2 quiziz
+- disisi admin misalnya tak tambahin mass input gimana (pakai excel/csv buat input)
+- untuk fitur materi jadinya gimana? pending apa tidak jadi? 
+- untuk premium yang menjadi pembeda user gratis dan pay apa
+- dan selanjutnya untuk payment gateway request buat dipakai luar negeri/dalam (pakai qris kah/ atau transfer bank)
+- disisi dashboard (halaman awal user setelah login) itu diisi apa saja? selain berita
+- apakah desain sudah sesuai yang diminta? jika belum ada kesesuaian Mohon untuk di jelaskan dimana letak kurang cocok/jelek/salah secara detail, agar bisa tak kerjakan segera (disemua page yang telah saya upload di drive)
+- untuk logo, nama website,deskripsi seperti apa?
+- selain itu apakah ada request lain? atau fitur lain
+08/06/26 00.26 - Reza: Oh iya mas yang video diatas masih belum tak masukin konten/cuma dummy, makanya keliatan kosong
+08/06/26 00.40 - Reza: Anda menghapus pesan ini
+08/06/26 00.50 - Reza: ‎IMG-20260608-WA0000.jpg (file terlampir)
+preview buat ppt nya mas
+08/06/26 01.18 - Reza: Lek kalau ada kurang soal tampilan sampean kasih tau aja, soale aku cari referensi juga sedikit mas
+08/06/26 07.23 - Fuad (Jepang): Pagi, nanti malem ku respon ya mas.
+08/06/26 20.56 - Fuad (Jepang): 1. Cukup admin
+2. Perlu fitur share
+3. Perlu library 
+4. Perlu
+5. Boleh
+6. Pending dulu mas
+7. Cukup dalam negri Dan qris
+8. Design cukup
+9. Nanti saya cariin copywriter sama designer logonya setelah beta test
+10. Mungkin abis saya tes sendiri bisa evaluasi lagi perlu fitur baru apa aja
+08/06/26 20.57 - Fuad (Jepang): Oke mas segera ya
+08/06/26 20.59 - Reza: Misalnya design tak rombak dikit gapapa mas?, ini kayaknya kurang optimal juga
+08/06/26 20.59 - Fuad (Jepang): Boleh mas
+08/06/26 21.00 - Reza: Kalo boleh tau isi konten nya merangkup apa saja ya mas, maksud isinya penjelasan materi/kanji atau gimana mas boleh di jelasin
+08/06/26 21.01 - Fuad (Jepang): Aku belum nyiapin rupiah sama sekali lo, tolong Kasi estimasi jasanya berapa dong biar bisa nentuin pricelist juga.
+08/06/26 21.01 - Fuad (Jepang): Aku pengen materinya ini nyambung ke gamifikasinya mas jadi nggak ada lembar khusus yang buat materi doang.
+08/06/26 21.03 - Reza: Oalah....udah terlanjur tak buat, gpp wes nanti tak benahi
+08/06/26 21.03 - Fuad (Jepang): Gapapa biarin dulu mas
+08/06/26 21.04 - Fuad (Jepang): Kayaknya bisa dibikin sesuatu
+08/06/26 21.04 - Reza: Iya mas, Oalah tak kira ada page materi
+08/06/26 21.05 - Fuad (Jepang): Iya mas
+08/06/26 21.05 - Reza: Sama anu mas, fitur premium itu mencakup apa saja ya 
+Apa cuma 1 plan aja atau 2 
+Tapi rata rata 2 sih
+Misal pro & annual
+08/06/26 21.06 - Fuad (Jepang): Ini sebagian emang nggak ada audionya ya mas?
+08/06/26 21.06 - Reza: Ya kah mas?, tadi soale mic ku mendem
+08/06/26 21.06 - Fuad (Jepang): Non premiumnya preview materi yang nggak lengkap aja mas
+08/06/26 21.07 - Fuad (Jepang): Oh iya agak nggak paham soalnya di pertengagan video
+08/06/26 21.07 - Fuad (Jepang): Gimana mas?
+08/06/26 21.12 - Reza: Mungkin di dp dulu bisa sih mas, tapi ngikut mas nya aja
+08/06/26 21.13 - Fuad (Jepang): Iya berapa dp sama totalnya
+08/06/26 21.13 - Reza: Atau nunggu demo dulu juga gpp
+08/06/26 21.14 - Fuad (Jepang): Sebutin dulu aja takutnya aku lagi nggak megang
+08/06/26 21.14 - Reza: Untuk phase sekarang mungkin saya belum bisa kasih tau harga kasarannya mas kalo belum demo 😅
+Maaf ya
+08/06/26 21.14 - Fuad (Jepang): Yaudah deh mas
+08/06/26 21.16 - Reza: Ya kalo diitung2 untuk phase ini mungkin 8-9 dulu aja sih mas, kalo plus hosting mungkin beda lagi
+08/06/26 21.16 - Reza: Bisa nego kok mas gpp
+08/06/26 21.17 - Fuad (Jepang): Oke mas negonya entar"an, dp nya berapa persen harga?
+08/06/26 21.17 - Reza: Bentar mas tak itung dulu
+08/06/26 21.18 - Fuad (Jepang): Okew
+08/06/26 21.18 - Reza: Mungkin 30% e harga mas, tapi gapapa Saman nunggu demo nya dulu aja
+08/06/26 21.19 - Reza: Kalo demo nya dah sesuai apa yang mas mau baru
+08/06/26 21.20 - Fuad (Jepang): Oke mas, aku kepikiran fitur baru buat admin, setiap akun admin punya akses buat kloterisasi usernya kan? <Pesan ini diedit>
+08/06/26 21.21 - Reza: Manajemen user mas?
+Udah saya tambahin, tapi boleh detil nya ga, nanti tak tambahi apa2 yg kurang
+08/06/26 21.21 - Fuad (Jepang): Segera saya kabari lagi mas, belum bisa bahas sekarang.
+08/06/26 21.21 - Reza: Oh oke mas gpp
+08/06/26 21.22 - Fuad (Jepang): Nggak papa mas kayaknya bakal sering revisi jadi aku kasih secepetnya aja.
+08/06/26 21.25 - Reza: Iya mas, ini maklum juga saya handle sendiri, biasanya ama timku ngerjain ber 3
+08/06/26 21.26 - Reza: Tapi ini masih perkiraan harga awal mas, kalo ada fitur tambahan misalnya smtp, ssl, sama hosting harga bisa berubah juga mas, efek rupiah melemah juga
+09/06/26 05.40 - Fuad (Jepang): Iya mss

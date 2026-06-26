@@ -63,7 +63,7 @@ class UserLearningService
 
             return [
                 'id' => $quiz->id,
-                'title' => $quiz->title,
+                'title' => $this->quizTitle($quiz),
                 'description' => $quiz->description ?? 'Kuis evaluasi pemahaman materi.',
                 'xpReward' => 50,
                 'durationEstimate' => $quiz->time_limit ? $quiz->time_limit . ' Menit' : '10 Menit',
@@ -145,6 +145,14 @@ class UserLearningService
         return $user->progress()->pluck('lesson_id')->all();
     }
 
+    private function quizTitle(Quiz $quiz): string
+    {
+        $lessonTitle = $quiz->lesson?->title;
+        $type = str($quiz->type)->replace('_', ' ')->title();
+
+        return $lessonTitle ? "Kuis {$lessonTitle} ({$type})" : "Kuis {$type}";
+    }
+
     private function lessonPayload(Lesson $lesson): array
     {
         return [
@@ -154,7 +162,7 @@ class UserLearningService
             'type' => $lesson->type,
             'video_url' => $lesson->video_url,
             'file_url' => $lesson->file_url,
-            'audio_url' => $lesson->audio_url,
+            'audio_url' => null,
             'duration_minutes' => $lesson->duration_minutes,
             'module' => [
                 'id' => $lesson->module->id,

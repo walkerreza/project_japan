@@ -7,6 +7,8 @@ use App\Models\Lesson;
 use App\Models\Level;
 use App\Models\Module;
 use App\Models\PresentationDeck;
+use App\Models\PresentationSlide;
+use App\Services\PresentationImportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -78,7 +80,7 @@ class AdminPresentationController extends Controller
 
     public function builder(PresentationDeck $presentationDeck)
     {
-        $presentationDeck->load(['level:id,level_name', 'module:id,title', 'lesson:id,title', 'slides']);
+        $presentationDeck->load(['level:id,level_name', 'module:id,title', 'lesson:id,title', 'slides.board']);
 
         return Inertia::render('Admin/Presentasi/BuilderPresentasi', [
             'deck' => $presentationDeck,
@@ -92,12 +94,14 @@ class AdminPresentationController extends Controller
             'slides' => ['present', 'array'],
             'slides.*.id' => ['nullable', 'integer'],
             'slides.*.title' => ['nullable', 'string', 'max:255'],
-            'slides.*.layout' => ['required', Rule::in(['title', 'content', 'vocabulary', 'kanji', 'media', 'question'])],
+            'slides.*.layout' => ['required', Rule::in(['title', 'content', 'vocabulary', 'kanji', 'media', 'question', 'board'])],
             'slides.*.content' => ['nullable', 'string'],
             'slides.*.media_url' => ['nullable', 'string', 'max:2048'],
             'slides.*.background' => ['required', Rule::in(['light', 'dark', 'sunrise', 'sakura', 'ocean', 'forest'])],
             'slides.*.accent_color' => ['nullable', 'string', 'max:20'],
             'slides.*.speaker_notes' => ['nullable', 'string'],
+            'slides.*.board_data' => ['nullable', 'array'],
+            'slides.*.snapshot_data' => ['nullable', 'string'],
         ]);
 
         $ids = [];
@@ -120,6 +124,24 @@ class AdminPresentationController extends Controller
                     ]
                 );
 
+                if ($model->layout === 'board') {
+                    $model->board()->updateOrCreate(
+                        ['presentation_slide_id' => $model->id],
+                        [
+                            'level_id' => $presentationDeck->level_id,
+                            'module_id' => $presentationDeck->module_id,
+                            'lesson_id' => $presentationDeck->lesson_id,
+                            'title' => $model->title ?: 'Board Presentasi',
+                            'description' => 'Board dari presentasi ' . $presentationDeck->title,
+                            'board_data' => $slide['board_data'] ?? ['strokes' => []],
+                            'snapshot_data' => $slide['snapshot_data'] ?? null,
+                            'status' => $presentationDeck->status,
+                        ]
+                    );
+                } else {
+                    $model->board()->delete();
+                }
+
                 $ids[] = $model->id;
             }
 
@@ -129,9 +151,48 @@ class AdminPresentationController extends Controller
         return redirect()->back()->with('success', 'Slide presentasi berhasil disimpan.');
     }
 
+    public function importPptx(Request $request, PresentationDeck $presentationDeck, PresentationImportService $importer)
+    {
+        $validated = $request->validate([
+            'pptx_file' => ['required', 'file', 'mimes:pptx', 'max:65536'],
+        ]);
+
+        $count = $importer->importPptx($presentationDeck, $validated['pptx_file']);
+
+        return redirect()->back()->with('success', "{$count} slide berhasil diimport dari PPTX.");
+    }
+
+    public function saveSlideBoard(Request $request, PresentationDeck $presentationDeck, PresentationSlide $presentationSlide)
+    {
+        abort_unless($presentationSlide->presentation_deck_id === $presentationDeck->id, 404);
+        abort_unless($presentationSlide->layout === 'board', 404);
+
+        $validated = $request->validate([
+            'status' => ['required', 'in:draft,published'],
+            'board_data' => ['nullable', 'array'],
+            'snapshot_data' => ['nullable', 'string'],
+        ]);
+
+        $presentationSlide->board()->updateOrCreate(
+            ['presentation_slide_id' => $presentationSlide->id],
+            [
+                'level_id' => $presentationDeck->level_id,
+                'module_id' => $presentationDeck->module_id,
+                'lesson_id' => $presentationDeck->lesson_id,
+                'title' => $presentationSlide->title ?: 'Board Presentasi',
+                'description' => 'Board dari presentasi ' . $presentationDeck->title,
+                'board_data' => $validated['board_data'] ?? ['strokes' => []],
+                'snapshot_data' => $validated['snapshot_data'] ?? null,
+                'status' => $validated['status'],
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Board presentasi berhasil disimpan.');
+    }
+
     public function presenter(PresentationDeck $presentationDeck)
     {
-        $presentationDeck->load(['module:id,title', 'lesson:id,title', 'slides']);
+        $presentationDeck->load(['module:id,title', 'lesson:id,title', 'slides.board']);
 
         return Inertia::render('Admin/Presentasi/ModePresentasi', [
             'deck' => $presentationDeck,

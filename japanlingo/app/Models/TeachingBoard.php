@@ -13,6 +13,7 @@ class TeachingBoard extends Model
         'level_id',
         'module_id',
         'lesson_id',
+        'presentation_slide_id',
         'title',
         'description',
         'board_data',
@@ -37,5 +38,10 @@ class TeachingBoard extends Model
     public function lesson()
     {
         return $this->belongsTo(Lesson::class);
+    }
+
+    public function presentationSlide()
+    {
+        return $this->belongsTo(PresentationSlide::class);
     }
 }

@@ -30,12 +30,14 @@ WORKDIR /var/www/html
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         git \
+        libreoffice-impress \
         libfreetype6-dev \
         libicu-dev \
         libjpeg62-turbo-dev \
         libpng-dev \
         libpq-dev \
         libzip-dev \
+        poppler-utils \
         unzip \
         zip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \

@@ -122,6 +122,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/presentations/{presentationDeck}', [AdminPresentationController::class, 'destroy'])->name('presentations.destroy');
         Route::get('/presentations/{presentationDeck}/builder', [AdminPresentationController::class, 'builder'])->name('presentations.builder');
         Route::post('/presentations/{presentationDeck}/builder', [AdminPresentationController::class, 'updateSlides'])->name('presentations.builder.update');
+        Route::post('/presentations/{presentationDeck}/import-pptx', [AdminPresentationController::class, 'importPptx'])->name('presentations.import-pptx');
+        Route::post('/presentations/{presentationDeck}/slides/{presentationSlide}/board', [AdminPresentationController::class, 'saveSlideBoard'])->name('presentations.slides.board.save');
         Route::get('/presentations/{presentationDeck}/presenter', [AdminPresentationController::class, 'presenter'])->name('presentations.presenter');
         Route::get('/boards', [AdminTeachingBoardController::class, 'index'])->name('boards.index');
         Route::post('/boards', [AdminTeachingBoardController::class, 'store'])->name('boards.store');

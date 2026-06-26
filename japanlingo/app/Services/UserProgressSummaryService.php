@@ -19,8 +19,8 @@ class UserProgressSummaryService
         $attemptedQuizIds = Attempt::where('user_id', $user->id)->pluck('quiz_id')->unique()->all();
         $lessonsDone = count($completedLessonIds);
         $quizzesDone = count($attemptedQuizIds);
-        $completedLessons = Lesson::whereIn('id', $completedLessonIds)->get(['id', 'title', 'audio_url']);
-        $completedQuizzes = Quiz::whereIn('id', $attemptedQuizIds)->get(['id', 'title']);
+        $completedLessons = Lesson::whereIn('id', $completedLessonIds)->get(['id', 'title']);
+        $completedQuizzes = Quiz::with('lesson:id,title')->whereIn('id', $attemptedQuizIds)->get(['id', 'lesson_id', 'type']);
 
         return [
             'stats' => [
@@ -108,12 +108,12 @@ class UserProgressSummaryService
         $grammarCount += $lessons->filter(fn ($lesson) => $this->titleContains($lesson->title, ['grammar', 'partikel', 'pola']))->count() * 15;
         $kanjiCount += $lessons->filter(fn ($lesson) => $this->titleContains($lesson->title, ['kanji']))->count() * 15;
         $vocabCount += $lessons->filter(fn ($lesson) => $this->titleContains($lesson->title, ['vocab', 'kosakata']))->count() * 15;
-        $listenCount += $lessons->filter(fn ($lesson) => $this->titleContains($lesson->title, ['listen', 'audio']) || ! empty($lesson->audio_url))->count() * 20;
+        $listenCount += $lessons->filter(fn ($lesson) => $this->titleContains($lesson->title, ['listen', 'audio']))->count() * 20;
         $readCount += $lessons->filter(fn ($lesson) => $this->titleContains($lesson->title, ['read', 'baca', 'dokkai']))->count() * 15;
 
-        $grammarCount += $quizzes->filter(fn ($quiz) => $this->titleContains($quiz->title, ['grammar', 'partikel']))->count() * 10;
-        $vocabCount += $quizzes->filter(fn ($quiz) => $this->titleContains($quiz->title, ['vocab', 'kosakata']))->count() * 10;
-        $kanjiCount += $quizzes->filter(fn ($quiz) => $this->titleContains($quiz->title, ['kanji']))->count() * 10;
+        $grammarCount += $quizzes->filter(fn ($quiz) => $this->titleContains($this->quizSkillText($quiz), ['grammar', 'partikel']))->count() * 10;
+        $vocabCount += $quizzes->filter(fn ($quiz) => $this->titleContains($this->quizSkillText($quiz), ['vocab', 'kosakata']))->count() * 10;
+        $kanjiCount += $quizzes->filter(fn ($quiz) => $this->titleContains($this->quizSkillText($quiz), ['kanji']))->count() * 10;
 
         return [
             ['label' => 'Grammar', 'value' => min(100, $grammarCount), 'color' => 'bg-red-500'],
@@ -133,5 +133,10 @@ class UserProgressSummaryService
         }
 
         return false;
+    }
+
+    private function quizSkillText(Quiz $quiz): string
+    {
+        return trim($quiz->type . ' ' . ($quiz->lesson?->title ?? ''));
     }
 }
