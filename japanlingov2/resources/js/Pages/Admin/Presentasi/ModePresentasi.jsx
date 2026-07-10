@@ -7,8 +7,13 @@ const backgroundClass = {
     dark: 'bg-gray-950 text-white',
     sunrise: 'bg-gradient-to-br from-orange-100 via-amber-50 to-white text-gray-950',
     sakura: 'bg-gradient-to-br from-pink-100 via-white to-rose-50 text-gray-950',
-    ocean: 'bg-gradient-to-br from-cyan-100 via-white to-blue-100 text-gray-950',
+    ocean: 'bg-gradient-to-br from-cyan-100 via-white to-red-100 text-gray-950',
     forest: 'bg-gradient-to-br from-emerald-100 via-white to-lime-100 text-gray-950',
+    paper: 'bg-[linear-gradient(#ffffff,#fff7ed)] text-gray-950',
+    grid: 'bg-white text-gray-950 bg-[linear-gradient(rgba(15,23,42,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.06)_1px,transparent_1px)] bg-[size:28px_28px]',
+    indigo: 'bg-gradient-to-br from-indigo-950 via-gray-950 to-red-950 text-white',
+    matcha: 'bg-gradient-to-br from-lime-100 via-white to-emerald-100 text-gray-950',
+    rose: 'bg-gradient-to-br from-rose-100 via-white to-orange-50 text-gray-950',
 };
 
 function PresenterSlide({ slide }) {
@@ -67,9 +72,9 @@ function PresenterSlide({ slide }) {
                 {slide.layout === 'media' && (
                     <div className="my-auto">
                         <h1 className="mb-8 text-6xl font-black">{slide.title || 'Media'}</h1>
-                        {slide.media_url ? (
+                        {slide.snapshot_url || slide.media_url ? (
                             <div className="overflow-hidden rounded-[2rem] bg-gray-950 shadow-2xl">
-                                <img src={slide.media_url} alt={slide.title || 'media'} className="h-[55vh] w-full object-cover" />
+                                <img src={slide.snapshot_url || slide.media_url} alt={slide.title || 'media'} className="h-[55vh] w-full object-contain" />
                             </div>
                         ) : (
                             <div className="grid h-[55vh] place-items-center rounded-[2rem] border-4 border-dashed border-gray-300 text-4xl font-black opacity-40">Media URL</div>
@@ -96,9 +101,30 @@ function PresenterSlide({ slide }) {
                             <p className="max-w-xl text-base font-bold opacity-70">{slide.content}</p>
                         </div>
                         <BoardCanvas
-                            strokes={slide.board?.board_data?.strokes || slide.board_data?.strokes || []}
+                            strokes={slide.jamboard_data?.strokes || slide.board_data?.strokes || []}
                             className="rounded-[2rem] border-4 border-white/70 shadow-2xl"
                         />
+                    </div>
+                )}
+
+                {slide.layout === 'canvas' && (
+                    <div className="my-auto">
+                        <h1 className="mb-8 text-6xl font-black">{slide.title || 'Canvas Slide'}</h1>
+                        {slide.snapshot_url || slide.snapshot_data || slide.media_url ? (
+                            <div className="overflow-hidden rounded-[2rem] bg-white shadow-2xl">
+                                <img src={slide.snapshot_url || slide.snapshot_data || slide.media_url} alt={slide.title || 'Canvas'} className="h-[65vh] w-full object-contain" />
+                            </div>
+                        ) : (
+                            <div className="grid h-[65vh] place-items-center rounded-[2rem] border-4 border-dashed border-gray-300 text-4xl font-black opacity-40">Canvas belum disimpan</div>
+                        )}
+                    </div>
+                )}
+
+                {slide.layout === 'pdf' && (
+                    <div className="my-auto text-center">
+                        <p className="text-sm font-black uppercase tracking-[0.45em]" style={{ color: accent }}>PDF</p>
+                        <h1 className="mt-8 text-6xl font-black sm:text-8xl">{slide.title || 'PDF Presentasi'}</h1>
+                        <p className="mx-auto mt-10 max-w-4xl text-3xl font-bold leading-relaxed opacity-70">Buka halaman user untuk viewer PDF carousel penuh.</p>
                     </div>
                 )}
             </div>

@@ -2,15 +2,19 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Kuis;
+use App\Services\AksesPremiumService;
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Lesson;
-use App\Models\Quiz;
+use Symfony\Component\HttpFoundation\Response;
 
 class SubscriptionMiddleware
 {
+    public function __construct(private AksesPremiumService $aksesPremium)
+    {
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -20,45 +24,25 @@ class SubscriptionMiddleware
     {
         $user = Auth::user();
 
-        // Only student accounts use paywall checks; admin/superadmin bypass for content review.
-        if (!$user || $user->role !== 'user') {
+        if (! $user || $user->role !== 'user') {
             return $next($request);
         }
 
-        // Check if the user is a premium user
-        $isPremiumUser = $user->subscription_status === 'premium';
+        $module = null;
 
-        $isPremiumContent = false;
-
-        // Check for Lesson route
-        if ($request->routeIs('user.lessons.show')) {
-            $lessonParam = $request->route('lesson');
-            $lesson = $lessonParam instanceof Lesson
-                ? $lessonParam->loadMissing('module.level')
-                : Lesson::with('module.level')->find($lessonParam);
-            
-            if ($lesson && $lesson->module && $lesson->module->level) {
-                $isPremiumContent = $lesson->module->level->is_premium;
-            }
-        }
-
-        // Check for Quiz route
         if ($request->routeIs('user.quizzes.show')) {
             $quizParam = $request->route('quiz');
-            $quiz = $quizParam instanceof Quiz
-                ? $quizParam->loadMissing('lesson.module.level')
-                : Quiz::with('lesson.module.level')->find($quizParam);
-            
-            if ($quiz && $quiz->lesson && $quiz->lesson->module && $quiz->lesson->module->level) {
-                $isPremiumContent = $quiz->lesson->module->level->is_premium;
-            }
+            $quiz = $quizParam instanceof Kuis
+                ? $quizParam->loadMissing('module.level')
+                : Kuis::with('module.level')->find($quizParam);
+
+            $module = $quiz?->module;
         }
 
-        // If the content is premium and the user is NOT premium, block access
-        // If the content is premium and the user is NOT premium, block access
-        if ($isPremiumContent && !$isPremiumUser) {
-            // Redirect back to dashboard with an error or to the pricing page
-            return redirect()->route('dashboard')->with('error', 'Akses Ditolak: Konten ini memerlukan langganan Premium.');
+        if ($module && ! $this->aksesPremium->bolehAksesModul($user, $module)) {
+            return redirect()
+                ->route('pricing')
+                ->with('error', 'Preview gratis hanya membuka materi dan kuis Week 1. Upgrade Premium untuk membuka Week berikutnya.');
         }
 
         return $next($request);

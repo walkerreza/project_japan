@@ -1,3 +1,7 @@
+import QuizIcon from '@mui/icons-material/Quiz';
+import PeopleIcon from '@mui/icons-material/People';
+import ShieldIcon from '@mui/icons-material/Shield';
+import BoltIcon from '@mui/icons-material/Bolt';
 import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
@@ -6,11 +10,11 @@ import ChartCard from '@/Components/Features/Dashboard/ChartCard';
 import Card from '@/Components/UI/Card';
 
 const defaultMetrics = [
-    { title: 'Total Student', value: '2,184', icon: '👥', change: '8%', changeType: 'up' },
+    { title: 'Total Student', value: '2,184', icon: '<PeopleIcon className="w-5 h-5 text-blue-500 inline-block" />', change: '8%', changeType: 'up' },
     { title: 'Learner Aktif', value: '1,392', icon: '🔥', change: '5%', changeType: 'up' },
-    { title: 'Total Admin', value: '8', icon: '🛡️', change: '1', changeType: 'up' },
-    { title: 'Quiz Attempt', value: '6,420', icon: '❓', change: '11%', changeType: 'up' },
-    { title: 'XP Terdistribusi', value: '48,220', icon: '⚡', change: '9%', changeType: 'up' },
+    { title: 'Total Admin', value: '8', icon: '<ShieldIcon className="w-5 h-5 text-blue-500 inline-block" />', change: '1', changeType: 'up' },
+    { title: 'Quiz Attempt', value: '6,420', icon: '<QuizIcon className="w-5 h-5 text-indigo-500 inline-block" />', change: '11%', changeType: 'up' },
+    { title: 'XP Terdistribusi', value: '48,220', icon: '<BoltIcon className="w-5 h-5 text-amber-500 inline-block" />', change: '9%', changeType: 'up' },
     { title: 'News Aktif', value: '5', icon: '📣', change: '2', changeType: 'up' },
 ];
 
@@ -111,7 +115,7 @@ export default function SuperadminDashboard({
                                         ? 'border-red-100 dark:border-red-900/30 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
                                         : item.tone === 'amber'
                                         ? 'border-amber-100 dark:border-amber-900/30 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400'
-                                        : 'border-blue-100 dark:border-blue-900/30 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                                        : 'border-red-100 dark:border-red-900/30 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
                                 }`}>
                                     {item.text}
                                 </div>

@@ -7,9 +7,10 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined';
 import SearchIcon from '@mui/icons-material/Search';
+import ConfirmActionDialog, { useConfirmAction } from '@/Components/UI/ConfirmActionDialog';
 
 const TYPE_CONFIG = {
-    multiple_choice: { label: 'Pilihan Ganda', color: 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300' },
+    multiple_choice: { label: 'Pilihan Ganda', color: 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300' },
     typing: { label: 'Mengetik', color: 'bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300' },
     listening: { label: 'Mendengarkan', color: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300' },
 };
@@ -34,27 +35,32 @@ function TypeBadge({ type }) {
     );
 }
 
-export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
-    const [filterLesson, setFilterLesson] = useState('all');
+export default function QuizzesIndex({ quizzes, modules = [], filters = {} }) {
+    const [filterModule, setFilterModule] = useState(filters?.module_id || 'all');
     const [searchQuery, setSearchQuery] = useState(filters?.search || '');
     const [deleteConfirm, setDeleteConfirm] = useState(null);
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const { confirmState, openConfirm, closeConfirm } = useConfirmAction();
 
     const createForm = useForm({
-        lesson_id: '',
+        module_id: '',
         type: 'multiple_choice',
         time_limit: '',
+        passing_score: 70,
         status: 'published',
     });
 
     const quizItems = quizzes?.data || quizzes || [];
-    const filtered = filterLesson === 'all'
+    const filtered = filterModule === 'all'
         ? quizItems
-        : quizItems.filter((quiz) => quiz.lesson?.id == filterLesson);
+        : quizItems.filter((quiz) => quiz.module?.id == filterModule);
 
     const handleSearch = (e) => {
         e.preventDefault();
-        router.get(route('admin.quizzes.index'), { search: searchQuery }, { preserveState: true });
+        router.get(route('admin.quizzes.index'), {
+            search: searchQuery,
+            module_id: filterModule === 'all' ? undefined : filterModule,
+        }, { preserveState: true });
     };
 
     const confirmDelete = () => {
@@ -74,9 +80,23 @@ export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
     };
 
     const toggleStatus = (quiz) => {
-        router.patch(route('admin.quizzes.status', quiz.id), {
-            status: quiz.status === 'draft' ? 'published' : 'draft',
-        }, { preserveScroll: true });
+        const nextStatus = quiz.status === 'draft' ? 'published' : 'draft';
+        openConfirm({
+            variant: nextStatus === 'published' ? 'success' : 'warning',
+            title: nextStatus === 'published' ? 'Publish Kuis?' : 'Ubah ke Draft?',
+            message: nextStatus === 'published' ? 'Kuis akan bisa diakses sesuai aturan kelas/modul.' : 'Kuis akan disembunyikan sementara dari user.',
+            confirmLabel: nextStatus === 'published' ? 'Iya, Publish' : 'Iya, Draft',
+            details: [
+                { label: 'Modul', value: quiz.module?.title || quiz.lesson?.title || '-' },
+                { label: 'Soal', value: `${quiz.question_count || 0} soal` },
+            ],
+            onConfirm: () => router.patch(route('admin.quizzes.status', quiz.id), {
+                status: nextStatus,
+            }, {
+                preserveScroll: true,
+                onFinish: closeConfirm,
+            }),
+        });
     };
 
     return (
@@ -94,7 +114,7 @@ export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
                                 <div>
                                     <p className="text-xs font-black uppercase tracking-[0.28em] text-[#E64A19]">Assessment Admin</p>
                                     <h1 className="mt-1 text-2xl font-black text-gray-900 dark:text-white">Manajemen Kuis</h1>
-                                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{filtered.length} kuis ditampilkan dari {quizItems.length} total data halaman ini.</p>
+                                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{filtered.length} kuis modul ditampilkan dari {quizItems.length} total data halaman ini.</p>
                                 </div>
                             </div>
 
@@ -119,12 +139,18 @@ export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
                                 />
                             </form>
                             <select
-                                value={filterLesson}
-                                onChange={(e) => setFilterLesson(e.target.value)}
+                                value={filterModule}
+                                onChange={(e) => {
+                                    setFilterModule(e.target.value);
+                                    router.get(route('admin.quizzes.index'), {
+                                        search: searchQuery,
+                                        module_id: e.target.value === 'all' ? undefined : e.target.value,
+                                    }, { preserveState: true });
+                                }}
                                 className="h-11 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm font-bold text-gray-700 outline-none focus:border-[#E64A19] focus:ring-4 focus:ring-orange-500/10 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-300"
                             >
-                                <option value="all">Semua Pelajaran</option>
-                                {lessons.map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.title}</option>)}
+                                <option value="all">Semua Modul</option>
+                                {modules.map((module) => <option key={module.id} value={module.id}>Week {module.week_number || '-'} - {module.title}</option>)}
                             </select>
                         </div>
                     </section>
@@ -134,7 +160,7 @@ export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
                             <table className="w-full text-left">
                                 <thead className="bg-gray-50 text-xs font-black uppercase tracking-wider text-gray-400 dark:bg-gray-800/50">
                                     <tr>
-                                        <th className="px-6 py-4">Lesson</th>
+                                        <th className="px-6 py-4">Modul</th>
                                         <th className="px-6 py-4">Tipe</th>
                                         <th className="px-6 py-4">Soal</th>
                                         <th className="px-6 py-4">Time Limit</th>
@@ -146,19 +172,22 @@ export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
                                     {filtered.map((quiz) => (
                                         <tr key={quiz.id} className="transition-colors hover:bg-gray-50/70 dark:hover:bg-gray-800/40">
                                             <td className="px-6 py-5">
-                                                <p className="font-black text-gray-900 dark:text-white">{quiz.lesson?.title || 'Pelajaran tidak ditemukan'}</p>
-                                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Quiz #{quiz.id}</p>
+                                                <p className="font-black text-gray-900 dark:text-white">{quiz.module?.title || quiz.lesson?.title || 'Modul tidak ditemukan'}</p>
+                                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Week {quiz.module?.week_number || '-'} - Quiz #{quiz.id}</p>
                                             </td>
                                             <td className="px-6 py-5"><TypeBadge type={quiz.type} /></td>
                                             <td className="px-6 py-5 text-sm font-bold text-gray-600 dark:text-gray-300">{quiz.question_count} soal</td>
-                                            <td className="px-6 py-5 text-sm font-bold text-gray-600 dark:text-gray-300">{quiz.time_limit ? `${Math.floor(quiz.time_limit / 60)} menit` : 'Tanpa batas'}</td>
+                                            <td className="px-6 py-5 text-sm font-bold text-gray-600 dark:text-gray-300">
+                                                <div>{quiz.time_limit ? `${Math.floor(quiz.time_limit / 60)} menit` : 'Tanpa batas'}</div>
+                                                <div className="mt-1 text-[11px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-300">Lulus {quiz.passing_score ?? 70}%</div>
+                                            </td>
                                             <td className="px-6 py-5"><StatusBadge status={quiz.status} /></td>
                                             <td className="px-6 py-5">
                                                 <div className="flex justify-end gap-2">
                                                     <Link href={route('admin.quizzes.builder', quiz.id)} className="rounded-lg border border-gray-200 px-3 py-2 text-xs font-black text-[#E64A19] transition-colors hover:border-[#E64A19] dark:border-gray-700">
                                                         Builder
                                                     </Link>
-                                                    <Link href={route('admin.questions.index', { quiz_id: quiz.id })} className="rounded-lg border border-gray-200 p-2 text-gray-500 transition-colors hover:border-blue-200 hover:text-blue-600 dark:border-gray-700" title="Kelola Soal">
+                                                    <Link href={route('admin.questions.index', { quiz_id: quiz.id })} className="rounded-lg border border-gray-200 p-2 text-gray-500 transition-colors hover:border-red-200 hover:text-red-600 dark:border-gray-700" title="Kelola Soal">
                                                         <EditOutlinedIcon sx={{ fontSize: 17 }} />
                                                     </Link>
                                                     <button onClick={() => toggleStatus(quiz)} className="rounded-lg border border-gray-200 px-3 py-2 text-xs font-black text-gray-600 transition-colors hover:border-[#E64A19] hover:text-[#E64A19] dark:border-gray-700 dark:text-gray-300">
@@ -180,8 +209,8 @@ export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
                                 <div key={quiz.id} className="rounded-2xl border border-gray-100 p-4 dark:border-gray-800">
                                     <div className="flex items-start justify-between gap-3">
                                         <div className="min-w-0">
-                                            <h2 className="truncate text-base font-black text-gray-900 dark:text-white">{quiz.lesson?.title || 'Pelajaran tidak ditemukan'}</h2>
-                                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{quiz.question_count} soal - {quiz.time_limit ? `${Math.floor(quiz.time_limit / 60)} menit` : 'Tanpa batas'}</p>
+                                            <h2 className="truncate text-base font-black text-gray-900 dark:text-white">{quiz.module?.title || quiz.lesson?.title || 'Modul tidak ditemukan'}</h2>
+                                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{quiz.question_count} soal - {quiz.time_limit ? `${Math.floor(quiz.time_limit / 60)} menit` : 'Tanpa batas'} - Lulus {quiz.passing_score ?? 70}%</p>
                                         </div>
                                         <StatusBadge status={quiz.status} />
                                     </div>
@@ -223,14 +252,14 @@ export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
                     <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl dark:bg-gray-900">
                         <div className="border-b border-gray-100 p-6 dark:border-gray-800">
                             <h3 className="text-lg font-black text-gray-900 dark:text-white">Buat Kuis Baru</h3>
-                            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">Pilih lesson dan tipe kuis. Soal ditambahkan lewat Builder.</p>
+                            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">Pilih modul mingguan dan tipe kuis. Soal ditambahkan lewat Builder.</p>
                         </div>
                         <form onSubmit={handleCreateQuiz} className="space-y-4 p-6">
                             <div>
-                                <label className="mb-1.5 block text-sm font-bold text-gray-700 dark:text-gray-300">Pelajaran</label>
-                                <select value={createForm.data.lesson_id} onChange={(e) => createForm.setData('lesson_id', e.target.value)} className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 dark:border-gray-700 dark:bg-gray-950 dark:text-white" required>
-                                    <option value="">Pilih Pelajaran</option>
-                                    {lessons.map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.title}</option>)}
+                                <label className="mb-1.5 block text-sm font-bold text-gray-700 dark:text-gray-300">Modul Mingguan</label>
+                                <select value={createForm.data.module_id} onChange={(e) => createForm.setData('module_id', e.target.value)} className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 dark:border-gray-700 dark:bg-gray-950 dark:text-white" required>
+                                    <option value="">Pilih Modul</option>
+                                    {modules.map((module) => <option key={module.id} value={module.id}>Week {module.week_number || '-'} - {module.title}</option>)}
                                 </select>
                             </div>
                             <div>
@@ -244,6 +273,11 @@ export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
                             <div>
                                 <label className="mb-1.5 block text-sm font-bold text-gray-700 dark:text-gray-300">Batas Waktu (detik)</label>
                                 <input type="number" min="0" value={createForm.data.time_limit} onChange={(e) => createForm.setData('time_limit', e.target.value)} className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 dark:border-gray-700 dark:bg-gray-950 dark:text-white" placeholder="Kosongkan jika tanpa batas" />
+                            </div>
+                            <div>
+                                <label className="mb-1.5 block text-sm font-bold text-gray-700 dark:text-gray-300">Nilai Lulus (%)</label>
+                                <input type="number" min="1" max="100" value={createForm.data.passing_score} onChange={(e) => createForm.setData('passing_score', e.target.value)} className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 dark:border-gray-700 dark:bg-gray-950 dark:text-white" placeholder="Default 70" />
+                                <p className="mt-1 text-xs font-medium text-gray-400 dark:text-gray-500">Week berikutnya baru terbuka jika skor kuis mencapai nilai ini.</p>
                             </div>
                             <div>
                                 <label className="mb-1.5 block text-sm font-bold text-gray-700 dark:text-gray-300">Status Publish</label>
@@ -262,20 +296,21 @@ export default function QuizzesIndex({ quizzes, lessons = [], filters = {} }) {
             )}
 
             {deleteConfirm && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                    <div className="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl dark:bg-gray-900">
-                        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
-                            <DeleteOutlineIcon sx={{ fontSize: 28 }} className="text-red-600 dark:text-red-400" />
-                        </div>
-                        <h3 className="mb-2 text-base font-black text-gray-900 dark:text-white">Hapus Kuis?</h3>
-                        <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">Kuis untuk <strong>"{deleteConfirm.lesson?.title}"</strong> akan dihapus beserta semua soalnya.</p>
-                        <div className="flex gap-3">
-                            <button onClick={() => setDeleteConfirm(null)} className="h-11 flex-1 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 dark:border-gray-700 dark:text-gray-400">Batal</button>
-                            <button onClick={confirmDelete} className="h-11 flex-1 rounded-xl bg-red-600 text-sm font-bold text-white">Hapus</button>
-                        </div>
-                    </div>
-                </div>
+                <ConfirmActionDialog
+                    show
+                    variant="danger"
+                    title="Hapus Kuis?"
+                    message="Kuis dan semua soalnya akan dihapus."
+                    confirmLabel="Iya, Hapus"
+                    details={[
+                        { label: 'Modul', value: deleteConfirm.module?.title || deleteConfirm.lesson?.title || '-' },
+                        { label: 'Soal', value: `${deleteConfirm.question_count || 0} soal` },
+                    ]}
+                    onCancel={() => setDeleteConfirm(null)}
+                    onConfirm={confirmDelete}
+                />
             )}
+            <ConfirmActionDialog {...confirmState} onCancel={closeConfirm} />
         </AuthenticatedLayout>
     );
 }

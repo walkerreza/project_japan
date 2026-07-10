@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\AksesPremiumService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,9 +36,11 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user() ? array_merge(
                     $request->user()->only([
                         'id', 'username', 'email', 'role',
-                        'xp', 'level', 'streak_count', 'subscription_status',
+                        'xp', 'level', 'streak_count', 'subscription_status', 'avatar',
                     ]),
                     [
+                        'name' => $request->user()->username,
+                        'access_status' => app(AksesPremiumService::class)->statusAkses($request->user()),
                         'notifications' => $request->user()->unreadNotifications->map(function ($notification) {
                             return [
                                 'id' => $notification->id,

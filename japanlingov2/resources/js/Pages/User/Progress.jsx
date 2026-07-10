@@ -1,3 +1,5 @@
+import TranslateIcon from '@mui/icons-material/Translate';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import React, { useEffect, useRef, useState } from 'react';
 import { Head } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
@@ -8,7 +10,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HelpCenterIcon from '@mui/icons-material/HelpCenter';
-import theme from '@/Components/theme/themes';
+import { MascotGuide } from '@/Components/User/UserVisuals';
 
 /* ─── Animated counter ──────────────────────────────────────────── */
 function CountUp({ target, duration = 1200 }) {
@@ -93,9 +95,9 @@ export default function Progress({
             label: 'Pelajaran Selesai',
             value: stats.lessonsDone || 0,
             icon: <AutoStoriesIcon sx={{ fontSize: 28 }} />,
-            gradient: 'from-blue-500 to-indigo-500',
-            glow: 'shadow-blue-500/30',
-            ring: 'ring-blue-200 dark:ring-blue-400/30',
+            gradient: 'from-red-500 to-rose-500',
+            glow: 'shadow-red-500/30',
+            ring: 'ring-red-200 dark:ring-red-400/30',
         },
         {
             label: 'Kuis Selesai',
@@ -113,7 +115,7 @@ export default function Progress({
         return <LocalFireDepartmentIcon sx={{ fontSize: 16 }} />;
     };
     const activityColor = (type) => {
-        if (type === 'lesson') return { bg: 'bg-blue-100 dark:bg-blue-500/20', text: 'text-blue-600 dark:text-blue-400', border: 'border-blue-200 dark:border-blue-500/30' };
+        if (type === 'lesson') return { bg: 'bg-red-100 dark:bg-red-500/20', text: 'text-red-600 dark:text-red-400', border: 'border-red-200 dark:border-red-500/30' };
         if (type === 'quiz')   return { bg: 'bg-green-100 dark:bg-green-500/20', text: 'text-green-600 dark:text-green-400', border: 'border-green-200 dark:border-green-500/30' };
         return { bg: 'bg-amber-100 dark:bg-amber-500/20', text: 'text-amber-600 dark:text-amber-400', border: 'border-amber-200 dark:border-amber-500/30' };
     };
@@ -130,34 +132,35 @@ export default function Progress({
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors duration-300">
-                    <ShowChartIcon className="text-indigo-500 dark:text-indigo-400" />
+                    <ShowChartIcon className="text-rose-500 dark:text-rose-400" />
                     Progres Saya
                 </h2>
             }
         >
             <Head title="Progres - Japanlingo" />
 
-            <div className="min-h-screen bg-[#F8FAFC] dark:bg-gray-950 transition-colors duration-300 pb-12">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+            <div className="relative min-h-screen overflow-hidden bg-[#eef6f2] pb-12 transition-colors duration-300 dark:bg-gray-950">
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(130deg,rgba(16,185,129,0.14)_0%,transparent_28%),linear-gradient(230deg,rgba(220,38,38,0.09)_0%,transparent_34%),repeating-linear-gradient(90deg,rgba(6,95,70,0.045)_0_1px,transparent_1px_78px),repeating-linear-gradient(0deg,rgba(6,95,70,0.035)_0_1px,transparent_1px_78px)] dark:bg-[linear-gradient(130deg,rgba(16,185,129,0.10)_0%,transparent_28%),linear-gradient(230deg,rgba(220,38,38,0.12)_0%,transparent_34%),repeating-linear-gradient(90deg,rgba(255,255,255,0.032)_0_1px,transparent_1px_78px),repeating-linear-gradient(0deg,rgba(255,255,255,0.026)_0_1px,transparent_1px_78px)]" />
+                <div className="pointer-events-none absolute left-6 top-36 hidden text-[12rem] font-black leading-none text-emerald-900/[0.045] dark:text-white/[0.035] lg:block">進</div>
+                <div className="pointer-events-none absolute right-8 top-[700px] hidden text-[12rem] font-black leading-none text-red-900/[0.04] dark:text-white/[0.03] lg:block">練</div>
+                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
                     {/* ── HERO SECTION ───────────────────────────────────────── */}
-                    <section className="relative overflow-hidden rounded-3xl mb-8 p-8 bg-gradient-to-br from-indigo-50 via-white to-slate-50 dark:from-slate-900 dark:via-indigo-950 dark:to-gray-900 border border-slate-200 dark:border-transparent transition-colors duration-300">
+                    <section className="relative overflow-hidden rounded-[2rem] mb-8 border border-white/70 bg-white/62 p-8 shadow-2xl shadow-emerald-900/5 backdrop-blur-md transition-colors duration-300 dark:border-gray-800 dark:bg-gray-900/62">
                         {/* Kanji Watermark */}
                         <span
                             aria-hidden="true"
-                            className="absolute right-6 top-1/2 -translate-y-1/2 text-[160px] font-black leading-none select-none pointer-events-none opacity-[0.03] dark:opacity-[0.04] text-indigo-900 dark:text-white transition-colors duration-300"
+                            className="absolute right-6 top-1/2 -translate-y-1/2 text-[160px] font-black leading-none select-none pointer-events-none opacity-[0.03] dark:opacity-[0.04] text-rose-900 dark:text-white transition-colors duration-300"
                             style={{ fontFamily: 'serif' }}
                         >
                             進
                         </span>
 
-                        {/* Decorative blobs */}
-                        <div className="absolute -top-16 -left-16 w-64 h-64 rounded-full opacity-30 dark:opacity-20 blur-3xl transition-opacity duration-300"
-                            style={{ background: 'radial-gradient(circle,#6366f1,transparent)' }} />
-                        <div className="absolute -bottom-12 right-48 w-48 h-48 rounded-full opacity-20 dark:opacity-15 blur-3xl transition-opacity duration-300"
-                            style={{ background: 'radial-gradient(circle,#f59e0b,transparent)' }} />
+                        <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-red-500 to-amber-400" />
+                        <div className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(135deg,rgba(15,23,42,0.035)_0_1px,transparent_1px_18px)] dark:bg-[repeating-linear-gradient(135deg,rgba(255,255,255,0.035)_0_1px,transparent_1px_18px)]" />
 
-                        <p className="text-indigo-600 dark:text-indigo-300 text-xs font-bold uppercase tracking-widest mb-1 transition-colors duration-300">Dasbor Progres</p>
-                        <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-6 transition-colors duration-300">Perjalanan Belajarmu 🎌</h1>
+                        <div className="relative z-10">
+                        <p className="text-rose-600 dark:text-rose-300 text-xs font-bold uppercase tracking-widest mb-1 transition-colors duration-300">Dasbor Progres</p>
+                        <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-6 transition-colors duration-300">Perjalanan Belajarmu <TranslateIcon className="w-6 h-6 inline-block" /></h1>
 
                         <motion.div
                             variants={stagger}
@@ -184,7 +187,16 @@ export default function Progress({
                                 </motion.div>
                             ))}
                         </motion.div>
+                        </div>
                     </section>
+
+                    <div className="mb-8">
+                        <MascotGuide
+                            tone="green"
+                            title="Peta perkembangan"
+                            message="XP menunjukkan aktivitas, streak menunjukkan konsistensi, dan skill bar menunjukkan area yang perlu diperkuat minggu ini."
+                        />
+                    </div>
 
                     {/* ── MAIN GRID ──────────────────────────────────────────── */}
                     <div className="grid lg:grid-cols-3 gap-6">
@@ -197,7 +209,7 @@ export default function Progress({
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2, duration: 0.55 }}
-                                className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-gray-800 transition-colors duration-300"
+                                className="rounded-[2rem] border border-white/70 bg-white/72 p-6 shadow-2xl shadow-emerald-900/5 backdrop-blur-md transition-colors duration-300 dark:border-gray-800 dark:bg-gray-900/72"
                             >
                                 <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
                                     <div>
@@ -259,7 +271,7 @@ export default function Progress({
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.35, duration: 0.55 }}
-                                className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-gray-800 transition-colors duration-300"
+                                className="rounded-[2rem] border border-white/70 bg-white/72 p-6 shadow-2xl shadow-emerald-900/5 backdrop-blur-md transition-colors duration-300 dark:border-gray-800 dark:bg-gray-900/72"
                             >
                                 <h3 className="font-black text-slate-900 dark:text-white text-lg mb-1 transition-colors duration-300">Kemampuan Skill</h3>
                                 <p className="text-xs text-slate-500 dark:text-gray-500 mb-6 transition-colors duration-300">Persentase penguasaan per topik</p>
@@ -292,7 +304,7 @@ export default function Progress({
                                 initial={{ opacity: 0, x: 30 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.25, duration: 0.55 }}
-                                className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-gray-800 transition-colors duration-300"
+                                className="rounded-[2rem] border border-white/70 bg-white/72 p-6 shadow-2xl shadow-emerald-900/5 backdrop-blur-md transition-colors duration-300 dark:border-gray-800 dark:bg-gray-900/72"
                             >
                                 <h3 className="font-black text-slate-900 dark:text-white text-lg mb-1 transition-colors duration-300">Perjalanan JLPT</h3>
                                 <p className="text-xs text-slate-500 dark:text-gray-500 mb-6 transition-colors duration-300">Level yang sudah & belum tercapai</p>
@@ -376,7 +388,7 @@ export default function Progress({
                                 initial={{ opacity: 0, x: 30 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.4, duration: 0.55 }}
-                                className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-gray-800 transition-colors duration-300"
+                                className="rounded-[2rem] border border-white/70 bg-white/72 p-6 shadow-2xl shadow-emerald-900/5 backdrop-blur-md transition-colors duration-300 dark:border-gray-800 dark:bg-gray-900/72"
                             >
                                 <h3 className="font-black text-slate-900 dark:text-white text-lg mb-1 transition-colors duration-300">Aktivitas Terkini</h3>
                                 <p className="text-xs text-slate-500 dark:text-gray-500 mb-5 transition-colors duration-300">Riwayat belajar kamu</p>
@@ -414,7 +426,7 @@ export default function Progress({
                                         );
                                     }) : (
                                         <div className="text-center py-8 transition-colors duration-300">
-                                            <p className="text-4xl mb-2">📭</p>
+                                            <p className="text-4xl mb-2"><LibraryBooksIcon className="w-8 h-8 text-gray-400 inline-block" /></p>
                                             <p className="text-xs text-slate-400 dark:text-gray-500">Belum ada aktivitas.</p>
                                         </div>
                                     )}

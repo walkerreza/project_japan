@@ -1,3 +1,4 @@
+import BoltIcon from '@mui/icons-material/Bolt';
 import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
@@ -28,7 +29,7 @@ const InputField = ({ label, type = 'text', defaultValue, placeholder, disabled 
 
 const SectionTitle = ({ icon, children }) => (
     <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl text-indigo-600 dark:text-indigo-400 transition-colors duration-300">
+        <div className="p-2 bg-rose-50 dark:bg-rose-900/30 rounded-xl text-rose-600 dark:text-rose-400 transition-colors duration-300">
             {icon}
         </div>
         <h3 className="font-bold text-gray-900 dark:text-white text-lg transition-colors duration-300">{children}</h3>
@@ -75,7 +76,7 @@ export default function ProfilAdmin() {
                             
                             {/* Card 1: Profil Admin */}
                             <div className="bg-white dark:bg-gray-900 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-800 p-8 flex flex-col items-center text-center transition-colors duration-300">
-                                <div className="w-32 h-32 rounded-[2rem] bg-gradient-to-br from-indigo-500 to-blue-600 p-1 shadow-lg mb-6 relative group cursor-pointer transform transition-transform duration-300 hover:scale-105">
+                                <div className="w-32 h-32 rounded-[2rem] bg-gradient-to-br from-rose-500 to-red-600 p-1 shadow-lg mb-6 relative group cursor-pointer transform transition-transform duration-300 hover:scale-105">
                                     <div className="w-full h-full rounded-[1.8rem] bg-white/10 backdrop-blur-sm flex items-center justify-center text-5xl font-black text-white overflow-hidden relative">
                                         {user.username?.charAt(0).toUpperCase()}
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
@@ -86,11 +87,11 @@ export default function ProfilAdmin() {
                                 
                                 <h2 className="text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2 justify-center transition-colors duration-300">
                                     {user.username}
-                                    <VerifiedUserIcon sx={{ fontSize: 22 }} className="text-indigo-600 dark:text-indigo-400" />
+                                    <VerifiedUserIcon sx={{ fontSize: 22 }} className="text-rose-600 dark:text-rose-400" />
                                 </h2>
                                 <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 mb-4 transition-colors duration-300">{user.email}</p>
                                 
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-bold text-sm border border-indigo-100 dark:border-indigo-800/50 transition-colors duration-300">
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 font-bold text-sm border border-indigo-100 dark:border-indigo-800/50 transition-colors duration-300">
                                     <AutoStoriesIcon sx={{ fontSize: 18 }} /> Admin Sensei
                                 </div>
                             </div>
@@ -102,7 +103,7 @@ export default function ProfilAdmin() {
                                         onClick={() => setActiveTab('settings')}
                                         className={`w-full flex items-center gap-3 px-6 py-4 rounded-2xl font-bold transition-all duration-300 ${
                                             activeTab === 'settings' 
-                                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/50' 
+                                            ? 'bg-rose-600 text-white shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/50' 
                                             : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
                                         }`}
                                     >
@@ -113,7 +114,7 @@ export default function ProfilAdmin() {
                                         onClick={() => setActiveTab('activity')}
                                         className={`w-full flex items-center gap-3 px-6 py-4 rounded-2xl font-bold transition-all duration-300 ${
                                             activeTab === 'activity' 
-                                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/50' 
+                                            ? 'bg-rose-600 text-white shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/50' 
                                             : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
                                         }`}
                                     >
@@ -150,9 +151,9 @@ export default function ProfilAdmin() {
                                                             onChange={e => handleThemeChange(e.target.value)}
                                                             className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 rounded-xl px-4 py-3 text-sm font-bold cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:border-indigo-400 transition-all duration-300"
                                                         >
-                                                            <option value="system">🌐 Sistem Default</option>
-                                                            <option value="light">☀️ Terang</option>
-                                                            <option value="dark">🌙 Gelap</option>
+                                                            <option value="system">Sistem Sistem Default</option>
+                                                            <option value="light">Terang Terang</option>
+                                                            <option value="dark">Gelap Gelap</option>
                                                         </select>
                                                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 leading-relaxed transition-colors duration-300">Pilih tampilan antarmuka yang paling nyaman untuk Anda.</p>
                                                     </div>
@@ -163,8 +164,8 @@ export default function ProfilAdmin() {
                                                     <SectionTitle icon={<EmailIcon />}>Informasi Kontak</SectionTitle>
                                                     <div className="bg-gray-50/50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 space-y-4 transition-colors duration-300">
                                                         <InputField label="Alamat Email" type="email" defaultValue={user.email} disabled />
-                                                        <div className="flex items-start gap-2 bg-indigo-50/50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 p-3 rounded-xl border border-indigo-100/50 dark:border-indigo-800/30 transition-colors duration-300">
-                                                            <span className="text-lg">💡</span>
+                                                        <div className="flex items-start gap-2 bg-rose-50/50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-300 p-3 rounded-xl border border-indigo-100/50 dark:border-indigo-800/30 transition-colors duration-300">
+                                                            <span className="text-lg"><BoltIcon className="w-5 h-5 text-yellow-500 inline-block" /></span>
                                                             <p className="text-xs font-medium leading-relaxed">Alamat email digunakan untuk login dan notifikasi. Hubungi SuperAdmin untuk melakukan perubahan.</p>
                                                         </div>
                                                     </div>
@@ -188,7 +189,7 @@ export default function ProfilAdmin() {
                                                     className={`flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-bold text-sm transition-all duration-300 transform active:scale-95
                                                         ${saved
                                                             ? 'bg-green-500 text-white shadow-lg shadow-green-500/30 dark:shadow-green-900/30'
-                                                            : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-600/30 dark:shadow-indigo-900/30'}`}
+                                                            : 'bg-rose-600 text-white hover:bg-rose-700 shadow-lg shadow-indigo-600/30 dark:shadow-indigo-900/30'}`}
                                                 >
                                                     {saved ? <><CheckCircleIcon sx={{ fontSize: 20 }} /> Perubahan Disimpan</> : 'Perbarui Kata Sandi'}
                                                 </button>
@@ -206,9 +207,9 @@ export default function ProfilAdmin() {
                                         transition={{ duration: 0.2 }}
                                     >
                                         <div className="bg-white dark:bg-gray-900 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-800 p-12 min-h-[500px] flex flex-col items-center justify-center text-center transition-colors duration-300">
-                                            <div className="w-32 h-32 bg-indigo-50 dark:bg-indigo-900/30 rounded-full flex items-center justify-center mb-8 relative transition-colors duration-300">
-                                                <div className="absolute inset-0 bg-indigo-100 dark:bg-indigo-900/50 rounded-full animate-ping opacity-20"></div>
-                                                <HistoryIcon sx={{ fontSize: 64 }} className="text-indigo-600 dark:text-indigo-400" />
+                                            <div className="w-32 h-32 bg-rose-50 dark:bg-rose-900/30 rounded-full flex items-center justify-center mb-8 relative transition-colors duration-300">
+                                                <div className="absolute inset-0 bg-rose-100 dark:bg-rose-900/50 rounded-full animate-ping opacity-20"></div>
+                                                <HistoryIcon sx={{ fontSize: 64 }} className="text-rose-600 dark:text-rose-400" />
                                             </div>
                                             <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-4 transition-colors duration-300">Log Aktivitas</h2>
                                             <p className="text-gray-500 dark:text-gray-400 max-w-md leading-relaxed transition-colors duration-300">
@@ -216,7 +217,7 @@ export default function ProfilAdmin() {
                                             </p>
                                             <button 
                                                 onClick={() => setActiveTab('settings')}
-                                                className="mt-8 text-indigo-600 dark:text-indigo-400 font-bold hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors duration-300"
+                                                className="mt-8 text-rose-600 dark:text-rose-400 font-bold hover:text-rose-700 dark:hover:text-rose-300 transition-colors duration-300"
                                             >
                                                 &larr; Kembali ke Pengaturan
                                             </button>

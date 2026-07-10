@@ -2,23 +2,24 @@ import React, { useState } from 'react';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Card from '@/Components/UI/Card';
+import ConfirmActionDialog, { useConfirmAction } from '@/Components/UI/ConfirmActionDialog';
 
 const emptyForm = {
     title: '',
     description: '',
     level_id: '',
     module_id: '',
-    lesson_id: '',
     status: 'draft',
 };
 
-export default function ManajemenFlashcard({ sets = {}, filters = {}, levels = [], modules = [], lessons = [] }) {
+export default function ManajemenFlashcard({ sets = {}, filters = {}, levels = [], modules = [] }) {
     const rows = sets.data || [];
     const [showForm, setShowForm] = useState(false);
     const [editing, setEditing] = useState(null);
     const [search, setSearch] = useState(filters.search || '');
     const [status, setStatus] = useState(filters.status || 'all');
     const form = useForm(emptyForm);
+    const { confirmState, openConfirm, closeConfirm } = useConfirmAction();
 
     const openCreate = () => {
         setEditing(null);
@@ -33,7 +34,6 @@ export default function ManajemenFlashcard({ sets = {}, filters = {}, levels = [
             description: item.description || '',
             level_id: item.level_id || '',
             module_id: item.module_id || '',
-            lesson_id: item.lesson_id || '',
             status: item.status || 'draft',
         });
         setShowForm(true);
@@ -49,7 +49,6 @@ export default function ManajemenFlashcard({ sets = {}, filters = {}, levels = [
         ...data,
         level_id: data.level_id || null,
         module_id: data.module_id || null,
-        lesson_id: data.lesson_id || null,
     });
 
     const submitForm = (event) => {
@@ -67,8 +66,20 @@ export default function ManajemenFlashcard({ sets = {}, filters = {}, levels = [
     };
 
     const deleteSet = (item) => {
-        if (!window.confirm(`Hapus flashcard set "${item.title}"?`)) return;
-        router.delete(route('admin.flashcards.destroy', item.id), { preserveScroll: true });
+        openConfirm({
+            variant: 'danger',
+            title: 'Hapus Flashcard Set?',
+            message: 'Apakah kamu setuju untuk menghapus set flashcard ini?',
+            confirmLabel: 'Iya, Hapus',
+            details: [
+                { label: 'Judul', value: item.title },
+                { label: 'Jumlah kartu', value: `${item.flashcards_count || 0} kartu` },
+            ],
+            onConfirm: () => router.delete(route('admin.flashcards.destroy', item.id), {
+                preserveScroll: true,
+                onFinish: closeConfirm,
+            }),
+        });
     };
 
     return (
@@ -80,7 +91,7 @@ export default function ManajemenFlashcard({ sets = {}, filters = {}, levels = [
                     <div>
                         <p className="text-xs font-black uppercase tracking-[0.3em] text-teal-600">Fast Card Builder</p>
                         <h1 className="text-2xl font-black text-gray-900 dark:text-white">Flashcard</h1>
-                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Buat set kartu kosakata yang bisa dipakai latihan dan generate quiz.</p>
+                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Buat set kartu kosakata untuk modul mingguan dan generate kuis.</p>
                     </div>
                     <button onClick={openCreate} className="h-11 rounded-xl bg-[#14B8A6] px-5 text-sm font-black text-white">Buat Set Flashcard</button>
                 </div>
@@ -135,18 +146,14 @@ export default function ManajemenFlashcard({ sets = {}, filters = {}, levels = [
                             <form onSubmit={submitForm} className="space-y-4">
                                 <input value={form.data.title} onChange={(event) => form.setData('title', event.target.value)} placeholder="Kosakata Minggu 1" className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
                                 <textarea value={form.data.description} onChange={(event) => form.setData('description', event.target.value)} placeholder="Deskripsi set" className="min-h-24 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                                     <select value={form.data.level_id} onChange={(event) => form.setData('level_id', event.target.value)} className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white">
                                         <option value="">Tanpa Level</option>
                                         {levels.map((level) => <option key={level.id} value={level.id}>{level.level_name}</option>)}
                                     </select>
-                                    <select value={form.data.module_id} onChange={(event) => form.setData('module_id', event.target.value)} className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white">
-                                        <option value="">Tanpa Modul</option>
-                                        {modules.map((module) => <option key={module.id} value={module.id}>{module.title}</option>)}
-                                    </select>
-                                    <select value={form.data.lesson_id} onChange={(event) => form.setData('lesson_id', event.target.value)} className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white">
-                                        <option value="">Tanpa Lesson</option>
-                                        {lessons.map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.title}</option>)}
+                                    <select value={form.data.module_id} onChange={(event) => form.setData('module_id', event.target.value)} className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" required>
+                                        <option value="">Pilih Modul</option>
+                                        {modules.map((module) => <option key={module.id} value={module.id}>Week {module.week_number || '-'} - {module.title}</option>)}
                                     </select>
                                     <select value={form.data.status} onChange={(event) => form.setData('status', event.target.value)} className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white">
                                         <option value="draft">Draft</option>
@@ -163,7 +170,7 @@ export default function ManajemenFlashcard({ sets = {}, filters = {}, levels = [
                     </div>
                 )}
             </div>
+            <ConfirmActionDialog {...confirmState} onCancel={closeConfirm} />
         </AuthenticatedLayout>
     );
 }
-

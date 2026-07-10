@@ -17,8 +17,7 @@ export default function GuestAuthLayout({ children }) {
 
                 <div className="relative z-10 flex min-h-full w-full flex-col justify-between">
                     <Link href="/" className="flex items-center gap-2 no-underline">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/20 text-xl font-black text-white backdrop-blur-sm">文</div>
-                        <span className="text-xl font-extrabold text-white">Japanlingo</span>
+                        <img src="/logo.png" alt="Japanlingo" className="h-10 w-auto" />
                     </Link>
 
                     <div className="max-w-xl pb-8">
@@ -29,7 +28,7 @@ export default function GuestAuthLayout({ children }) {
                             Kuasai Bahasa Jepang<br />Satu Tingkat Setiap Waktu.
                         </h1>
                         <p className="max-w-md text-base leading-relaxed text-white/75 xl:text-lg">
-                            Bergabunglah dengan 20.000+ pembelajar di Japanlingo. Pelajaran tergamifikasi yang dirancang untuk membantu Anda lulus ujian N3 dengan percaya diri.
+                            Bergabunglah dengan komunitas Japanlingo. Pelajaran tergamifikasi yang dirancang untuk membantu Anda lulus ujian N3 dengan percaya diri.
                         </p>
                     </div>
 
@@ -49,8 +48,7 @@ export default function GuestAuthLayout({ children }) {
             <div className="flex min-h-screen w-full flex-col overflow-y-auto bg-gray-50 lg:w-1/2">
                 <div className="px-5 py-4 sm:p-6 lg:hidden">
                     <Link href="/" className="flex items-center gap-2 no-underline">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600 text-lg font-black text-white">文</div>
-                        <span className="text-xl font-extrabold text-gray-900">Japanlingo</span>
+                        <img src="/logo.png" alt="Japanlingo" className="h-8 w-auto" />
                     </Link>
                 </div>
 

@@ -3,6 +3,8 @@ import { Head, Link, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Confetti from 'react-confetti';
 import theme from '@/Components/theme/themes';
+import { FloatingLearningDecor, MascotGuide, RewardSummary } from '@/Components/User/UserVisuals';
+import ConfirmActionDialog, { useConfirmAction } from '@/Components/UI/ConfirmActionDialog';
 
 // MUI Icons
 import CloseIcon from '@mui/icons-material/Close';
@@ -12,18 +14,21 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import StarIcon from '@mui/icons-material/Star';
 
-// Hitung XP berdasarkan akurasi
-function calcXP(correct, total) {
-    const pct = total > 0 ? correct / total : 0;
-    if (pct === 1) return 50;
-    if (pct >= 0.8) return 35;
-    if (pct >= 0.6) return 20;
-    return 10;
-}
+const formatTime = (seconds) => {
+    const safeSeconds = Math.max(0, Number(seconds) || 0);
+    const minutes = String(Math.floor(safeSeconds / 60)).padStart(2, '0');
+    const remainingSeconds = String(safeSeconds % 60).padStart(2, '0');
 
-function normalizeAnswer(value) {
-    return String(value || '').trim().toLowerCase();
-}
+    return `${minutes}:${remainingSeconds}`;
+};
+
+const reviewPriority = (question) => {
+    if (question.review_due) return 0;
+    if (question.review_status === 'learning') return 1;
+    if (question.review_status === 'review') return 2;
+    if (question.review_status === 'new') return 3;
+    return 4;
+};
 
 function normalizeQuestionType(type) {
     if (type === 'fill_blank' || type === 'typing') return 'fill_blank';
@@ -31,23 +36,24 @@ function normalizeQuestionType(type) {
     return 'multiple_choice';
 }
 
-export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = [] }) {
-    // Normalise: backend kirim correct_answer (string), ubah ke correctIndex
-    const [questions] = useState(() =>
-        rawQuestions.map(q => ({
-            ...q,
-            type: normalizeQuestionType(q.type),
-            // options adalah array string dari DB
-            options: Array.isArray(q.options) ? q.options : [],
-            correctIndex: Array.isArray(q.options)
-                ? q.options.indexOf(q.correct_answer)
-                : -1,
-        }))
+export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = [], module_flow = false, back_url = null, finish_url = null }) {
+    const [questions, setQuestions] = useState(() =>
+        rawQuestions
+            .map((q, index) => ({
+                ...q,
+                originalIndex: index,
+                type: normalizeQuestionType(q.type),
+                options: Array.isArray(q.options) ? q.options : [],
+                attemptKey: `${q.id}-${index}-0`,
+                repeatCount: 0,
+            }))
+            .sort((a, b) => reviewPriority(a) - reviewPriority(b) || a.originalIndex - b.originalIndex)
     );
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [textAnswer, setTextAnswer] = useState('');
-    const [isCorrect, setIsCorrect] = useState(false);
+    const [answerFeedback, setAnswerFeedback] = useState(null);
+    const [isCheckingAnswer, setIsCheckingAnswer] = useState(false);
     
     // Status Quiz
     const [lives, setLives] = useState(5);
@@ -55,12 +61,18 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
     const [showResult, setShowResult] = useState(false);
     const [showFlashcard, setShowFlashcard] = useState(false);
     const [flashcardIndex, setFlashcardIndex] = useState(0);
+    const hasTimeLimit = Number(quiz?.time_limit || 0) > 0;
+    const [secondsLeft, setSecondsLeft] = useState(Number(quiz?.time_limit || 0));
+    const [finishedByTimeout, setFinishedByTimeout] = useState(false);
     
     const submitted = useRef(false);
-    const answerLogRef = useRef([]);
+    const answerLogRef = useRef({});
+    const answerEventsRef = useRef([]);
+    const correctMapRef = useRef({});
 
     // Animasi state
     const [shakeKey, setShakeKey] = useState(0); // Trigger shake animation
+    const { confirmState, openConfirm, closeConfirm } = useConfirmAction();
 
     // Window size for Confetti
     const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
@@ -74,7 +86,12 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
 
     const currentQ = questions[currentIndex];
     const currentType = currentQ?.type || 'multiple_choice';
-    const progressPercentage = ((currentIndex) / questions.length) * 100;
+    const totalQuestionCount = rawQuestions.length || questions.length;
+    const answeredCount = Object.keys(answerLogRef.current).length;
+    const correctCount = Object.values(correctMapRef.current).filter(Boolean).length;
+    const passingScore = Number(quiz?.passing_score || 70);
+    const progressPercentage = ((currentIndex + (selectedAnswer !== null ? 1 : 0)) / questions.length) * 100;
+    const timePercentage = hasTimeLimit ? (secondsLeft / Number(quiz.time_limit)) * 100 : 100;
     const activeFlashcard = flashcards[flashcardIndex] || null;
     const flashcardInterval = 1;
     const shouldShowFlashcardAfterQuestion = (answeredCount, lastQuestion, gameOver) => (
@@ -86,78 +103,150 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
         && answeredCount % flashcardInterval === 0
     );
 
-    const handleAnswerClick = (index) => {
-        if (selectedAnswer !== null) return; // Mencegah double click
-        
-        setSelectedAnswer(index);
-        const correct = index === currentQ.correctIndex;
-        setIsCorrect(correct);
+    const repeatWrongQuestion = (question) => {
+        const repeatCount = Number(question.repeatCount || 0);
 
-        if (correct) {
-            setScore(prev => prev + 1);
-            // PUT SOUND EFFECT HERE: playCorrectSound()
-        } else {
-            setLives(prev => Math.max(0, prev - 1));
-            setShakeKey(prev => prev + 1); // Trigger getaran
-            // PUT SOUND EFFECT HERE: playWrongSound()
-        }
+        if (repeatCount >= 2) return;
 
-        answerLogRef.current[currentIndex] = {
-            question_id: currentQ.id,
-            answer_text: currentQ.options[index] || '',
-            answer_payload: {
-                selected_index: index,
-                selected_option: currentQ.options[index] || '',
+        setQuestions((items) => [
+            ...items,
+            {
+                ...question,
+                attemptKey: `${question.id}-${items.length}-${repeatCount + 1}`,
+                repeatCount: repeatCount + 1,
+                isRepeat: true,
             },
-        };
+        ]);
+    };
+
+    const checkAnswer = async ({ answerValue, selectedIndex = null, answerPayload }) => {
+        if (!currentQ || selectedAnswer !== null || isCheckingAnswer) return;
+
+        setSelectedAnswer(selectedIndex ?? answerValue);
+        setIsCheckingAnswer(true);
+        setAnswerFeedback({ status: 'checking', title: 'Mengecek jawaban...', message: 'Sebentar, jawaban sedang dikoreksi.' });
+
+        try {
+            const response = await window.axios.post(route('user.questions.check', currentQ.id), {
+                answer: answerValue,
+            });
+            const isCorrect = Boolean(response.data?.is_correct);
+            const explanation = response.data?.explanation;
+
+            const answerEvent = {
+                question_id: currentQ.id,
+                answer_text: answerValue,
+                answer_payload: {
+                    ...answerPayload,
+                    is_correct: isCorrect,
+                    attempt_key: currentQ.attemptKey,
+                    repeat_count: currentQ.repeatCount || 0,
+                },
+            };
+            answerLogRef.current[currentQ.id] = answerEvent;
+            answerEventsRef.current.push(answerEvent);
+            correctMapRef.current[currentQ.id] = isCorrect;
+
+            if (isCorrect) {
+                setScore(Object.values({ ...correctMapRef.current, [currentQ.id]: true }).filter(Boolean).length);
+                setAnswerFeedback({
+                    status: 'correct',
+                    title: currentQ.isRepeat ? 'Mantap, sudah membaik!' : 'Benar!',
+                    message: currentQ.isRepeat ? 'Soal yang tadi sulit sudah berhasil kamu jawab.' : 'Jawaban ini masuk ke progres mastery.',
+                });
+            } else {
+                setLives((value) => Math.max(0, value - 1));
+                setShakeKey((value) => value + 1);
+                repeatWrongQuestion(currentQ);
+                setAnswerFeedback({
+                    status: 'wrong',
+                    title: 'Belum tepat',
+                    message: explanation || 'Soal ini akan muncul lagi di akhir sesi untuk repetisi.',
+                });
+            }
+        } catch (error) {
+            setSelectedAnswer(null);
+            setAnswerFeedback({
+                status: 'error',
+                title: 'Gagal mengecek jawaban',
+                message: 'Coba kirim ulang jawaban. Jika masih gagal, cek koneksi atau login.',
+            });
+        } finally {
+            setIsCheckingAnswer(false);
+        }
+    };
+
+    const handleAnswerClick = (index) => {
+        if (selectedAnswer !== null || isCheckingAnswer) return;
+
+        const answerValue = currentQ.options[index] || '';
+        if (!answerValue) return;
+
+        checkAnswer({
+            answerValue,
+            selectedIndex: index,
+            answerPayload: {
+                selected_index: index,
+                selected_option: answerValue,
+                question_type: currentType,
+            },
+        });
     };
 
     const handleTypedAnswerSubmit = (event) => {
         event.preventDefault();
-        if (selectedAnswer !== null) return;
+        if (selectedAnswer !== null || isCheckingAnswer) return;
 
         const answer = textAnswer.trim();
         if (!answer) return;
 
-        setSelectedAnswer(answer);
-        const correct = normalizeAnswer(answer) === normalizeAnswer(currentQ.correct_answer);
-        setIsCorrect(correct);
-
-        if (correct) {
-            setScore(prev => prev + 1);
-        } else {
-            setLives(prev => Math.max(0, prev - 1));
-            setShakeKey(prev => prev + 1);
-        }
-
-        answerLogRef.current[currentIndex] = {
-            question_id: currentQ.id,
-            answer_text: answer,
-            answer_payload: {
+        checkAnswer({
+            answerValue: answer,
+            selectedIndex: null,
+            answerPayload: {
                 typed_answer: answer,
                 question_type: currentType,
             },
-        };
+        });
     };
 
-    const submitAttempt = (finalScore) => {
+    const submitAttempt = ({ timeout = false } = {}) => {
         if (submitted.current || !quiz?.id) return;
         submitted.current = true;
-        const xp = calcXP(finalScore, questions.length);
         router.post(route('user.attempts.store'), {
             quiz_id: quiz.id,
-            score: finalScore,
-            xp_earned: xp,
-            answers: answerLogRef.current.filter(Boolean),
+            module_flow,
+            finished_by_timeout: timeout,
+            answers: answerEventsRef.current,
         }, { preserveState: true });
     };
 
+    useEffect(() => {
+        if (!hasTimeLimit || questions.length === 0 || showResult || showFlashcard) return undefined;
+
+        const timer = window.setInterval(() => {
+            setSecondsLeft((value) => {
+                if (value <= 1) {
+                    window.clearInterval(timer);
+                    setFinishedByTimeout(true);
+                    submitAttempt({ timeout: true });
+                    setShowResult(true);
+                    return 0;
+                }
+
+                return value - 1;
+            });
+        }, 1000);
+
+        return () => window.clearInterval(timer);
+    }, [hasTimeLimit, questions.length, showResult, showFlashcard, score]);
+
     const handleNext = () => {
-        const gameOver = lives === 0;
+        const gameOver = lives <= 0;
         const lastQuestion = currentIndex >= questions.length - 1;
 
         if (gameOver || lastQuestion) {
-            submitAttempt(score);
+            submitAttempt({ timeout: false });
             setShowResult(true);
             return;
         }
@@ -166,12 +255,14 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
             setShowFlashcard(true);
             setSelectedAnswer(null);
             setTextAnswer('');
+            setAnswerFeedback(null);
             return;
         }
 
         setCurrentIndex(prev => prev + 1);
         setSelectedAnswer(null);
         setTextAnswer('');
+        setAnswerFeedback(null);
     };
 
     const continueAfterFlashcard = () => {
@@ -180,6 +271,7 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
         setCurrentIndex((prev) => Math.min(prev + 1, questions.length - 1));
         setSelectedAnswer(null);
         setTextAnswer('');
+        setAnswerFeedback(null);
     };
 
     const handleFlashcardReview = (action) => {
@@ -200,20 +292,30 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
 
     const confirmExit = (e) => {
         e.preventDefault();
-        if (window.confirm("Yakin ingin keluar? Progres kuis ini akan hilang!")) {
-            router.get('/user/dashboard');
-        }
+        openConfirm({
+            variant: 'warning',
+            title: 'Keluar dari Kuis?',
+            message: 'Progres sesi kuis yang belum dikirim akan hilang.',
+            confirmLabel: 'Iya, Keluar',
+            details: [
+                { label: 'Kuis', value: quiz?.title || quiz?.module?.title || 'Kuis aktif' },
+                { label: 'Progress', value: `${answeredCount}/${totalQuestionCount} soal dijawab` },
+                { label: 'Nyawa tersisa', value: `${lives} nyawa` },
+            ],
+            onConfirm: () => router.get(back_url || '/user/dashboard'),
+        });
     };
 
     // Jika tidak ada soal dari DB
     if (questions.length === 0) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-red-50 via-white to-amber-50 p-6">
                 <Head title="Quiz" />
-                <div className="text-center">
+                <FloatingLearningDecor />
+                <div className="relative z-10 max-w-md text-center">
                     <p className="text-2xl font-black text-gray-400 mb-4">😅 Belum Ada Soal</p>
                     <p className="text-gray-500 mb-6">Admin belum menambahkan soal untuk kuis ini.</p>
-                    <Link href={route('user.dashboard')} className="px-6 py-3 bg-red-600 text-white font-bold rounded-xl no-underline">
+                    <Link href={route('user.dashboard')} className="inline-flex rounded-2xl bg-red-600 px-6 py-3 font-black text-white no-underline shadow-lg shadow-red-500/20">
                         Kembali ke Dashboard
                     </Link>
                 </div>
@@ -223,9 +325,16 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
 
     // === TAMPILAN HASIL (SUMMARY SCREEN) ===
     if (showResult) {
-        const accuracy = Math.round((score / questions.length) * 100);
-        const xpEarned = calcXP(score, questions.length);
-        const isSuccess = lives > 0;
+        const answeredCount = Object.keys(answerLogRef.current).length;
+        const finalCorrectCount = Object.values(correctMapRef.current).filter(Boolean).length;
+        const finalScore = totalQuestionCount > 0 ? Math.round((finalCorrectCount / totalQuestionCount) * 100) : 0;
+        const hasAnsweredAll = answeredCount >= totalQuestionCount;
+        const isSuccess = !finishedByTimeout && lives > 0 && hasAnsweredAll && finalScore >= passingScore;
+        const retryQuiz = () => {
+            if (typeof window !== 'undefined') {
+                router.get(window.location.href);
+            }
+        };
 
         return (
             <div className="min-h-screen font-sans flex flex-col items-center justify-center p-6 relative overflow-hidden" 
@@ -238,45 +347,38 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ type: "spring", bounce: 0.5, duration: 0.8 }}
-                    className="max-w-md w-full bg-white rounded-[2rem] shadow-xl p-8 text-center relative z-10"
+                    className="relative z-10 w-full max-w-xl"
                 >
-                    <div className="mx-auto w-24 h-24 rounded-full flex items-center justify-center mb-6" 
-                         style={{ backgroundColor: isSuccess ? theme.activeColor : '#EF4444', color: 'white' }}>
-                        {isSuccess ? <EmojiEventsIcon sx={{ fontSize: 56 }} /> : <CloseIcon sx={{ fontSize: 56 }} />}
-                    </div>
-
-                    <h1 className="text-3xl font-black text-gray-900 mb-2">
-                        {isSuccess ? "Pelajaran Selesai!" : "Coba Lagi Nanti!"}
-                    </h1>
-                    <p className="text-gray-500 font-medium mb-8">
-                        {isSuccess ? "Kamu mendapatkan pengetahuan baru hari ini." : "Jangan menyerah, kamu pasti bisa."}
-                    </p>
-
-                    <div className="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-3">
-                        <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
-                            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Skor</h3>
-                            <div className="text-2xl font-black" style={{ color: theme.activeColor }}>
-                                {score}/{questions.length}
-                            </div>
-                        </div>
-                        <div className="bg-yellow-50 rounded-2xl p-4 border border-yellow-100">
-                            <h3 className="text-sm font-bold text-yellow-500 uppercase tracking-wider mb-1">Akurasi</h3>
-                            <div className="text-2xl font-black text-yellow-600">
-                                {accuracy}%
-                            </div>
-                        </div>
-                        <div className="bg-green-50 rounded-2xl p-4 border border-green-100">
-                            <h3 className="text-sm font-bold text-green-500 uppercase tracking-wider mb-1">XP</h3>
-                            <div className="text-2xl font-black text-green-600">+{xpEarned}</div>
-                        </div>
+                    <RewardSummary
+                        status={isSuccess ? 'success' : 'review'}
+                        title={finishedByTimeout ? 'Waktu Habis!' : (isSuccess ? 'Quest Kuis Selesai!' : 'Belum Lulus')}
+                        message={finishedByTimeout
+                            ? 'Jawaban yang sudah dikerjakan tetap dikirim, tetapi week belum selesai karena waktu habis.'
+                            : isSuccess
+                                ? 'Skor cukup dan mastery naik. Week ini selesai, lanjutkan momentum ke roadmap.'
+                                : `Target lulus ${passingScore}%. Soal yang salah masuk repetisi, ulangi sampai cukup kuat.`
+                        }
+                        stats={[
+                            { label: 'Skor', value: `${finalCorrectCount}/${totalQuestionCount}` },
+                            { label: 'Status', value: finishedByTimeout ? 'Timeout' : `${finalScore}%` },
+                            { label: 'Target', value: `${passingScore}%` },
+                            { label: 'XP', value: 'Tersimpan' },
+                        ]}
+                    />
+                    <div className="mt-4">
+                        <MascotGuide
+                            tone={isSuccess ? 'green' : 'amber'}
+                            title={isSuccess ? 'Mastery naik' : 'Review dulu'}
+                            message={isSuccess ? 'Satu quest selesai. Week berikutnya terbuka jika akses dan jadwal kloter sudah memenuhi.' : 'Week berikutnya tetap terkunci sampai skor lulus. Polanya dibuat seperti Duolingo: salah berarti latihan ulang, bukan berhenti.'}
+                        />
                     </div>
 
                     <button 
-                        onClick={() => router.get(route('user.dashboard'))}
-                        className="w-full py-4 rounded-2xl font-black text-white text-lg tracking-wide uppercase shadow-lg hover:brightness-110 active:translate-y-1 active:shadow-none transition-all"
+                        onClick={() => isSuccess ? router.get(finish_url || route('user.dashboard')) : retryQuiz()}
+                        className="mt-4 w-full py-4 rounded-2xl font-black text-white text-lg tracking-wide uppercase shadow-lg hover:brightness-110 active:translate-y-1 active:shadow-none transition-all"
                         style={{ backgroundColor: theme.doneColor, boxShadow: `0 4px 0 0 ${theme.doneShadow}` }}
                     >
-                        LANJUTKAN
+                        {isSuccess ? 'LANJUTKAN' : 'ULANGI KUIS'}
                     </button>
                 </motion.div>
             </div>
@@ -305,10 +407,15 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
                             transition={{ duration: 0.5, ease: "easeOut" }}
                         />
                     </div>
-                    <div className="flex items-center gap-1.5 font-black text-red-500 text-lg">
-                        <FavoriteIcon sx={{ fontSize: 24, color: lives > 0 ? '#EF4444' : '#gray-300' }} /> {lives}
+                <div className="flex items-center gap-1.5 font-black text-red-500 text-lg">
+                    <FavoriteIcon sx={{ fontSize: 24, color: lives > 0 ? '#EF4444' : '#D1D5DB' }} /> {lives}
+                </div>
+                {hasTimeLimit && (
+                    <div className={`rounded-full px-3 py-1 text-xs font-black tabular-nums ${secondsLeft <= 10 ? 'bg-red-100 text-red-700' : 'bg-white text-gray-700'}`}>
+                        {formatTime(secondsLeft)}
                     </div>
-                    {flashcards.length > 0 && (
+                )}
+                {flashcards.length > 0 && (
                         <div className="hidden rounded-full bg-orange-100 px-3 py-1 text-xs font-black uppercase tracking-wider text-orange-700 sm:block">
                             {flashcards.length} Kosakata
                         </div>
@@ -383,7 +490,7 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
                             onClick={() => handleFlashcardReview('known')}
                             className="rounded-[2rem] bg-lime-400 px-6 py-5 text-center text-lg font-black text-gray-900 shadow-[0_8px_0_#65A30D] transition hover:brightness-105 active:translate-y-1 active:shadow-[0_4px_0_#65A30D]"
                         >
-                            <span className="block text-2xl">✓</span>
+                            <span className="block text-2xl">OK</span>
                             Sudah Paham
                         </button>
                     </div>
@@ -413,14 +520,35 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
                     />
                 </div>
                 <div className="flex items-center gap-1.5 font-black text-red-500 text-lg">
-                    <FavoriteIcon sx={{ fontSize: 24, color: lives > 0 ? '#EF4444' : '#gray-300' }} /> {lives}
+                    <FavoriteIcon sx={{ fontSize: 24, color: lives > 0 ? '#EF4444' : '#D1D5DB' }} /> {lives}
                 </div>
+                {hasTimeLimit && (
+                    <div className={`rounded-full px-3 py-1 text-xs font-black tabular-nums ${secondsLeft <= 10 ? 'bg-red-100 text-red-700' : 'bg-white text-gray-700'}`}>
+                        {formatTime(secondsLeft)}
+                    </div>
+                )}
                 {flashcards.length > 0 && (
                     <div className="hidden rounded-full bg-orange-100 px-3 py-1 text-xs font-black uppercase tracking-wider text-orange-700 sm:block">
                         {flashcards.length} Kosakata
                     </div>
                 )}
             </header>
+
+            {hasTimeLimit && (
+                <div className="mb-6 w-full max-w-4xl px-2 md:px-4">
+                    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-gray-400">
+                        <span>Waktu</span>
+                        <span>{formatTime(secondsLeft)}</span>
+                    </div>
+                    <div className="mt-2 h-2 overflow-hidden rounded-full bg-gray-200">
+                        <motion.div
+                            className={`h-full rounded-full ${secondsLeft <= 10 ? 'bg-red-500' : 'bg-orange-500'}`}
+                            animate={{ width: `${timePercentage}%` }}
+                            transition={{ duration: 0.25 }}
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* Quiz Content Area */}
             <main className="w-full max-w-3xl flex-1 flex flex-col items-center relative z-10">
@@ -437,7 +565,9 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
                         {/* Question Info */}
                         <div className="text-center mb-8 w-full">
                             <h2 className="text-xl md:text-3xl font-black text-gray-900 mb-2">{currentQ.question}</h2>
-                            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest text-shadow">Soal {currentIndex + 1} dari {questions.length}</p>
+                            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest text-shadow">
+                                Soal {currentIndex + 1} dari {questions.length} - Terjawab {answeredCount}/{questions.length}
+                            </p>
                         </div>
 
                         {/* Flashcard Canvas / Media */}
@@ -475,12 +605,10 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
                             animate={shakeKey > 0 ? { x: [0, -10, 10, -10, 10, 0] } : {}}
                             transition={{ duration: 0.4 }}
                         >
-                            {currentType === 'multiple_choice' ? (
+                            {currentType === 'multiple_choice' && currentQ.options.length > 0 ? (
                                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     {currentQ.options.map((option, index) => {
                                         const isSelected = selectedAnswer === index;
-                                        const isThisCorrect = isSelected && isCorrect;
-
                                         let buttonStyle = {
                                             backgroundColor: "white",
                                             borderColor: "#E5E7EB",
@@ -488,44 +616,38 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
                                             boxShadow: `0 4px 0 0 #E5E7EB`
                                         };
 
-                                        if (isSelected) {
-                                            if (isThisCorrect) {
-                                                buttonStyle = {
-                                                    backgroundColor: theme.heroBlob1 || '#F0FDF4',
-                                                    borderColor: theme.activeColor,
-                                                    color: theme.activeShadow,
-                                                    boxShadow: `0 4px 0 0 ${theme.activeColor}`
-                                                };
-                                            } else {
-                                                buttonStyle = {
-                                                    backgroundColor: '#FEF2F2',
-                                                    borderColor: '#EF4444',
-                                                    color: '#B91C1C',
-                                                    boxShadow: `0 4px 0 0 #EF4444`
-                                                };
-                                            }
+                                        if (isSelected && answerFeedback?.status === 'correct') {
+                                            buttonStyle = {
+                                                backgroundColor: '#dcfce7',
+                                                borderColor: '#22c55e',
+                                                color: '#166534',
+                                                boxShadow: '0 4px 0 0 #16a34a',
+                                            };
+                                        } else if (isSelected && answerFeedback?.status === 'wrong') {
+                                            buttonStyle = {
+                                                backgroundColor: '#fee2e2',
+                                                borderColor: '#ef4444',
+                                                color: '#991b1b',
+                                                boxShadow: '0 4px 0 0 #dc2626',
+                                            };
+                                        } else if (isSelected) {
+                                            buttonStyle = {
+                                                backgroundColor: theme.heroBlob1 || '#F0FDF4',
+                                                borderColor: theme.activeColor,
+                                                color: theme.activeShadow,
+                                                boxShadow: `0 4px 0 0 ${theme.activeColor}`
+                                            };
                                         }
 
                                         return (
                                             <button
                                                 key={index}
-                                                disabled={selectedAnswer !== null}
+                                                disabled={selectedAnswer !== null || isCheckingAnswer}
                                                 onClick={() => handleAnswerClick(index)}
                                                 className="relative w-full text-center py-5 px-6 rounded-2xl border-2 font-bold text-base transition-all active:translate-y-1 active:shadow-none disabled:cursor-default"
                                                 style={buttonStyle}
                                             >
                                                 {option}
-
-                                                {(selectedAnswer !== null && index === currentQ.correctIndex) && (
-                                                    <motion.div
-                                                        initial={{ scale: 0, opacity: 0 }}
-                                                        animate={{ scale: 1, opacity: 1 }}
-                                                        className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white flex items-center justify-center p-0.5"
-                                                        style={{ color: theme.activeColor }}
-                                                    >
-                                                        <CheckCircleIcon sx={{ fontSize: 20 }} />
-                                                    </motion.div>
-                                                )}
                                             </button>
                                         );
                                     })}
@@ -541,13 +663,13 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
                                         type="text"
                                         value={textAnswer}
                                         onChange={(e) => setTextAnswer(e.target.value)}
-                                        disabled={selectedAnswer !== null}
+                                        disabled={selectedAnswer !== null || isCheckingAnswer}
                                         placeholder={currentType === 'listening' ? 'Ketik jawaban dari audio...' : 'Ketik jawaban yang tepat...'}
                                         className="w-full rounded-2xl border-2 border-gray-200 bg-white px-5 py-5 text-center text-lg font-black text-gray-800 shadow-sm outline-none transition-all focus:border-red-400 focus:ring-4 focus:ring-red-500/10 disabled:bg-gray-50"
                                     />
                                     <button
                                         type="submit"
-                                        disabled={selectedAnswer !== null || textAnswer.trim() === ''}
+                                        disabled={selectedAnswer !== null || isCheckingAnswer || textAnswer.trim() === ''}
                                         className="w-full rounded-2xl bg-red-600 px-6 py-4 text-lg font-black uppercase tracking-wide text-white shadow-lg shadow-red-500/20 transition-all hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         Cek Jawaban
@@ -555,6 +677,12 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
                                 </form>
                             )}
                         </motion.div>
+
+                        {answerFeedback?.status === 'error' && selectedAnswer === null && (
+                            <div className="mt-5 w-full max-w-[500px] rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+                                {answerFeedback.message}
+                            </div>
+                        )}
                     </motion.div>
                 </AnimatePresence>
             </main>
@@ -569,8 +697,8 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
                         className={`fixed bottom-0 left-0 right-0 border-t-2 z-50`}
                         style={{ 
-                            backgroundColor: isCorrect ? (theme.sectionBg || '#F0FDF4') : '#FEF2F2',
-                            borderColor: isCorrect ? (theme.activeColor) : '#FCA5A5'
+                            backgroundColor: answerFeedback?.status === 'wrong' ? '#fef2f2' : (theme.sectionBg || '#F0FDF4'),
+                            borderColor: answerFeedback?.status === 'wrong' ? '#ef4444' : theme.activeColor
                         }}
                     >
                         <div className="max-w-4xl mx-auto px-4 py-6 md:px-8 md:py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -582,18 +710,18 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
                                     animate={{ scale: 1 }}
                                     transition={{ type: "spring", bounce: 0.6, delay: 0.1 }}
                                     className="w-16 h-16 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm"
-                                    style={{ color: isCorrect ? theme.activeColor : '#EF4444' }}
+                                    style={{ color: answerFeedback?.status === 'wrong' ? '#ef4444' : theme.activeColor }}
                                 >
-                                    {isCorrect ? <CheckCircleIcon sx={{ fontSize: 40 }} /> : <CloseIcon sx={{ fontSize: 40 }} />}
+                                    {answerFeedback?.status === 'wrong' ? <CloseIcon sx={{ fontSize: 40 }} /> : <CheckCircleIcon sx={{ fontSize: 40 }} />}
                                 </motion.div>
                                 <div>
                                     <h3 className="text-2xl font-black mb-1" 
-                                        style={{ color: isCorrect ? theme.activeShadow : '#B91C1C' }}>
-                                        {isCorrect ? 'Luar Biasa!' : 'Ops, salah!'}
+                                        style={{ color: answerFeedback?.status === 'wrong' ? '#991b1b' : theme.activeShadow }}>
+                                        {answerFeedback?.title || 'Jawaban direkam'}
                                     </h3>
                                     <p className="text-sm font-medium" 
-                                       style={{ color: isCorrect ? theme.activeShadow : '#B91C1C' }}>
-                                        {isCorrect ? 'Jawaban yang tepat direkam.' : currentQ.explanation}
+                                       style={{ color: answerFeedback?.status === 'wrong' ? '#b91c1c' : theme.activeShadow }}>
+                                        {answerFeedback?.message || 'Koreksi dan XP dihitung oleh server.'}
                                     </p>
                                 </div>
                             </div>
@@ -601,18 +729,20 @@ export default function Quiz({ quiz, questions: rawQuestions = [], flashcards = 
                             {/* Action Button */}
                             <button 
                                 onClick={handleNext}
-                                className="w-full sm:w-auto px-12 py-4 rounded-2xl font-black text-white text-lg tracking-wide uppercase transition-all shadow-lg active:translate-y-1 active:shadow-none hover:brightness-110"
+                                disabled={isCheckingAnswer || answerFeedback?.status === 'checking'}
+                                className="w-full sm:w-auto px-12 py-4 rounded-2xl font-black text-white text-lg tracking-wide uppercase transition-all shadow-lg active:translate-y-1 active:shadow-none hover:brightness-110 disabled:cursor-wait disabled:opacity-70"
                                 style={{ 
-                                    backgroundColor: isCorrect ? theme.doneColor : '#EF4444', 
-                                    boxShadow: `0 4px 0 0 ${isCorrect ? theme.doneShadow : '#B91C1C'}` 
+                                    backgroundColor: theme.doneColor, 
+                                    boxShadow: `0 4px 0 0 ${theme.doneShadow}` 
                                 }}
                             >
-                                {lives === 0 ? "SELESAI" : "LANJUT"}
+                                {isCheckingAnswer ? "CEK..." : (lives === 0 ? "SELESAI" : "LANJUT")}
                             </button>
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
+            <ConfirmActionDialog {...confirmState} onCancel={closeConfirm} />
         </div>
     );
 }

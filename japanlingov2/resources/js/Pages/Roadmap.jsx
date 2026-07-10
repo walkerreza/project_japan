@@ -100,22 +100,32 @@ export default function Roadmap() {
       <GuestNavbar />
 
       {/* Hero */}
-      <section className={`relative overflow-hidden px-6 lg:px-20 py-20 lg:py-28 bg-gradient-to-br ${theme.heroBg} text-center`}>
-        <div className="absolute inset-0 pointer-events-none">
-          <div className={`absolute top-10 left-10 w-72 h-72 ${theme.heroBlob1} rounded-full blur-3xl opacity-30`} />
-          <div className={`absolute bottom-0 right-0 w-96 h-96 ${theme.heroBlob2} rounded-full blur-3xl opacity-20`} />
-        </div>
-        <div className="relative max-w-3xl mx-auto">
-          <Badge color="red" className="mb-5">Kurikulum JLPT N3</Badge>
-          <h1 className="text-4xl lg:text-6xl font-black text-gray-900 leading-tight mb-6">
-            Taklukkan <span className={theme.heroAccent}>JLPT N3</span> dengan<br />Metode Interaktif
-          </h1>
-          <p className="text-lg text-gray-500 max-w-xl mx-auto mb-8 leading-relaxed">
-            Kurikulum khusus N3 yang dirancang seperti permainan. Pelajari pola kalimat, kanji, dan percakapan bisnis dalam langkah-langkah kecil yang menyenangkan.
-          </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Button href="/register" size="lg">Mulai Gratis →</Button>
-            <Button href="/pricing" variant="outline" size="lg">Lihat Paket</Button>
+      <section className="px-6 lg:px-40 py-16 lg:py-24 bg-gradient-to-b from-red-600/5 to-transparent">
+        <div className="max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-12">
+          <div className="flex flex-col gap-6 flex-1 text-center lg:text-left">
+            <div className="inline-flex items-center self-center lg:self-start px-3 py-1 rounded-full bg-red-600/10 text-red-600 text-xs font-bold uppercase tracking-wider">
+              Kurikulum JLPT N3
+            </div>
+            <h1 className="text-slate-900 dark:text-slate-100 text-4xl lg:text-6xl font-black leading-tight tracking-tight">
+              Taklukkan <span className="text-red-600">JLPT N3</span> dengan<br />Metode Interaktif
+            </h1>
+            <p className="text-slate-600 dark:text-slate-400 text-lg lg:text-xl font-normal leading-relaxed max-w-2xl">
+              Kurikulum khusus N3 yang dirancang seperti permainan. Pelajari pola kalimat, kanji, dan percakapan bisnis dalam langkah-langkah kecil yang menyenangkan.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start">
+              <Button href="/register" className="flex items-center justify-center rounded-xl h-14 px-8 !bg-red-600 !text-white text-lg font-bold shadow-xl shadow-red-600/30 hover:-translate-y-1 transition-all w-full sm:w-auto">
+                Mulai Gratis →
+              </Button>
+              <Button href="/pricing" variant="outline" className="flex items-center justify-center rounded-xl h-14 px-8 !bg-white dark:bg-slate-800 border-2 !border-red-600/20 !text-slate-700 dark:!text-slate-200 text-lg font-bold hover:!bg-slate-50 transition-all w-full sm:w-auto">
+                Lihat Paket
+              </Button>
+            </div>
+          </div>
+          <div className="flex-1 w-full max-w-md hidden lg:block">
+            <div className="relative aspect-square rounded-3xl bg-gradient-to-tr from-red-600 to-rose-400 p-1 shadow-2xl overflow-hidden group">
+              <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-all"></div>
+              <img className="w-full h-full object-cover rounded-[calc(1.5rem-4px)]" alt="Japanlingo Landing Page" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBy4j71o0cBeApBo0ViK6wMpX6RnWOR3Vu3F3gqK59NFiV87D7Ek2JKd6En_jjcDGxQMEd8cMMOCcas1J9IR-r9grma47CmN36IKmidGpXdHUXRVzbHgK-o476wNAzMkM7kfgOAZuyUfsbWfHjWoS53OAXOcHS7SbdJItFYPqG_RYMjCGur7AutbaPFdqhy8e7gOoqBREm69FayGuiQMfolPw0fiEX6XzStfgxYTlz2vPuwh4k7VrsmhD1p4C8mxAZ_9pn7eaQL4eA" />
+            </div>
           </div>
         </div>
       </section>
@@ -279,16 +289,16 @@ export default function Roadmap() {
       </section>
 
       {/* Stats */}
-      <section className={`px-6 lg:px-20 py-16 ${theme.statBg} text-white`}>
+      <section className="px-6 lg:px-20 py-16 bg-slate-900 text-white">
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
-            { val: '50K+', label: 'Pelajar Aktif' },
-            { val: '95%', label: 'Tingkat Kelulusan' },
-            { val: '6 Unit', label: 'Materi N3' },
-            { val: '4.9', label: 'Rating Pengguna', icon: <StarIcon sx={{ fontSize: 18, color: '#FFD700' }} /> },
+            { val: 'JLPT N3', label: 'Level Kurikulum' },
+            { val: '6 Unit', label: 'Materi Tersedia' },
+            { val: '4 Skill', label: 'Flashcard, Kuis, Kanji, Kosakata' },
+            { val: '100%', label: 'Berbasis Gamifikasi', icon: <StarIcon sx={{ fontSize: 18, color: '#FFD700' }} /> },
           ].map((s, i) => (
             <div key={i}>
-              <p className={`text-4xl font-black ${theme.statAccent} mb-1 flex items-center justify-center gap-1`}>
+              <p className="text-3xl font-black text-red-500 mb-1 flex items-center justify-center gap-1">
                 {s.val}{s.icon}
               </p>
               <p className="text-white/60 text-sm">{s.label}</p>
@@ -298,18 +308,23 @@ export default function Roadmap() {
       </section>
 
       {/* CTA */}
-      <section className={`px-6 lg:px-40 py-20 bg-gradient-to-r ${theme.ctaBg} text-white text-center rounded-t-[3rem] lg:rounded-t-[5rem]`}>
-        <h2 className="font-display text-3xl lg:text-5xl font-black mb-6">Siap Memulai Perjalananmu?</h2>
+      <section className="px-6 lg:px-40 py-20 bg-red-600 text-white text-center rounded-t-[3rem] lg:rounded-t-[5rem]">
+        <h2 className="text-3xl lg:text-5xl font-black mb-6">Siap Memulai Perjalananmu?</h2>
         <p className="text-white/80 text-lg lg:text-xl mb-10 max-w-2xl mx-auto">
           Bergabunglah dengan ribuan siswa lainnya dan kuasai Bahasa Jepang dengan cara yang lebih modern.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button href="/register" className="!bg-white !text-gray-900 hover:!scale-105 !transition-all !shadow-xl !rounded-xl !px-10 !py-4 !text-xl !font-bold" size="lg">
+          <Button href="/register" className="px-10 py-4 !bg-white !text-red-600 rounded-xl text-xl font-bold hover:scale-105 transition-all shadow-xl">
             Daftar Sekarang
           </Button>
-          <Button href="/contact" variant="outline" className="!border-2 !border-white !text-white !bg-transparent hover:!bg-white hover:!text-gray-900 !rounded-xl !px-10 !py-4 !text-xl !font-bold" size="lg">
-            Hubungi Konsultan
-          </Button>
+          <a
+            href="https://wa.me/6283892614774"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-10 py-4 bg-red-600 border-2 border-white text-white rounded-xl text-xl font-bold hover:bg-white/10 transition-all no-underline inline-block"
+          >
+            Hubungi via WhatsApp
+          </a>
         </div>
       </section>
 

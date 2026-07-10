@@ -155,7 +155,7 @@ export default function LessonArticle({
                 <section className="border-t border-orange-200 bg-orange-100/50 px-6 py-8 dark:border-gray-800 dark:bg-gray-950/40 sm:px-10">
                     <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-300">
                                 {isPdf ? <PictureAsPdfIcon /> : isPresentation ? <SlideshowIcon /> : <InsertDriveFileIcon />}
                             </div>
                             <div>
@@ -179,7 +179,7 @@ export default function LessonArticle({
                                 download
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-black text-white shadow-lg shadow-blue-500/20 transition-colors hover:bg-blue-700"
+                                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-red-600 px-5 text-sm font-black text-white shadow-lg shadow-red-500/20 transition-colors hover:bg-red-700"
                             >
                                 <DownloadIcon sx={{ fontSize: 18 }} />
                                 Download
@@ -189,10 +189,10 @@ export default function LessonArticle({
                     </div>
 
                     {fileUrl && isPdf ? (
-                        <div className="rounded-2xl border border-blue-300 bg-blue-50 p-8 text-center shadow-sm dark:border-blue-900/40 dark:bg-gray-900">
-                            <PictureAsPdfIcon className="text-blue-700 dark:text-blue-300" sx={{ fontSize: 56 }} />
-                            <h4 className="mt-3 text-lg font-black text-blue-950 dark:text-white">PDF siap dibaca</h4>
-                            <p className="mx-auto mt-2 max-w-md text-sm font-medium text-blue-800 dark:text-gray-400">
+                        <div className="rounded-2xl border border-red-300 bg-red-50 p-8 text-center shadow-sm dark:border-red-900/40 dark:bg-gray-900">
+                            <PictureAsPdfIcon className="text-red-700 dark:text-red-300" sx={{ fontSize: 56 }} />
+                            <h4 className="mt-3 text-lg font-black text-red-950 dark:text-white">PDF siap dibaca</h4>
+                            <p className="mx-auto mt-2 max-w-md text-sm font-medium text-red-800 dark:text-gray-400">
                                 Buka viewer fullscreen agar fokus membaca konten. Tombol download tetap tersedia untuk menyimpan file.
                             </p>
                             <button
@@ -205,7 +205,7 @@ export default function LessonArticle({
                         </div>
                     ) : fileUrl ? (
                         <div className="rounded-2xl border border-dashed border-orange-300 bg-orange-50 p-8 text-center dark:border-gray-700 dark:bg-gray-900">
-                            {isPresentation ? <SlideshowIcon className="text-blue-600" sx={{ fontSize: 52 }} /> : <InsertDriveFileIcon className="text-blue-600" sx={{ fontSize: 52 }} />}
+                            {isPresentation ? <SlideshowIcon className="text-red-600" sx={{ fontSize: 52 }} /> : <InsertDriveFileIcon className="text-red-600" sx={{ fontSize: 52 }} />}
                             <h4 className="mt-3 text-lg font-black text-orange-950 dark:text-white">Preview inline tidak tersedia untuk format ini.</h4>
                             <p className="mt-2 text-sm font-medium text-orange-800 dark:text-gray-400">
                                 DOCX/PPTX yang di-import akan tampil sebagai konten teks di atas. Gunakan tombol download untuk menyimpan file asli.
@@ -251,8 +251,8 @@ export default function LessonArticle({
 
             {lesson?.audio_url && (
                 <section className="border-t border-gray-100 px-6 py-8 dark:border-gray-800 sm:px-10">
-                    <div className="rounded-2xl bg-indigo-50 p-6 dark:bg-indigo-900/20">
-                        <div className="mb-4 flex items-center gap-3 text-indigo-700 dark:text-indigo-300">
+                    <div className="rounded-2xl bg-rose-50 p-6 dark:bg-rose-900/20">
+                        <div className="mb-4 flex items-center gap-3 text-rose-700 dark:text-rose-300">
                             <VolumeUpIcon />
                             <h3 className="font-black">Audio Lesson</h3>
                         </div>

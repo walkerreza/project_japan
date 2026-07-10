@@ -107,7 +107,7 @@ const LandingPage = () => {
                 </div>
               ))}
             </div>
-            <span>Bergabunglah dengan <strong className="text-gray-900 font-bold">10.000+</strong> pembelajar aktif</span>
+            <span>Bergabunglah dengan <strong className="text-gray-900 font-bold">komunitas pembelajar</strong> Japanlingo</span>
           </div>
         </div>
 
@@ -149,15 +149,15 @@ const LandingPage = () => {
                 <div className="relative">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
+                      <div className="w-10 h-10 rounded-2xl bg-red-50 flex items-center justify-center text-red-600">
                         <HeadsetIcon sx={{ fontSize: 18 }} />
                       </div>
                       <span className="font-bold text-gray-800">Mendengar N3</span>
                     </div>
-                    <span className="font-bold text-blue-600">45%</span>
+                    <span className="font-bold text-red-600">45%</span>
                   </div>
                   <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-500 rounded-full w-[45%]"></div>
+                    <div className="h-full bg-red-500 rounded-full w-[45%]"></div>
                   </div>
                 </div>
               </div>
@@ -203,7 +203,7 @@ const LandingPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {[
               { level: 'N5', title: 'Pemula', desc: 'Salam dasar, hiragana, katakana, dan struktur kalimat sederhana.', color: 'bg-green-500', label: 'Dasar Sekali' },
-              { level: 'N4', title: 'Dasar', desc: 'Percakapan harian, kanji dasar, dan membaca bacaan sederhana.', color: 'bg-blue-500', label: 'Fondasi' },
+              { level: 'N4', title: 'Dasar', desc: 'Percakapan harian, kanji dasar, dan membaca bacaan sederhana.', color: 'bg-red-500', label: 'Fondasi' },
               { level: 'N3', title: 'Menengah', desc: 'Jembatan menuju kefasihan. Tata bahasa kompleks dan percakapan santai.', color: 'bg-red-600', label: 'Paling Populer', highlight: true },
               { level: 'N2', title: 'Pra-Lanjut', desc: 'Bahasa Jepang bisnis, pemahaman berita, dan topik abstrak.', color: 'bg-purple-500', label: 'Tingkat Bisnis' },
               { level: 'N1', title: 'Mahir', desc: 'Kefasihan setara penutur asli. Tulisan kompleks dan diskusi akademis.', color: 'bg-gray-800', label: 'Kemahiran' },
@@ -261,7 +261,7 @@ const LandingPage = () => {
                 {[
                   { icon: <VideogameAssetIcon />, title: 'Kuis Tergamifikasi', desc: 'Dapatkan XP, buka lencana, dan bersaing di papan peringkat sembari menguasai tata bahasa dan kosakata.', color: 'bg-red-100 text-red-600' },
                   { icon: <AutoAwesomeIcon />, title: 'Audio Penutur Asli', desc: 'Dengarkan lebih dari 10.000 frasa yang direkam oleh pengisi suara profesional Jepang, bukan robot.', color: 'bg-orange-100 text-orange-600' },
-                  { icon: <ListAltIcon />, title: 'Kurikulum Terstruktur', desc: 'Tidak ada lagi belajar acak. Ikuti jalur jelas yang dirancang untuk membantu Anda lulus JLPT.', color: 'bg-blue-100 text-blue-600' },
+                  { icon: <ListAltIcon />, title: 'Kurikulum Terstruktur', desc: 'Tidak ada lagi belajar acak. Ikuti jalur jelas yang dirancang untuk membantu Anda lulus JLPT.', color: 'bg-red-100 text-red-600' },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-5 group">
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl shrink-0 transition-transform group-hover:scale-110 ${item.color}`}>
@@ -315,7 +315,7 @@ const LandingPage = () => {
                 <div className="animate-float">
                   <div className="bg-white/90 backdrop-blur-md rounded-3xl p-4 shadow-xl flex flex-col gap-3 -translate-y-10 border border-white">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 overflow-hidden">
+                      <div className="w-8 h-8 rounded-full bg-red-100 overflow-hidden">
                         <img src="https://i.pravatar.cc/100?u=ken" className="w-full h-full object-cover" alt="Ken" />
                       </div>
                       <div>
@@ -337,7 +337,7 @@ const LandingPage = () => {
       {/* Testimonials */}
       <section className="px-6 lg:px-20 py-16 lg:py-20">
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-900">Dipercaya oleh 10.000+ Pembelajar</h2>
+          <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-900">Apa Kata Mereka?</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
@@ -364,40 +364,36 @@ const LandingPage = () => {
       <section className="px-6 lg:px-20 py-16 lg:py-20">
         <div className={`${theme.ctaBg} rounded-3xl px-6 lg:px-16 py-14 text-center text-white`}>
           <h2 className="text-3xl lg:text-4xl font-extrabold mb-3">Siap memulai perjalanan Anda?</h2>
-          <p className="text-gray-400 max-w-lg mx-auto mb-10">Bergabunglah secara gratis hari ini. Tingkatkan ke Premium kapan saja untuk akses offline, kuis tak terbatas, dan bimbingan pribadi.</p>
+          <p className="text-gray-400 max-w-lg mx-auto mb-10">Bergabunglah secara gratis hari ini. Dapatkan akses ke materi, kuis, dan review kosakata terstruktur.</p>
           <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
             <div className="bg-gray-800/50 border border-white/10 rounded-2xl p-8 text-left">
               <h3 className="text-lg font-bold text-white mb-2">Dasar Gratis</h3>
               <div className="flex items-baseline gap-1 mb-5">
-                <span className="text-sm text-white/50">$</span>
-                <span className="text-4xl font-black text-white">0</span>
-                <span className="text-sm text-white/40">/bln</span>
+                <span className="text-4xl font-black text-white">Gratis</span>
               </div>
               <ul className="space-y-3 mb-6 list-none p-0">
-                <li className="flex items-center gap-2 text-sm text-white/80"><CheckIcon sx={{ fontSize: 16 }} className="text-green-400" /> 5 Materi/hari</li>
-                <li className="flex items-center gap-2 text-sm text-white/80"><CheckIcon sx={{ fontSize: 16 }} className="text-green-400" /> Kuis Dasar</li>
-                <li className="flex items-center gap-2 text-sm text-white/80"><CheckIcon sx={{ fontSize: 16 }} className="text-green-400" /> Akses Komunitas</li>
+                <li className="flex items-center gap-2 text-sm text-white/80"><CheckIcon sx={{ fontSize: 16 }} className="text-green-400" /> Preview materi Week 1</li>
+                <li className="flex items-center gap-2 text-sm text-white/80"><CheckIcon sx={{ fontSize: 16 }} className="text-green-400" /> Kuis Dasar Week 1</li>
+                <li className="flex items-center gap-2 text-sm text-white/80"><CheckIcon sx={{ fontSize: 16 }} className="text-green-400" /> Progress Belajar</li>
               </ul>
               <Button variant="outline" href="/register" className="w-full !border-white/20 !text-white hover:!bg-black/20 hover:!text-white">
-                Mulai Sekarang
+                Mulai Preview Gratis
               </Button>
             </div>
             <div className={`${theme.ctaProBg} rounded-2xl p-8 text-left relative`}>
-              <Badge color="yellow" className="absolute -top-3 right-5">POPULER</Badge>
-              <h3 className="text-lg font-bold text-white mb-2">Pelajar Pro</h3>
+              <Badge color="yellow" className="absolute -top-3 right-5">PREMIUM</Badge>
+              <h3 className="text-lg font-bold text-white mb-2">Akses Premium</h3>
               <div className="flex items-baseline gap-1 mb-5">
-                <span className="text-sm text-white/60">$</span>
-                <span className="text-4xl font-black text-white">12</span>
-                <span className="text-sm text-white/50">/bln</span>
+                <span className="text-4xl font-black text-white">Berlangganan</span>
               </div>
               <ul className="space-y-3 mb-6 list-none p-0">
-                <li className="flex items-center gap-2 text-sm text-white/90"><CheckIcon sx={{ fontSize: 16 }} className="text-white" /> Materi Tak Terbatas</li>
-                <li className="flex items-center gap-2 text-sm text-white/90"><CheckIcon sx={{ fontSize: 16 }} className="text-white" /> Mode Offline</li>
-                <li className="flex items-center gap-2 text-sm text-white/90"><CheckIcon sx={{ fontSize: 16 }} className="text-white" /> Statistik Lanjutan</li>
-                <li className="flex items-center gap-2 text-sm text-white/90"><CheckIcon sx={{ fontSize: 16 }} className="text-white" /> Bimbingan Pribadi</li>
+                <li className="flex items-center gap-2 text-sm text-white/90"><CheckIcon sx={{ fontSize: 16 }} className="text-white" /> Akses materi premium</li>
+                <li className="flex items-center gap-2 text-sm text-white/90"><CheckIcon sx={{ fontSize: 16 }} className="text-white" /> Kuis premium &amp; XP</li>
+                <li className="flex items-center gap-2 text-sm text-white/90"><CheckIcon sx={{ fontSize: 16 }} className="text-white" /> Flashcard &amp; Kosakata</li>
+                <li className="flex items-center gap-2 text-sm text-white/90"><CheckIcon sx={{ fontSize: 16 }} className="text-white" /> Leaderboard &amp; Gamifikasi</li>
               </ul>
-              <Button href="/register" className="w-full !bg-white !text-gray-900 hover:!bg-gray-100">
-                Tingkatkan Sekarang
+              <Button href="/pricing" className="w-full !bg-white !text-gray-900 hover:!bg-gray-100">
+                Lihat Paket Harga
               </Button>
             </div>
           </div>

@@ -84,47 +84,61 @@ export default function EditableBoardCanvas({ initialStrokes = [], onChange, cla
 
     return (
         <div className={`space-y-3 ${className}`}>
-            <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
-                <button
-                    type="button"
-                    onClick={() => setTool('pen')}
-                    className={`rounded-xl px-3 py-2 text-xs font-black ${tool === 'pen' ? 'bg-gray-950 text-white dark:bg-white dark:text-gray-950' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300'}`}
-                >
-                    Pena
-                </button>
-                <button
-                    type="button"
-                    onClick={() => setTool('eraser')}
-                    className={`rounded-xl px-3 py-2 text-xs font-black ${tool === 'eraser' ? 'bg-gray-950 text-white dark:bg-white dark:text-gray-950' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300'}`}
-                >
-                    Penghapus
-                </button>
-                <div className="flex gap-1">
-                    {colorOptions.map((item) => (
-                        <button
-                            key={item}
-                            type="button"
-                            onClick={() => setColor(item)}
-                            className={`h-8 w-8 rounded-lg border-2 ${color === item ? 'border-gray-950 dark:border-white' : 'border-transparent'}`}
-                            style={{ backgroundColor: item }}
-                            aria-label={`Pilih warna ${item}`}
-                        />
-                    ))}
+            <div className="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                    <div>
+                        <p className="text-xs font-black uppercase tracking-[0.18em] text-orange-600">Jamboard</p>
+                        <p className="text-xs font-bold text-gray-500 dark:text-gray-400">Menu coret-coret untuk slide aktif.</p>
+                    </div>
+                    <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-black text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                        {tool === 'pen' ? 'Pena' : 'Penghapus'} {size}px
+                    </span>
                 </div>
-                <input
-                    type="range"
-                    min="2"
-                    max="30"
-                    value={size}
-                    onChange={(event) => setSize(event.target.value)}
-                    className="w-28 accent-orange-600"
-                />
-                <button type="button" onClick={() => setStrokes((items) => items.slice(0, -1))} className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600 dark:border-gray-700 dark:text-gray-300">
-                    Undo
-                </button>
-                <button type="button" onClick={() => setStrokes([])} className="rounded-xl border border-red-100 px-3 py-2 text-xs font-black text-red-600 dark:border-red-900/40">
-                    Bersihkan
-                </button>
+                <div className="flex flex-wrap items-center gap-2">
+                    <button
+                        type="button"
+                        onClick={() => setTool('pen')}
+                        className={`rounded-xl px-3 py-2 text-xs font-black ${tool === 'pen' ? 'bg-gray-950 text-white dark:bg-white dark:text-gray-950' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'}`}
+                    >
+                        Pena
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setTool('eraser')}
+                        className={`rounded-xl px-3 py-2 text-xs font-black ${tool === 'eraser' ? 'bg-gray-950 text-white dark:bg-white dark:text-gray-950' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'}`}
+                    >
+                        Penghapus
+                    </button>
+                    <div className="flex gap-1 rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
+                        {colorOptions.map((item) => (
+                            <button
+                                key={item}
+                                type="button"
+                                onClick={() => setColor(item)}
+                                className={`h-8 w-8 rounded-lg border-2 transition ${color === item ? 'border-gray-950 ring-2 ring-orange-200 dark:border-white' : 'border-white/70 dark:border-gray-700'}`}
+                                style={{ backgroundColor: item }}
+                                aria-label={`Pilih warna ${item}`}
+                            />
+                        ))}
+                    </div>
+                    <label className="flex items-center gap-2 rounded-xl bg-gray-100 px-3 py-2 text-xs font-black text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                        Ukuran
+                        <input
+                            type="range"
+                            min="2"
+                            max="30"
+                            value={size}
+                            onChange={(event) => setSize(event.target.value)}
+                            className="w-24 accent-orange-600"
+                        />
+                    </label>
+                    <button type="button" disabled={!strokes.length} onClick={() => setStrokes((items) => items.slice(0, -1))} className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800">
+                        Undo
+                    </button>
+                    <button type="button" disabled={!strokes.length} onClick={() => setStrokes([])} className="rounded-xl border border-red-100 px-3 py-2 text-xs font-black text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-red-900/40 dark:hover:bg-red-950/30">
+                        Bersihkan
+                    </button>
+                </div>
             </div>
 
             <canvas

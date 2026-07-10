@@ -7,7 +7,7 @@ export const QUESTION_TYPES = [
 export const TYPE_LABELS = { multiple_choice: 'MC', fill_blank: 'FILL', listening: 'LISTEN' };
 
 export const TYPE_COLORS = {
-    multiple_choice: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20',
+    multiple_choice: 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20',
     fill_blank: 'text-purple-600 bg-purple-50',
     listening: 'text-green-600 bg-green-50 dark:bg-green-900/20',
 };

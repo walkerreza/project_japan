@@ -1,3 +1,4 @@
+import TranslateIcon from '@mui/icons-material/Translate';
 import React from 'react';
 
 export default function CertificateTemplate({ certificate, user }) {
@@ -59,7 +60,7 @@ export default function CertificateTemplate({ certificate, user }) {
                     <div className="w-32 h-0.5 bg-gray-300 mb-2"></div>
                     <p className="text-xs font-bold text-gray-500">Instruktur</p>
                 </div>
-                <div className="text-4xl">🎌</div>
+                <div className="text-4xl"><TranslateIcon className="w-6 h-6 inline-block" /></div>
                 <div className="text-center">
                     <div className="w-32 h-0.5 bg-gray-300 mb-2"></div>
                     <p className="text-xs font-bold text-gray-500">Direktur Akademik</p>

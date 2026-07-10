@@ -1,7 +1,7 @@
 const colors = {
     red: 'bg-red-50 text-red-600',
     green: 'bg-green-50 text-green-600',
-    blue: 'bg-blue-50 text-blue-600',
+    blue: 'bg-red-50 text-red-600',
     yellow: 'bg-amber-50 text-amber-600',
     gray: 'bg-gray-100 text-gray-600',
     purple: 'bg-purple-50 text-purple-600',

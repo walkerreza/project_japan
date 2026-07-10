@@ -1,3 +1,4 @@
+import LockIcon from '@mui/icons-material/Lock';
 import Badge from '@/Components/UI/Badge';
 import ProgressBar from '@/Components/UI/ProgressBar';
 
@@ -9,7 +10,7 @@ export default function LessonCard({ title, subtitle, progress, total, icon, loc
         >
             <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-2xl flex-shrink-0">
-                    {locked ? '🔒' : icon}
+                    {locked ? '<LockIcon className="w-5 h-5 inline-block" />' : icon}
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">

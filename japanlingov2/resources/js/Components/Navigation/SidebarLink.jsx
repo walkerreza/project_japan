@@ -7,12 +7,12 @@ export default function SidebarLink({ href, icon, children, active = false, badg
             preserveState
             className={`flex ${isExpanded ? 'flex-row items-center justify-start px-4' : 'flex-col items-center justify-center px-1'} py-3 mb-1.5 rounded-2xl transition-all relative group h-[52px] ${
                 active
-                    ? 'bg-blue-50 text-blue-700' 
+                    ? 'bg-red-50 text-red-700' 
                     : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
                 } ${className}`}
         >
             {/* Ikon Utama */}
-            <span className={`flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${isExpanded ? 'mr-3' : 'mb-0.5'} ${active ? 'text-blue-600' : ''}`}>
+            <span className={`flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${isExpanded ? 'mr-3' : 'mb-0.5'} ${active ? 'text-red-600' : ''}`}>
                 {icon}
             </span>
             
@@ -21,7 +21,7 @@ export default function SidebarLink({ href, icon, children, active = false, badg
                 isExpanded 
                     ? 'text-[14px] text-left opacity-100 w-auto' 
                     : 'text-[10px] text-center w-full truncate opacity-100'
-                } ${active ? 'text-blue-700' : ''}`}>
+                } ${active ? 'text-red-700' : ''}`}>
                 {children}
             </span>
             

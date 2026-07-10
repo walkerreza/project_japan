@@ -15,7 +15,7 @@ export default function NewsShow({ newsItem, relatedNews = [] }) {
         <AuthenticatedLayout>
             <Head title={`${newsItem.title} - Japanlingo News`} />
 
-            <main className="min-h-screen bg-white pb-16 dark:bg-gray-950">
+            <main className="min-h-screen bg-transparent pb-16 dark:bg-gray-950">
                 <article>
                     <header className="border-b border-gray-100 bg-gray-50 py-8 dark:border-gray-800 dark:bg-gray-900/40">
                         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">

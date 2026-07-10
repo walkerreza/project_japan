@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { ScrollIcon, KabutoIcon, ShurikenIcon, HitodamaIcon, DarumaIcon } from '@/Components/JapaneseIcons';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import theme from '@/Components/theme/themes';
@@ -15,10 +16,10 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 // Kategori visual per tipe kuis
 const QUIZ_TYPE_META = {
-    multiple_choice: { emoji: '🎯', label: 'Pilihan Ganda', color: 'from-red-500 to-rose-600', glow: 'shadow-red-400/30 dark:shadow-red-900/30', badge: 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400' },
-    fill_blank:      { emoji: '✏️', label: 'Isi Jawaban',   color: 'from-indigo-500 to-violet-600', glow: 'shadow-indigo-400/30 dark:shadow-indigo-900/30', badge: 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400' },
-    listening:       { emoji: '🎧', label: 'Menyimak',      color: 'from-violet-500 to-purple-600', glow: 'shadow-violet-400/30 dark:shadow-violet-900/30', badge: 'bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400' },
-    default:         { emoji: '📝', label: 'Kuis',          color: 'from-amber-500 to-orange-600', glow: 'shadow-amber-400/30 dark:shadow-amber-900/30', badge: 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400' },
+    multiple_choice: { emoji: <ShurikenIcon className="w-6 h-6" />, label: 'Pilihan Ganda', color: 'from-red-500 to-rose-600', glow: 'shadow-red-400/30 dark:shadow-red-900/30', badge: 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400' },
+    fill_blank:      { emoji: <ScrollIcon className="w-6 h-6" />, label: 'Isi Jawaban',   color: 'from-rose-500 to-violet-600', glow: 'shadow-indigo-400/30 dark:shadow-indigo-900/30', badge: 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400' },
+    listening:       { emoji: <HitodamaIcon className="w-6 h-6" />, label: 'Menyimak',      color: 'from-violet-500 to-purple-600', glow: 'shadow-violet-400/30 dark:shadow-violet-900/30', badge: 'bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400' },
+    default:         { emoji: <ScrollIcon className="w-6 h-6" />, label: 'Kuis',          color: 'from-amber-500 to-orange-600', glow: 'shadow-amber-400/30 dark:shadow-amber-900/30', badge: 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400' },
 };
 
 const getQuizMeta = (type) => QUIZ_TYPE_META[type] || QUIZ_TYPE_META.default;
@@ -29,7 +30,7 @@ const DifficultyStars = ({ count }) => {
     return (
         <div className="flex gap-0.5">
             {[1, 2, 3].map(i => (
-                <span key={i} className={`text-xs transition-colors duration-300 ${i <= d ? 'text-amber-400' : 'text-gray-200 dark:text-gray-700'}`}>★</span>
+                <span key={i} className={`text-xs transition-colors duration-300 ${i <= d ? 'text-amber-400' : 'text-gray-200 dark:text-gray-700'}`}><ShurikenIcon className="w-3 h-3" /></span>
             ))}
         </div>
     );
@@ -115,8 +116,8 @@ export default function DaftarKuis({ quizzes = [] }) {
                             className="flex items-center gap-2 mb-8 overflow-x-auto pb-1">
                             {[
                                 { key: 'all',       label: 'Semua Kuis',  count: quizzes.length },
-                                { key: 'available', label: '✅ Tersedia', count: quizzes.filter(q => q.status === 'available').length },
-                                { key: 'locked',    label: '🔒 Terkunci', count: quizzes.filter(q => q.status === 'locked').length },
+                                { key: 'available', label: ' Tersedia', count: quizzes.filter(q => q.status === 'available').length },
+                                { key: 'locked',    label: ' Terkunci', count: quizzes.filter(q => q.status === 'locked').length },
                             ].map(f => (
                                 <button key={f.key} onClick={() => setFilter(f.key)}
                                     className={`flex items-center gap-2 shrink-0 px-4 py-2 rounded-full text-sm font-black transition-all border
@@ -134,7 +135,7 @@ export default function DaftarKuis({ quizzes = [] }) {
                         {/* Empty state */}
                         {filtered.length === 0 && (
                             <div className="text-center py-24 transition-colors duration-300">
-                                <div className="text-6xl mb-4">🍵</div>
+                                <div className="flex justify-center mb-4"><DarumaIcon className="w-16 h-16 text-gray-300" /></div>
                                 <p className="font-black text-gray-400 text-xl transition-colors duration-300">Tidak ada kuis untuk ditampilkan.</p>
                             </div>
                         )}
@@ -175,7 +176,7 @@ export default function DaftarKuis({ quizzes = [] }) {
                                                 {/* Header */}
                                                 <div className="flex items-start justify-between mb-4 gap-3">
                                                     <div className={`w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center text-2xl shadow-lg transition-colors duration-300 ${isLocked ? 'bg-gray-200 dark:bg-gray-800 grayscale' : `bg-gradient-to-br ${meta.color} ${meta.glow} shadow-lg`}`}>
-                                                        {isLocked ? (isPremiumLock ? '👑' : '🔒') : meta.emoji}
+                                                        {isLocked ? (isPremiumLock ? '' : '') : meta.emoji}
                                                     </div>
                                                     <div className="flex flex-col gap-1.5 items-end">
                                                         <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider transition-colors duration-300 ${isLocked ? 'bg-gray-200 dark:bg-gray-800 text-gray-500 dark:text-gray-400' : meta.badge}`}>
@@ -224,7 +225,7 @@ export default function DaftarKuis({ quizzes = [] }) {
                                                         </div>
                                                     )
                                                 ) : (
-                                                    <Link href={`/user/quizzes/${quiz.id}`}
+                                                    <Link href={route('user.quizzes.show', quiz.id)}
                                                         className={`flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-white font-black text-sm transition-all duration-300 hover:brightness-110 active:scale-[0.98] bg-gradient-to-r ${meta.color} shadow-md ${meta.glow}`}
                                                     >
                                                         <PlayArrowIcon sx={{ fontSize: 18 }} />
@@ -244,8 +245,8 @@ export default function DaftarKuis({ quizzes = [] }) {
                                 className="mt-12 rounded-3xl overflow-hidden">
                                 <div className={`bg-gradient-to-r ${theme.heroBg} dark:from-gray-900 dark:to-gray-800 px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors duration-300`}>
                                     <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center text-2xl shadow-lg shadow-amber-400/30">
-                                            🏆
+                                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow-lg shadow-amber-400/30">
+                                            <KabutoIcon className="w-6 h-6 text-white" />
                                         </div>
                                         <div>
                                             <p className="font-black text-gray-900 dark:text-white text-base transition-colors duration-300">Cek Peringkatmu</p>

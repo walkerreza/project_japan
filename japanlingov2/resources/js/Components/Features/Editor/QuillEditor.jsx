@@ -1,28 +1,40 @@
-import React, { useRef } from 'react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import React, { useRef, useState } from 'react';
 
-const TOOLBAR_OPTIONS = [
-    [{ 'header': [1, 2, 3, false] }],
-    ['bold', 'italic', 'underline', 'strike'],
-    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-    ['blockquote', 'code-block'],
-    ['link', 'image'],
-    [{ 'color': [] }, { 'background': [] }],
-    ['clean'],
-];
+const buttonClass = 'rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-black text-gray-700 transition hover:border-orange-300 hover:text-orange-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200';
 
 export default function QuillEditor({ value, onChange, placeholder = 'Tulis konten di sini...', editorMinHeight = '200px', uploadImageUrl = null }) {
-    // Karena di-lazy load lewat React.lazy di file pemanggil, 
-    // komponen ini hanya akan dijalankan di sisi client (browser).
-    const quillRef = useRef(null);
+    const textareaRef = useRef(null);
+    const [preview, setPreview] = useState(false);
+
+    const insertSnippet = (before, after = '') => {
+        const textarea = textareaRef.current;
+        const currentValue = value || '';
+
+        if (!textarea) {
+            onChange(`${currentValue}${before}${after}`);
+            return;
+        }
+
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selected = currentValue.slice(start, end);
+        const nextValue = `${currentValue.slice(0, start)}${before}${selected || ''}${after}${currentValue.slice(end)}`;
+
+        onChange(nextValue);
+
+        window.requestAnimationFrame(() => {
+            textarea.focus();
+            const cursor = start + before.length + (selected ? selected.length : 0);
+            textarea.setSelectionRange(cursor, cursor);
+        });
+    };
 
     const uploadImage = () => {
         if (!uploadImageUrl) return;
 
         const input = document.createElement('input');
-        input.setAttribute('type', 'file');
-        input.setAttribute('accept', 'image/jpeg,image/png,image/webp');
+        input.type = 'file';
+        input.accept = 'image/jpeg,image/png,image/webp';
         input.click();
 
         input.onchange = async () => {
@@ -30,88 +42,48 @@ export default function QuillEditor({ value, onChange, placeholder = 'Tulis kont
             if (!file) return;
 
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append(uploadImageUrl.includes('editor-images') ? 'image' : 'file', file);
 
             const response = await window.axios.post(uploadImageUrl, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
 
-            const editor = quillRef.current?.getEditor();
-            const range = editor?.getSelection(true);
-
-            if (editor && response.data?.url) {
-                editor.insertEmbed(range?.index ?? editor.getLength(), 'image', response.data.url, 'user');
+            if (response.data?.url) {
+                insertSnippet(`<img src="${response.data.url}" alt="">`);
             }
         };
     };
-    
+
     return (
-        <div className="quill-wrapper">
-            <style>{`
-                .quill-wrapper .ql-container {
-                    border-bottom-left-radius: 12px;
-                    border-bottom-right-radius: 12px;
-                    border-color: #e5e7eb;
-                    font-family: inherit;
-                    font-size: 14px;
-                    min-height: ${editorMinHeight};
-                }
-                .quill-wrapper .ql-toolbar {
-                    border-top-left-radius: 12px;
-                    border-top-right-radius: 12px;
-                    border-color: #e5e7eb;
-                    background: #f9fafb;
-                }
-                .quill-wrapper .ql-container.ql-snow:focus-within,
-                .quill-wrapper .ql-toolbar.ql-snow:focus-within {
-                    border-color: #E64A19;
-                }
-                .quill-wrapper .ql-editor {
-                    min-height: ${editorMinHeight};
-                }
-                .quill-wrapper .ql-editor.ql-blank::before {
-                    color: #9ca3af;
-                    font-style: normal;
-                }
-                .dark .quill-wrapper .ql-container {
-                    border-color: #374151;
-                    background: #030712;
-                    color: #f9fafb;
-                }
-                .dark .quill-wrapper .ql-toolbar {
-                    border-color: #374151;
-                    background: #111827;
-                }
-                .dark .quill-wrapper .ql-toolbar .ql-stroke {
-                    stroke: #d1d5db;
-                }
-                .dark .quill-wrapper .ql-toolbar .ql-fill {
-                    fill: #d1d5db;
-                }
-                .dark .quill-wrapper .ql-toolbar .ql-picker {
-                    color: #d1d5db;
-                }
-                .dark .quill-wrapper .ql-picker-options {
-                    border-color: #374151;
-                    background: #111827;
-                }
-                .dark .quill-wrapper .ql-editor.ql-blank::before {
-                    color: #6b7280;
-                }
-            `}</style>
-            <ReactQuill
-                ref={quillRef}
-                theme="snow"
-                value={value || ''}
-                onChange={onChange}
-                placeholder={placeholder}
-                modules={{
-                    toolbar: {
-                        container: TOOLBAR_OPTIONS,
-                        handlers: uploadImageUrl ? { image: uploadImage } : {},
-                    },
-                }}
-            />
+        <div className="rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-950">
+            <div className="flex flex-wrap items-center gap-2 border-b border-gray-200 bg-gray-50 p-2 dark:border-gray-700 dark:bg-gray-900">
+                <button type="button" className={buttonClass} onClick={() => insertSnippet('<h2>', '</h2>')}>H2</button>
+                <button type="button" className={buttonClass} onClick={() => insertSnippet('<p>', '</p>')}>P</button>
+                <button type="button" className={buttonClass} onClick={() => insertSnippet('<strong>', '</strong>')}>B</button>
+                <button type="button" className={buttonClass} onClick={() => insertSnippet('<em>', '</em>')}>I</button>
+                <button type="button" className={buttonClass} onClick={() => insertSnippet('<ul><li>', '</li></ul>')}>List</button>
+                <button type="button" className={buttonClass} onClick={() => insertSnippet('<blockquote>', '</blockquote>')}>Quote</button>
+                <button type="button" className={buttonClass} onClick={() => insertSnippet('<a href="https://">', '</a>')}>Link</button>
+                {uploadImageUrl && <button type="button" className={buttonClass} onClick={uploadImage}>Image</button>}
+                <button type="button" className={buttonClass} onClick={() => setPreview((state) => !state)}>{preview ? 'Edit' : 'Preview'}</button>
+            </div>
+
+            {preview ? (
+                <div
+                    className="prose prose-orange max-w-none p-4 dark:prose-invert"
+                    style={{ minHeight: editorMinHeight }}
+                    dangerouslySetInnerHTML={{ __html: value || '<p class="text-gray-400">Belum ada konten.</p>' }}
+                />
+            ) : (
+                <textarea
+                    ref={textareaRef}
+                    value={value || ''}
+                    onChange={(event) => onChange(event.target.value)}
+                    placeholder={placeholder}
+                    className="block w-full resize-y border-0 bg-white p-4 text-sm leading-7 text-gray-900 outline-none focus:ring-0 dark:bg-gray-950 dark:text-gray-100"
+                    style={{ minHeight: editorMinHeight }}
+                />
+            )}
         </div>
     );
 }

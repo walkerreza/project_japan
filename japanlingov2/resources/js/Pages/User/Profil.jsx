@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { KabutoIcon, ShurikenIcon, HitodamaIcon, ScrollIcon } from '@/Components/JapaneseIcons';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import ConfirmActionDialog from '@/Components/UI/ConfirmActionDialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import theme from '@/Components/theme/themes';
 
@@ -13,24 +15,18 @@ import BoltIcon from '@mui/icons-material/Bolt';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import LockIcon from '@mui/icons-material/Lock';
 import PaletteIcon from '@mui/icons-material/Palette';
-import EmailIcon from '@mui/icons-material/Email';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-
-const MOCK_INVOICES = [
-    { id: 'INV-JPN-102', date: '10 Nov 2026', plan: 'Quarterly Premium', price: 'Rp 299.000', status: 'Success' },
-    { id: 'INV-JPN-101', date: '08 Agu 2026', plan: 'Monthly Premium',   price: 'Rp 119.000', status: 'Success' },
-    { id: 'INV-JPN-099', date: '01 Agu 2026', plan: 'Monthly Premium',   price: 'Rp 119.000', status: 'Failed'  },
-];
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
 
 const LEAGUE_TIERS = [
-    { name: 'Bronze',   color: 'text-amber-700 dark:text-amber-500',  bg: 'bg-amber-50 dark:bg-amber-900/20',  bar: 'bg-amber-500',  icon: '🥉', min: 0     },
-    { name: 'Silver',   color: 'text-slate-600 dark:text-slate-400',  bg: 'bg-slate-50 dark:bg-slate-800/50',  bar: 'bg-slate-500',  icon: '🥈', min: 500   },
-    { name: 'Gold',     color: 'text-yellow-600 dark:text-yellow-400', bg: 'bg-yellow-50 dark:bg-yellow-900/20', bar: 'bg-yellow-500', icon: '🥇', min: 2000  },
-    { name: 'Diamond',  color: 'text-blue-600 dark:text-blue-400',   bg: 'bg-blue-50 dark:bg-blue-900/20',   bar: 'bg-blue-500',   icon: '💎', min: 5000  },
-    { name: 'Amethyst', color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-50 dark:bg-purple-900/20', bar: 'bg-purple-500', icon: '🔮', min: 12000 },
+    { name: 'Bronze',   color: 'text-amber-700 dark:text-amber-500',  bg: 'bg-amber-50 dark:bg-amber-900/20',  bar: 'bg-amber-500',  icon: <KabutoIcon className="w-5 h-5 text-amber-700" />, min: 0     },
+    { name: 'Silver',   color: 'text-slate-600 dark:text-slate-400',  bg: 'bg-slate-50 dark:bg-slate-800/50',  bar: 'bg-slate-500',  icon: <KabutoIcon className="w-5 h-5 text-slate-400" />, min: 500   },
+    { name: 'Gold',     color: 'text-yellow-600 dark:text-yellow-400', bg: 'bg-yellow-50 dark:bg-yellow-900/20', bar: 'bg-yellow-500', icon: <KabutoIcon className="w-5 h-5 text-yellow-500" />, min: 2000  },
+    { name: 'Diamond',  color: 'text-red-600 dark:text-red-400',   bg: 'bg-red-50 dark:bg-red-900/20',   bar: 'bg-red-500',   icon: <ShurikenIcon className="w-5 h-5 text-cyan-400 animate-pulse" />, min: 5000  },
+    { name: 'Amethyst', color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-50 dark:bg-purple-900/20', bar: 'bg-purple-500', icon: <ShurikenIcon className="w-5 h-5 text-purple-500 animate-spin" />, min: 12000 },
 ];
 
 const getLeague = (xp) => {
@@ -87,14 +83,35 @@ const FloatingSakura = () => {
                     }}
                     className="absolute text-xl opacity-30 dark:opacity-20 drop-shadow-sm"
                 >
-                    🌸
+                    <LocalFireDepartmentIcon className="w-5 h-5 text-pink-500 inline-block" />
                 </motion.div>
             ))}
         </div>
     );
 };
 
-export default function Profile() {
+const transactionTone = (status) => {
+    if (status === 'success') {
+        return {
+            icon: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 dark:text-emerald-400',
+            badge: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400',
+        };
+    }
+
+    if (status === 'pending') {
+        return {
+            icon: 'bg-amber-50 dark:bg-amber-900/20 text-amber-500 dark:text-amber-400',
+            badge: 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400',
+        };
+    }
+
+    return {
+        icon: 'bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400',
+        badge: 'bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-400',
+    };
+};
+
+export default function Profile({ recentTransactions = [] }) {
     const { user } = usePage().props.auth;
     const [activeTab, setActiveTab] = useState('stats');
     const [saved, setSaved] = useState(false);
@@ -102,6 +119,17 @@ export default function Profile() {
     const [themeMode, setThemeMode] = useState(() =>
         typeof window !== 'undefined' ? localStorage.getItem('theme') || 'system' : 'system'
     );
+    const accessKeyForm = useForm({ code: '' });
+    const deleteAccountForm = useForm({ password: '' });
+    const accessStatus = user.access_status || {};
+    const transactionInvoices = recentTransactions.map((transaction) => ({
+        id: transaction.code,
+        date: transaction.created_at_label || 'Tanggal belum tersedia',
+        plan: `${transaction.plan}${transaction.scope_label ? ` - ${transaction.scope_label}` : ''}`,
+        price: transaction.amount_formatted,
+        status: transaction.status === 'success' ? 'Success' : 'Failed',
+        statusLabel: transaction.status_label || (transaction.status === 'success' ? 'Berhasil' : 'Gagal'),
+    }));
 
     const handleThemeChange = (val) => {
         setThemeMode(val);
@@ -125,9 +153,29 @@ export default function Profile() {
         setTimeout(() => setSaved(false), 2500);
     };
 
+    const submitAccessKey = (event) => {
+        event.preventDefault();
+        accessKeyForm.post(route('profile.access-keys.redeem'), {
+            preserveScroll: true,
+            onSuccess: () => accessKeyForm.reset(),
+        });
+    };
+
+    const deleteAccount = () => {
+        deleteAccountForm.delete(route('profile.destroy'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setDeleteConfirm(false);
+                deleteAccountForm.reset();
+            },
+        });
+    };
+
     const xp = user.xp || 0;
     const streak = user.streak_count || 0;
-    const isPrem = user.subscription_status === 'premium';
+    const isPrem = Boolean(accessStatus.is_premium ?? user.subscription_status === 'premium');
+    const shouldShowUpgrade = accessStatus.should_show_upgrade ?? !isPrem;
+    const activeUntilLabel = accessStatus.active_until_label;
     const league = getLeague(xp);
 
     const currentTierIndex = LEAGUE_TIERS.findIndex(t => t.name === league.name);
@@ -160,8 +208,7 @@ export default function Profile() {
                             {/* Card 1: Profil */}
                             <div className="bg-white dark:bg-gray-900 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-800 p-8 text-center relative overflow-hidden transition-colors">
                                 {isPrem && (
-                                    <div className="absolute top-4 left-4 px-3 py-1.5 rounded-xl text-[10px] font-black text-white uppercase tracking-widest shadow-sm flex items-center gap-1"
-                                         style={{ background: theme.ctaBg || 'linear-gradient(to right, #fbbf24, #f59e0b)' }}>
+                                    <div className={`absolute top-4 left-4 px-3 py-1.5 rounded-xl text-[10px] font-black text-white uppercase tracking-widest shadow-sm flex items-center gap-1 bg-gradient-to-r ${theme.ctaBg || 'from-amber-400 to-orange-500'}`}>
                                         <WorkspacePremiumIcon sx={{ fontSize: 14 }} /> Premium
                                     </div>
                                 )}
@@ -169,7 +216,11 @@ export default function Profile() {
                                 <div className="relative inline-block mt-4 mb-5">
                                     <div className="w-32 h-32 bg-gradient-to-br from-rose-400 to-pink-500 rounded-[2rem] flex items-center justify-center text-5xl font-black text-white shadow-xl shadow-rose-200 dark:shadow-rose-900/20 group overflow-hidden cursor-pointer"
                                          style={{ border: `2px solid ${theme.activeColor || 'transparent'}` }}>
-                                        {user.username?.charAt(0).toUpperCase()}
+                                        {user?.avatar ? (
+                                            <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                                        ) : (
+                                            user?.username?.charAt(0).toUpperCase()
+                                        )}
                                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                             <EditIcon sx={{ color: 'white', fontSize: 32 }} />
                                         </div>
@@ -190,6 +241,7 @@ export default function Profile() {
                                         { id: 'stats', label: 'Dashboard Profil', icon: <PersonIcon /> },
                                         { id: 'settings', label: 'Pengaturan Akun', icon: <ManageAccountsIcon /> },
                                         { id: 'billing', label: 'Riwayat Tagihan', icon: <ReceiptLongIcon /> },
+                                        { id: 'accessKey', label: 'Access Key', icon: <VpnKeyIcon /> },
                                     ].map((item) => (
                                         <button 
                                             key={item.id}
@@ -239,16 +291,16 @@ export default function Profile() {
                                         </div>
 
                                         {/* XP Card */}
-                                        <div className="col-span-1 bg-blue-50 dark:bg-blue-900/10 rounded-[2rem] border border-blue-100 dark:border-blue-500/20 p-6 sm:p-8 flex flex-col justify-center relative overflow-hidden group transition-colors">
+                                        <div className="col-span-1 bg-red-50 dark:bg-red-900/10 rounded-[2rem] border border-red-100 dark:border-red-500/20 p-6 sm:p-8 flex flex-col justify-center relative overflow-hidden group transition-colors">
                                             <div className="absolute -right-4 -top-4 opacity-10 dark:opacity-[0.05] group-hover:scale-110 transition-transform duration-500">
                                                 <BoltIcon sx={{ fontSize: 120, color: '#3b82f6' }} />
                                             </div>
                                             <div className="relative z-10">
-                                                <div className="w-12 h-12 bg-white dark:bg-blue-500/20 rounded-2xl shadow-sm flex items-center justify-center text-blue-500 dark:text-blue-400 mb-4">
+                                                <div className="w-12 h-12 bg-white dark:bg-red-500/20 rounded-2xl shadow-sm flex items-center justify-center text-red-500 dark:text-red-400 mb-4">
                                                     <BoltIcon sx={{ fontSize: 24 }} />
                                                 </div>
-                                                <h3 className="text-4xl font-black text-blue-600 dark:text-blue-400 tracking-tight">{xp.toLocaleString()}</h3>
-                                                <p className="text-xs font-black text-blue-500/80 dark:text-blue-400/80 uppercase tracking-widest mt-1">Total XP</p>
+                                                <h3 className="text-4xl font-black text-red-600 dark:text-red-400 tracking-tight">{xp.toLocaleString()}</h3>
+                                                <p className="text-xs font-black text-red-500/80 dark:text-red-400/80 uppercase tracking-widest mt-1">Total XP</p>
                                             </div>
                                         </div>
 
@@ -306,10 +358,10 @@ export default function Profile() {
 
                                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                                 {[
-                                                    { icon: '🎯', label: 'Penembak Jitu', desc: '100% Akurasi', color: 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-800/30' },
-                                                    { icon: '📚', label: 'Kutu Buku', desc: '50 Pelajaran', color: 'bg-violet-50 dark:bg-violet-900/10 border-violet-100 dark:border-violet-800/30' },
-                                                    { icon: '🚀', label: 'Melesat', desc: 'Selesai < 1 Menit', color: 'bg-sky-50 dark:bg-sky-900/10 border-sky-100 dark:border-sky-800/30' },
-                                                    { icon: '🔒', label: 'Terkunci', desc: 'Level 10', color: 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700/50 grayscale opacity-50' },
+                                                    { icon: <ShurikenIcon className="w-5 h-5 text-emerald-500" />, label: 'Penembak Jitu', desc: '100% Akurasi', color: 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-800/30' },
+                                                    { icon: <ScrollIcon className="w-5 h-5 text-indigo-500" />, label: 'Kutu Buku', desc: '50 Pelajaran', color: 'bg-violet-50 dark:bg-violet-900/10 border-violet-100 dark:border-violet-800/30' },
+                                                    { icon: <HitodamaIcon className="w-5 h-5 text-sky-500" />, label: 'Melesat', desc: 'Selesai < 1 Menit', color: 'bg-sky-50 dark:bg-sky-900/10 border-sky-100 dark:border-sky-800/30' },
+                                                    { icon: <LockIcon className="w-5 h-5" />, label: 'Terkunci', desc: 'Level 10', color: 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700/50 grayscale opacity-50' },
                                                 ].map((badge, idx) => (
                                                     <div key={idx} className={`p-4 rounded-2xl border flex flex-col items-center text-center ${badge.color}`}>
                                                         <div className="text-3xl mb-3">{badge.icon}</div>
@@ -354,9 +406,9 @@ export default function Profile() {
                                                         </div>
                                                         <select value={themeMode} onChange={e => handleThemeChange(e.target.value)}
                                                             className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-200 dark:focus:ring-rose-900 min-w-[160px] shadow-sm">
-                                                            <option value="system">🌐 Sistem Default</option>
-                                                            <option value="light">☀️ Terang</option>
-                                                            <option value="dark">🌙 Gelap</option>
+                                                            <option value="system">Sistem Default</option>
+                                                            <option value="light">Terang Terang</option>
+                                                            <option value="dark">Gelap</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -399,22 +451,13 @@ export default function Profile() {
                                                 Menghapus akun akan menghilangkan seluruh progres belajar, XP, dan riwayat langganan Anda secara <strong className="font-black">permanen</strong>. Tindakan ini tidak dapat dibatalkan.
                                             </p>
                                             
-                                            {!deleteConfirm ? (
-                                                <button onClick={() => setDeleteConfirm(true)}
-                                                    className="px-6 py-3 rounded-xl font-black text-sm text-rose-600 dark:text-rose-400 bg-white dark:bg-gray-900 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors shadow-sm">
-                                                    Hapus Akun Saya
-                                                </button>
-                                            ) : (
-                                                <div className="flex flex-wrap gap-3">
-                                                    <button onClick={() => setDeleteConfirm(false)}
-                                                        className="px-6 py-3 rounded-xl font-black text-sm text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm transition-colors">
-                                                        Batal
-                                                    </button>
-                                                    <button className="px-6 py-3 rounded-xl font-black text-sm text-white bg-rose-600 dark:bg-rose-500 hover:bg-rose-700 dark:hover:bg-rose-600 shadow-sm shadow-rose-300 dark:shadow-rose-900/30 transition-colors">
-                                                        Ya, Hapus Permanen
-                                                    </button>
-                                                </div>
-                                            )}
+                                            <button
+                                                type="button"
+                                                onClick={() => setDeleteConfirm(true)}
+                                                className="px-6 py-3 rounded-xl font-black text-sm text-rose-600 dark:text-rose-400 bg-white dark:bg-gray-900 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors shadow-sm"
+                                            >
+                                                Hapus Akun Saya
+                                            </button>
                                         </div>
                                     </motion.div>
                                 )}
@@ -434,22 +477,26 @@ export default function Profile() {
                                             ${isPrem ? 'bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/10 border-amber-200 dark:border-amber-500/20' : 'bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 shadow-sm'}`}>
                                             <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center text-3xl shadow-sm 
                                                 ${isPrem ? 'bg-gradient-to-br from-yellow-400 to-amber-500 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>
-                                                {isPrem ? <WorkspacePremiumIcon sx={{ fontSize: 32 }} /> : '🆓'}
+                                                  {isPrem ? <WorkspacePremiumIcon sx={{ fontSize: 32 }} /> : <WorkspacePremiumIcon className="w-8 h-8 text-amber-500" />}
                                             </div>
                                             <div className="flex-1">
                                                 <p className="text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">Paket Saat Ini</p>
-                                                <h3 className="text-xl font-black text-gray-900 dark:text-white">{isPrem ? 'Premium' : 'Gratis'}</h3>
+                                                <h3 className="text-xl font-black text-gray-900 dark:text-white">{isPrem ? 'Akses Aktif' : 'Preview Week 1'}</h3>
                                                 <p className="text-sm text-gray-600 dark:text-gray-400 font-medium mt-1">
                                                     {isPrem 
-                                                        ? 'Anda memiliki akses penuh ke seluruh materi dan fitur premium.' 
+                                                        ? (accessStatus.has_full_access ? 'Anda memiliki akses penuh ke seluruh kelas.' : `Anda memiliki akses aktif untuk ${accessStatus.active_program_count || 1} kelas.`)
                                                         : 'Akses Anda terbatas. Upgrade sekarang untuk membuka seluruh pelajaran.'}
                                                 </p>
+                                                {isPrem && activeUntilLabel && (
+                                                    <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+                                                        <WorkspacePremiumIcon sx={{ fontSize: 14 }} /> Masa aktif sampai {activeUntilLabel}
+                                                    </p>
+                                                )}
                                             </div>
-                                            {!isPrem && (
+                                            {shouldShowUpgrade && (
                                                 <Link href={route('pricing')}
-                                                    className="shrink-0 px-6 py-3.5 rounded-xl text-white font-black text-sm shadow-md shadow-amber-300/40 dark:shadow-amber-900/20 hover:-translate-y-0.5 transition-transform text-center"
-                                                    style={{ background: theme.ctaBg || 'linear-gradient(to right, #fbbf24, #f59e0b)' }}>
-                                                    Tingkatkan ke Premium
+                                                    className={`shrink-0 px-6 py-3.5 rounded-xl text-white font-black text-sm shadow-md shadow-amber-300/40 dark:shadow-amber-900/20 hover:-translate-y-0.5 transition-transform text-center bg-gradient-to-r ${theme.ctaBg || 'from-amber-400 to-orange-500'}`}>
+                                                    {isPrem ? 'Perpanjang Akses' : 'Tingkatkan Akses'}
                                                 </Link>
                                             )}
                                         </div>
@@ -462,7 +509,7 @@ export default function Profile() {
                                             </div>
 
                                             <div className="space-y-3">
-                                                {MOCK_INVOICES.map((inv, idx) => (
+                                                {transactionInvoices.map((inv, idx) => (
                                                     <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl border border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors gap-4">
                                                         <div className="flex items-center gap-4">
                                                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${inv.status === 'Success' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400'}`}>
@@ -477,12 +524,60 @@ export default function Profile() {
                                                             <p className="font-black text-gray-900 dark:text-white">{inv.price}</p>
                                                             <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider
                                                                 ${inv.status === 'Success' ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-400'}`}>
-                                                                {inv.status === 'Success' ? 'Berhasil' : 'Gagal'}
+                                                                {inv.statusLabel}
                                                             </span>
                                                         </div>
                                                     </div>
                                                 ))}
+                                                {transactionInvoices.length === 0 && (
+                                                    <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-5 py-8 text-center dark:border-gray-800 dark:bg-gray-950/60">
+                                                        <ReceiptLongIcon sx={{ fontSize: 36 }} className="text-gray-300 dark:text-gray-700" />
+                                                        <p className="mt-3 text-sm font-black text-gray-700 dark:text-gray-200">Belum ada transaksi</p>
+                                                        <p className="mt-1 text-xs font-medium text-gray-400 dark:text-gray-500">
+                                                            Riwayat pembayaran Midtrans atau access key akan tampil di sini.
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
+                                        </div>
+                                    </motion.div>
+                                )}
+
+                                {/* TAB ACCESS KEY */}
+                                {activeTab === 'accessKey' && (
+                                    <motion.div
+                                        key="accessKey"
+                                        initial={{ opacity: 0, scale: 0.98 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.98 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="space-y-6"
+                                    >
+                                        <div className="bg-white dark:bg-gray-900 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-800 p-6 sm:p-8 transition-colors">
+                                            <div className="flex items-center gap-2 mb-6">
+                                                <VpnKeyIcon sx={{ color: '#f43f5e' }} />
+                                                <h3 className="font-black text-gray-900 dark:text-white text-lg">Access Key</h3>
+                                            </div>
+                                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-6">
+                                                Masukkan kode dari sensei untuk membuka akses belajar. Form ini dipindah dari dashboard agar halaman awal tetap fokus ke aktivitas belajar.
+                                            </p>
+                                            {isPrem && activeUntilLabel && (
+                                                <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-300">
+                                                    Akses aktif sampai {activeUntilLabel}.
+                                                </div>
+                                            )}
+                                            <form onSubmit={submitAccessKey} className="flex flex-col gap-3 sm:flex-row">
+                                                <input
+                                                    value={accessKeyForm.data.code}
+                                                    onChange={(event) => accessKeyForm.setData('code', event.target.value.toUpperCase())}
+                                                    placeholder="JL-XXXX-XXXX"
+                                                    className="h-12 flex-1 rounded-2xl border border-gray-200 bg-white px-4 text-sm font-black uppercase tracking-widest text-gray-900 outline-none focus:border-rose-300 focus:ring-4 focus:ring-rose-100 dark:border-gray-700 dark:bg-gray-950 dark:text-white dark:focus:ring-rose-900/30"
+                                                />
+                                                <button disabled={accessKeyForm.processing} className="h-12 rounded-2xl bg-rose-600 px-6 text-sm font-black text-white shadow-lg shadow-rose-500/20 transition-colors hover:bg-rose-700 disabled:opacity-50">
+                                                    {accessKeyForm.processing ? 'Mengecek...' : 'Redeem'}
+                                                </button>
+                                            </form>
+                                            {accessKeyForm.errors.access_key && <p className="mt-3 text-xs font-bold text-rose-600">{accessKeyForm.errors.access_key}</p>}
                                         </div>
                                     </motion.div>
                                 )}
@@ -492,6 +587,36 @@ export default function Profile() {
                     </div>
                 </div>
             </div>
+            <ConfirmActionDialog
+                show={deleteConfirm}
+                variant="danger"
+                title="Hapus Akun Permanen?"
+                message="Masukkan password akun untuk menghapus akun. Progres belajar, XP, dan riwayat langganan akan ikut terhapus."
+                details={[
+                    { label: 'Akun', value: user.username },
+                    { label: 'Email', value: user.email },
+                ]}
+                confirmLabel="Ya, Hapus Permanen"
+                processing={deleteAccountForm.processing}
+                onConfirm={deleteAccount}
+                onCancel={() => {
+                    setDeleteConfirm(false);
+                    deleteAccountForm.reset();
+                    deleteAccountForm.clearErrors();
+                }}
+            >
+                <label className="block space-y-2">
+                    <span className="text-xs font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Password</span>
+                    <input
+                        type="password"
+                        value={deleteAccountForm.data.password}
+                        onChange={(event) => deleteAccountForm.setData('password', event.target.value)}
+                        className="w-full rounded-xl border border-rose-200 bg-white px-4 py-3 text-sm font-bold text-gray-900 outline-none focus:ring-4 focus:ring-rose-500/10 dark:border-rose-900/40 dark:bg-gray-950 dark:text-white"
+                        placeholder="Masukkan password"
+                    />
+                    {deleteAccountForm.errors.password && <p className="text-xs font-bold text-rose-600 dark:text-rose-400">{deleteAccountForm.errors.password}</p>}
+                </label>
+            </ConfirmActionDialog>
         </AuthenticatedLayout>
     );
 }

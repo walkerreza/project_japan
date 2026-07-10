@@ -1,3 +1,4 @@
+import PrintIcon from '@mui/icons-material/Print';
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
@@ -15,7 +16,7 @@ export default function DetailSertifikat({ certificate, user }) {
                             onClick={() => window.print()}
                             className="px-8 py-3 bg-gray-900 text-white font-black rounded-2xl hover:bg-gray-800 transition-all shadow-lg print:hidden"
                         >
-                            🖨️ Cetak / Simpan PDF
+                            <PrintIcon className="w-5 h-5 inline-block" /> Cetak / Simpan PDF
                         </button>
                     </div>
 

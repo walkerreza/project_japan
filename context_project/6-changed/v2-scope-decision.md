@@ -1,66 +1,59 @@
-# V2 Scope Decision - Pemangkasan dari Web Lawas
+# V2 Scope Decision - Japanlingo V2
 
-## Alasan Pindah ke V2
+Tanggal update: 2026-07-10
 
-Web lawas `japanlingo` sudah membawa terlalu banyak asumsi lama: module/lesson-centric, builder materi kompleks, payment manual/access key, superadmin lengkap, certificate/news/theme, dan presentation/board yang melebar.
+## Arah V2
 
-Scope client terbaru lebih cocok dibangun ulang sebagai backend yang lebih ramping, dengan fokus utama pada quiz-first learning flow, flashcard/kosakata, QRIS gateway, dan kloter/classroom.
+`japanlingov2` tidak lagi mengikuti LMS lawas yang lesson/materi-centric. V2 diarahkan menjadi platform belajar N3 berbasis kelas, roadmap mingguan, gamifikasi, payment, dan kloter.
 
-## Patokan Request Client Terbaru
+`japanlingo` lawas tetap referensi perilaku dan data, bukan source yang dipindahkan 1:1.
 
-- Materi dari Drive dipakai untuk digamifikasi, bukan menjadi halaman materi panjang.
-- Fitur materi/module dipending dulu.
-- Flashcard dipakai untuk kanji dan kosakata, tetapi library yang diminta cukup kosakata dulu.
-- Flashcard/kosakata harus nyambung ke game/kuis.
-- Presentasi cukup diedit admin, user hanya melihat.
-- Presentasi perlu fitur share, tetapi versi lengkap presentation/board tidak harus masuk v2 awal.
-- Payment diarahkan ke dalam negeri dan QRIS.
-- SEO tidak diprioritaskan.
-- Non-premium hanya mendapat preview materi/konten yang tidak lengkap.
-- Admin kemungkinan perlu kloterisasi user, detail masih menyusul.
-
-## Scope Utama V2
-
-- Quiz-first learning flow.
-- Flashcard/kosakata sebagai materi utama yang nyambung ke kuis/game.
-- Progress, XP, feedback jawaban, dan unlock setelah lulus.
-- QRIS payment gateway otomatis.
-- Premium/free access berbasis akses konten, quiz, pack, atau kelas, bukan halaman materi panjang.
-- Admin quiz/question/vocabulary management.
-- Import soal/kosakata CSV/XLSX jika masih dibutuhkan admin.
-- Kloter/classroom untuk admin, detail menyusul.
-
-## Fitur Lawas yang Dipangkas atau Ditunda
-
-- Halaman materi panjang.
-- Module/lesson builder kompleks.
-- Import dokumen materi.
-- Manual payment/access key sebagai flow utama.
-- Certificate.
-- Leaderboard.
-- News portal lengkap.
-- Superadmin system/theme global.
-- Activity/login history detail.
-- Google OAuth.
-- Notification system.
-- Kanji bank penuh.
-- Presentation/board versi lengkap.
-- SEO lanjutan.
-- OCR/import PDF/PPT gambar.
-
-## Fitur Lawas yang Masih Layak Dibawa
+## Scope Utama Aktif
 
 - Auth role `user`, `admin`, dan `superadmin`.
-- Quiz, questions, attempts, attempt_answers.
-- Scoring server-side.
-- XP/progress.
-- Flashcard + vocabulary library.
-- Admin quiz/question management.
-- Premium/free access, tetapi disesuaikan dengan QRIS gateway dan scope v2.
+- Kelas/program sebagai entry point user.
+- Modul/week mingguan di dalam kelas.
+- PPT/presentasi sebagai materi penunjang yang bisa dishare admin ke user.
+- Kosakata N3 sebagai library.
+- Flashcard sebagai bentuk materi interaktif.
+- Kuis sebagai evaluasi dan gate unlock.
+- XP, progress, achievement, dan feedback belajar.
+- Payment Midtrans.
+- Payment scope hybrid: global atau per kelas.
+- Access key untuk akses manual/per kloter.
+- Kloterisasi user berdasarkan batch/tanggal mulai belajar.
+- Notifikasi in-app untuk user/admin/superadmin.
 
-## Catatan Implementasi
+## Scope Yang Dipangkas / Deferred
 
-- `japanlingo` lawas tetap dipakai sebagai referensi perilaku dan schema, bukan dipindahkan 1:1.
-- V2 jangan dimulai dari porting semua fitur lawas.
-- Prioritas backend v2 adalah domain yang langsung mendukung demo/beta: auth role, quiz, flashcard/kosakata, progress/XP, payment QRIS, dan admin minimal.
-- Fitur yang tidak dikunci oleh chat terbaru masuk backlog sampai client mengonfirmasi ulang.
+- Halaman materi panjang sebagai flow utama user.
+- Kanji Bank sebagai menu utama.
+- Trial 7 hari.
+- Redis sebagai kebutuhan wajib.
+- PDF final carousel sebagai jalur utama presentasi.
+- Import PDF sebagai fitur utama.
+- Online document viewer pihak ketiga.
+- WhatsApp/push notification.
+- Email production tanpa domain.
+- Jadwal Zoom.
+- Sertifikat final.
+- SEO lanjutan.
+- OCR/import dokumen berat.
+- Full LMS lesson builder seperti web lawas.
+
+## Perubahan dari Catatan Lama
+
+- Leaderboard/pencapaian tidak lagi dipangkas total; tetap dipakai sebagai bagian gamifikasi.
+- Presentasi/PPT tidak lagi deferred total; sudah menjadi bagian kelas/week.
+- Superadmin tetap dipakai untuk payment, kloter, user, admin, dan operasional.
+- Access key bukan flow utama pembayaran, tetapi tetap penting untuk kloter/manual access.
+- Notification system tidak lagi dipangkas; in-app notification sudah aktif, email hanya siap konfigurasi.
+
+## Aturan Implementasi
+
+- Jangan menghidupkan kembali `Materi` sebagai halaman utama user.
+- Jangan membuat fitur baru yang berat tanpa kebutuhan client yang jelas.
+- Jangan menambah tabel jika relasi existing sudah cukup.
+- Prioritaskan flow:
+  `Kelas -> Roadmap Week -> PPT/Kosakata/Flashcard -> Kuis -> Progress`.
+- Jika ada konflik dengan dokumen lama, ikuti `latest-changed.md`.

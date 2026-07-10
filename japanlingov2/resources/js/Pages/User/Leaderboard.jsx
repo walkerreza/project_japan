@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import { Head } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { KabutoIcon } from '@/Components/JapaneseIcons';
 import { motion } from 'framer-motion';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import StarsIcon from '@mui/icons-material/Stars';
-import theme from '@/Components/theme/themes';
+import { MascotGuide } from '@/Components/User/UserVisuals';
 
 const hashColor = (name) => {
     const colors = [
         'from-violet-500 to-purple-700',
-        'from-cyan-500 to-blue-700',
+        'from-cyan-500 to-red-700',
         'from-emerald-500 to-green-700',
         'from-rose-500 to-pink-700',
         'from-orange-500 to-red-700',
         'from-teal-500 to-cyan-700',
-        'from-indigo-500 to-violet-700',
+        'from-rose-500 to-violet-700',
         'from-fuchsia-500 to-pink-700',
     ];
     let hash = 0;
@@ -36,9 +37,9 @@ const Avatar = ({ name, size = 'md', gradient }) => {
 const TABS = ['Weekly', 'Monthly', 'All Time'];
 
 const medalEmoji = (rank) => {
-    if (rank === 1) return '🥇';
-    if (rank === 2) return '🥈';
-    if (rank === 3) return '🥉';
+    if (rank === 1) return <KabutoIcon className="w-5 h-5 inline-block text-yellow-500" />;
+    if (rank === 2) return <KabutoIcon className="w-5 h-5 inline-block text-gray-300" />;
+    if (rank === 3) return <KabutoIcon className="w-5 h-5 inline-block text-amber-600" />;
     return null;
 };
 
@@ -64,28 +65,31 @@ export default function Leaderboard({ players = [] }) {
 
     return (
         <AuthenticatedLayout>
-            <Head title="排行榜 Leaderboard" />
+            <Head title="Papan Peringkat - Japanlingo" />
 
-            <div className="min-h-screen bg-[#F8FAFC] dark:bg-gray-950 text-slate-900 dark:text-white transition-colors duration-300">
+            <div className="relative min-h-screen overflow-hidden bg-[#f5eadb] text-slate-900 transition-colors duration-300 dark:bg-gray-950 dark:text-white">
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(140deg,rgba(245,158,11,0.18)_0%,transparent_28%),linear-gradient(230deg,rgba(220,38,38,0.10)_0%,transparent_34%),repeating-linear-gradient(90deg,rgba(120,53,15,0.05)_0_1px,transparent_1px_74px),repeating-linear-gradient(0deg,rgba(120,53,15,0.04)_0_1px,transparent_1px_74px)] dark:bg-[linear-gradient(140deg,rgba(245,158,11,0.12)_0%,transparent_28%),linear-gradient(230deg,rgba(220,38,38,0.12)_0%,transparent_34%),repeating-linear-gradient(90deg,rgba(255,255,255,0.032)_0_1px,transparent_1px_74px),repeating-linear-gradient(0deg,rgba(255,255,255,0.026)_0_1px,transparent_1px_74px)]" />
+                <div className="pointer-events-none absolute left-8 top-32 hidden text-[12rem] font-black leading-none text-amber-900/[0.055] dark:text-white/[0.035] lg:block">勝</div>
+                <div className="pointer-events-none absolute right-8 top-[620px] hidden text-[12rem] font-black leading-none text-red-900/[0.04] dark:text-white/[0.03] lg:block">位</div>
                 {/* ── HERO ── */}
-                <div className="bg-gradient-to-b from-amber-50 via-[#F8FAFC] to-[#F8FAFC] dark:from-yellow-950/50 dark:via-gray-900 dark:to-gray-950 px-4 pt-8 pb-6 transition-colors duration-300 border-b border-slate-200 dark:border-transparent">
+                <div className="relative z-10 px-4 pt-10 pb-8 transition-colors duration-300">
                     <div className="max-w-2xl mx-auto text-center">
                         <div className="flex items-center justify-center gap-2 mb-1">
                             <EmojiEventsIcon className="text-amber-500 dark:text-amber-400" style={{ fontSize: 32 }} />
                             <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-amber-600 to-yellow-500 dark:from-amber-300 dark:to-yellow-500 bg-clip-text text-transparent transition-colors duration-300">
-                                排行榜 Leaderboard
+                                Papan Peringkat
                             </h1>
                             <EmojiEventsIcon className="text-amber-500 dark:text-amber-400" style={{ fontSize: 32 }} />
                         </div>
                         <p className="text-slate-500 dark:text-gray-400 text-sm mb-5 transition-colors duration-300">Bersaing dengan pemain lain dan raih posisi teratas!</p>
 
                         {/* Stats mini */}
-                        <div className="flex justify-center gap-6">
-                            <div className="bg-white dark:bg-gray-800/60 border border-slate-200 dark:border-gray-700 rounded-xl px-5 py-3 text-center shadow-sm dark:shadow-none transition-colors duration-300">
+                        <div className="mx-auto flex max-w-lg justify-center gap-4 rounded-[1.5rem] border border-white/70 bg-white/55 p-3 shadow-xl shadow-amber-900/5 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/55">
+                            <div className="flex-1 rounded-2xl bg-white/75 px-5 py-3 text-center shadow-sm transition-colors duration-300 dark:bg-gray-950/70">
                                 <p className="text-xl font-bold text-slate-800 dark:text-white transition-colors duration-300">{players.length}</p>
                                 <p className="text-xs text-slate-500 dark:text-gray-400 transition-colors duration-300">Total Peserta</p>
                             </div>
-                            <div className="bg-white dark:bg-gray-800/60 border border-slate-200 dark:border-gray-700 rounded-xl px-5 py-3 text-center shadow-sm dark:shadow-none transition-colors duration-300">
+                            <div className="flex-1 rounded-2xl bg-white/75 px-5 py-3 text-center shadow-sm transition-colors duration-300 dark:bg-gray-950/70">
                                 <p className="text-xl font-bold text-amber-500 dark:text-amber-400 transition-colors duration-300">{totalXP.toLocaleString()}</p>
                                 <p className="text-xs text-slate-500 dark:text-gray-400 transition-colors duration-300">Total XP Terdistribusi</p>
                             </div>
@@ -93,9 +97,16 @@ export default function Leaderboard({ players = [] }) {
                     </div>
                 </div>
 
-                <div className="max-w-2xl mx-auto px-4 pb-16">
+                <div className="relative z-10 max-w-2xl mx-auto px-4 pb-16">
+                    <div className="my-6">
+                        <MascotGuide
+                            tone="amber"
+                            title="Liga Mingguan"
+                            message="Peringkat naik dari XP dan konsistensi. Selesaikan quest modul mingguan untuk mengejar posisi podium."
+                        />
+                    </div>
                     {/* ── TABS ── */}
-                    <div className="flex gap-2 my-6 bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-xl p-1 shadow-sm transition-colors duration-300">
+                    <div className="flex gap-2 my-6 rounded-2xl border border-white/70 bg-white/60 p-1.5 shadow-xl shadow-amber-900/5 backdrop-blur-md transition-colors duration-300 dark:border-gray-800 dark:bg-gray-900/60">
                         {TABS.map(tab => (
                             <button
                                 key={tab}
@@ -113,7 +124,7 @@ export default function Leaderboard({ players = [] }) {
 
                     {/* ── PODIUM ── */}
                     {podiumOrder.length >= 3 && (
-                        <div className="flex items-end justify-center gap-3 mb-8">
+                        <div className="relative mb-8 flex items-end justify-center gap-3 rounded-[2rem] border border-white/70 bg-white/35 px-4 pt-8 shadow-2xl shadow-amber-900/5 backdrop-blur-sm dark:border-gray-800 dark:bg-gray-900/35">
                             {podiumOrder.map((player) => {
                                 const st = podiumStyles[player.rank];
                                 const isFirst = player.rank === 1;
@@ -132,7 +143,7 @@ export default function Leaderboard({ players = [] }) {
                                                 transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
                                                 className="text-3xl"
                                             >
-                                                👑
+                                                <KabutoIcon className="w-5 h-5 inline-block text-yellow-400" />
                                             </motion.div>
                                         )}
 
@@ -167,7 +178,7 @@ export default function Leaderboard({ players = [] }) {
                     )}
 
                     {/* ── RANKING TABLE ── */}
-                    <div className="bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm transition-colors duration-300">
+                    <div className="overflow-hidden rounded-[2rem] border border-white/70 bg-white/72 shadow-2xl shadow-amber-900/5 backdrop-blur-md transition-colors duration-300 dark:border-gray-800 dark:bg-gray-900/72">
                         <div className="px-4 py-3 border-b border-slate-100 dark:border-gray-800 flex items-center gap-2 transition-colors duration-300">
                             <StarsIcon className="text-amber-500 dark:text-amber-400" style={{ fontSize: 18 }} />
                             <span className="text-sm font-semibold text-slate-700 dark:text-gray-300 transition-colors duration-300">Peringkat Lengkap</span>

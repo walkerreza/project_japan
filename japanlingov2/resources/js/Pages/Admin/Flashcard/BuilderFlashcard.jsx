@@ -44,6 +44,16 @@ export default function BuilderFlashcard({ set, vocabulary = {}, filters = {}, q
     const addBlankCard = () => setCards((current) => [...current, { ...emptyCard }]);
     const addVocabulary = (item) => setCards((current) => [...current, fromVocabulary(item)]);
     const removeCard = (index) => setCards((current) => current.filter((_, cardIndex) => cardIndex !== index));
+    const duplicateCard = (index) => setCards((current) => {
+        const card = current[index];
+        if (!card) return current;
+
+        const duplicate = { ...card, id: null, vocabulary_id: card.vocabulary_id || null };
+        const next = [...current];
+        next.splice(index + 1, 0, duplicate);
+
+        return next;
+    });
 
     const moveCard = (index, direction) => {
         const nextIndex = index + direction;
@@ -63,7 +73,7 @@ export default function BuilderFlashcard({ set, vocabulary = {}, filters = {}, q
 
     const saveCards = () => {
         router.post(route('admin.flashcards.builder.update', set.id), {
-            status: setStatus,
+            status: setRecordStatus,
             cards: cards.map((card) => ({
                 id: card.id,
                 vocabulary_id: card.vocabulary_id,
@@ -95,11 +105,11 @@ export default function BuilderFlashcard({ set, vocabulary = {}, filters = {}, q
                         </Link>
                         <h1 className="mt-2 text-2xl font-black text-gray-900 dark:text-white">{set.title}</h1>
                         <p className="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
-                            Susun kartu dari Vocabulary Bank, lalu publish agar siswa bisa latihan fast card.
+                            Susun kartu seperti form: satu blok untuk satu kosakata, lalu publish agar muncul di modul mingguan.
                         </p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        <select value={setStatus} onChange={(event) => setSetStatus(event.target.value)} className="h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+                        <select value={setRecordStatus} onChange={(event) => setSetRecordStatus(event.target.value)} className="h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold dark:border-gray-700 dark:bg-gray-950 dark:text-white">
                             <option value="draft">Draft</option>
                             <option value="published">Published</option>
                         </select>
@@ -123,8 +133,8 @@ export default function BuilderFlashcard({ set, vocabulary = {}, filters = {}, q
                         )}
 
                         {cards.map((card, index) => (
-                            <Card key={`${card.id || 'new'}-${card.vocabulary_id || 'manual'}-${index}`} className="overflow-hidden">
-                                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                            <Card key={`${card.id || 'new'}-${card.vocabulary_id || 'manual'}-${index}`} className="overflow-hidden border-l-4 border-l-[#14B8A6]">
+                                <div className="mb-4 flex flex-col gap-3 border-b border-gray-100 pb-4 dark:border-gray-800 sm:flex-row sm:items-start sm:justify-between">
                                     <div>
                                         <p className="text-xs font-black uppercase tracking-[0.2em] text-teal-600">Kartu #{index + 1}</p>
                                         <h2 className="mt-1 text-lg font-black text-gray-900 dark:text-white">{card.front_text || 'Kartu baru'}</h2>
@@ -132,17 +142,36 @@ export default function BuilderFlashcard({ set, vocabulary = {}, filters = {}, q
                                     <div className="flex flex-wrap gap-2">
                                         <button type="button" onClick={() => moveCard(index, -1)} className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600 dark:border-gray-700 dark:text-gray-300">Naik</button>
                                         <button type="button" onClick={() => moveCard(index, 1)} className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600 dark:border-gray-700 dark:text-gray-300">Turun</button>
+                                        <button type="button" onClick={() => duplicateCard(index)} className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-black text-gray-600 dark:border-gray-700 dark:text-gray-300">Duplikat</button>
                                         <button type="button" onClick={() => removeCard(index)} className="rounded-xl border border-red-100 px-3 py-2 text-xs font-black text-red-600 dark:border-red-900/40">Hapus</button>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                                    <input value={card.front_text || ''} onChange={(event) => updateCard(index, 'front_text', event.target.value)} placeholder="Kata Jepang" className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
-                                    <input value={card.reading || ''} onChange={(event) => updateCard(index, 'reading', event.target.value)} placeholder="Reading / kana" className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
-                                    <input value={card.back_text || ''} onChange={(event) => updateCard(index, 'back_text', event.target.value)} placeholder="Arti" className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
-                                    <input value={card.hint || ''} onChange={(event) => updateCard(index, 'hint', event.target.value)} placeholder="Kategori / hint" className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
-                                    <textarea value={card.example_sentence || ''} onChange={(event) => updateCard(index, 'example_sentence', event.target.value)} placeholder="Contoh kalimat" className="min-h-20 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
-                                    <textarea value={card.example_meaning || ''} onChange={(event) => updateCard(index, 'example_meaning', event.target.value)} placeholder="Arti contoh kalimat" className="min-h-20 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
+                                    <label className="space-y-1">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Depan Kartu</span>
+                                        <input value={card.front_text || ''} onChange={(event) => updateCard(index, 'front_text', event.target.value)} placeholder="Kata Jepang" className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
+                                    </label>
+                                    <label className="space-y-1">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Reading</span>
+                                        <input value={card.reading || ''} onChange={(event) => updateCard(index, 'reading', event.target.value)} placeholder="Reading / kana" className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
+                                    </label>
+                                    <label className="space-y-1">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Belakang Kartu</span>
+                                        <input value={card.back_text || ''} onChange={(event) => updateCard(index, 'back_text', event.target.value)} placeholder="Arti" className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
+                                    </label>
+                                    <label className="space-y-1">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Hint / Kategori</span>
+                                        <input value={card.hint || ''} onChange={(event) => updateCard(index, 'hint', event.target.value)} placeholder="Kategori / hint" className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
+                                    </label>
+                                    <label className="space-y-1">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Contoh Kalimat</span>
+                                        <textarea value={card.example_sentence || ''} onChange={(event) => updateCard(index, 'example_sentence', event.target.value)} placeholder="Contoh kalimat" className="min-h-20 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
+                                    </label>
+                                    <label className="space-y-1">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Arti Contoh</span>
+                                        <textarea value={card.example_meaning || ''} onChange={(event) => updateCard(index, 'example_meaning', event.target.value)} placeholder="Arti contoh kalimat" className="min-h-20 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
+                                    </label>
                                     <input value={card.audio_url || ''} onChange={(event) => updateCard(index, 'audio_url', event.target.value)} placeholder="Audio URL opsional" className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white md:col-span-2" />
                                 </div>
                             </Card>
@@ -186,7 +215,7 @@ export default function BuilderFlashcard({ set, vocabulary = {}, filters = {}, q
                                 <select value={generateForm.data.quiz_id} onChange={(event) => generateForm.setData('quiz_id', event.target.value)} className="h-11 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white">
                                     <option value="">Pilih kuis tujuan</option>
                                     {quizzes.map((quiz) => (
-                                        <option key={quiz.id} value={quiz.id}>#{quiz.id} {quiz.lesson?.title || quiz.type || 'Quiz'}</option>
+                                        <option key={quiz.id} value={quiz.id}>#{quiz.id} {quiz.module ? `Week ${quiz.module.week_number || '-'} - ${quiz.module.title}` : (quiz.type || 'Quiz')}</option>
                                     ))}
                                 </select>
                                 <select value={generateForm.data.mode} onChange={(event) => generateForm.setData('mode', event.target.value)} className="h-11 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white">

@@ -1,7 +1,7 @@
 const colors = {
     red: 'bg-red-600',
     green: 'bg-green-500',
-    blue: 'bg-blue-500',
+    blue: 'bg-red-500',
     yellow: 'bg-amber-500',
     gradient: 'bg-gradient-to-r from-red-500 to-amber-500',
 };

@@ -52,7 +52,7 @@ export default function NewsIndex({ featured = null, news = { data: [], links: [
         <AuthenticatedLayout>
             <Head title="Portal Berita - Japanlingo" />
 
-            <main className="min-h-screen bg-white pb-16 dark:bg-gray-950">
+            <main className="min-h-screen bg-transparent pb-16 dark:bg-gray-950">
                 <section className="border-b border-gray-100 bg-gray-50 py-10 dark:border-gray-800 dark:bg-gray-900/40">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <p className="text-xs font-black uppercase tracking-[0.32em] text-red-600 dark:text-red-400">Japanlingo News</p>

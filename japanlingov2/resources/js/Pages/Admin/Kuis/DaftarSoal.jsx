@@ -12,9 +12,10 @@ import ChecklistIcon from '@mui/icons-material/Checklist';
 import KeyboardIcon from '@mui/icons-material/Keyboard';
 import HearingIcon from '@mui/icons-material/Hearing';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import ConfirmActionDialog from '@/Components/UI/ConfirmActionDialog';
 
 const QUIZ_TYPE_LABELS = {
-    multiple_choice: { label: 'Pilihan Ganda', icon: <ChecklistIcon sx={{ fontSize: 12 }} />, color: 'bg-blue-100 text-blue-700 dark:text-blue-400' },
+    multiple_choice: { label: 'Pilihan Ganda', icon: <ChecklistIcon sx={{ fontSize: 12 }} />, color: 'bg-red-100 text-red-700 dark:text-red-400' },
     typing:          { label: 'Mengetik',      icon: <KeyboardIcon sx={{ fontSize: 12 }} />,  color: 'bg-purple-100 text-purple-700' },
     listening:       { label: 'Mendengarkan',  icon: <HearingIcon sx={{ fontSize: 12 }} />,   color: 'bg-green-100 text-green-700 dark:text-green-400' },
 };
@@ -138,7 +139,7 @@ export default function QuestionsIndex({ questions = [], quizzes = [], selectedQ
                                         <div className="flex items-center gap-2 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <Link
                                                 href={route('admin.questions.edit', question.id)}
-                                                className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:bg-blue-900/20 transition-colors"
+                                                className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-red-600 dark:text-red-400 hover:bg-red-50 dark:bg-red-900/20 transition-colors"
                                                 title="Edit"
                                             >
                                                 <EditOutlinedIcon sx={{ fontSize: 18 }} />
@@ -160,21 +161,19 @@ export default function QuestionsIndex({ questions = [], quizzes = [], selectedQ
             </div>
 
             {deleteConfirm && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
-                        <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <DeleteOutlineIcon sx={{ fontSize: 28 }} className="text-red-600 dark:text-red-400" />
-                        </div>
-                        <h3 className="text-base font-black text-gray-900 dark:text-white mb-2">Hapus Pertanyaan?</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                            Pertanyaan "<strong>{deleteConfirm.question_text?.substring(0, 50)}...</strong>" akan dihapus permanen.
-                        </p>
-                        <div className="flex gap-3">
-                            <button onClick={() => setDeleteConfirm(null)} className="flex-1 h-11 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-800/50 transition-colors">Batal</button>
-                            <button onClick={confirmDelete} className="flex-1 h-11 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-bold transition-colors">Hapus</button>
-                        </div>
-                    </div>
-                </div>
+                <ConfirmActionDialog
+                    show
+                    variant="danger"
+                    title="Hapus Pertanyaan?"
+                    message="Pertanyaan akan dihapus permanen dari bank soal."
+                    confirmLabel="Iya, Hapus"
+                    details={[
+                        { label: 'Pertanyaan', value: `${deleteConfirm.question_text?.substring(0, 80) || '-'}...` },
+                        { label: 'Jawaban', value: deleteConfirm.correct_answer || '-' },
+                    ]}
+                    onCancel={() => setDeleteConfirm(null)}
+                    onConfirm={confirmDelete}
+                />
             )}
         </AuthenticatedLayout>
     );

@@ -1,7 +1,10 @@
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ConfirmActionDialog from '@/Components/UI/ConfirmActionDialog';
 
 import SecurityIcon from '@mui/icons-material/Security';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
@@ -93,7 +96,7 @@ export default function ProfilSuperAdmin() {
                                         {user.username?.charAt(0).toUpperCase()}
                                     </div>
                                     <div className="absolute -bottom-2 -right-2 w-10 h-10 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center text-lg shadow-sm border border-gray-100 dark:border-gray-700 transition-colors duration-300">
-                                        👑
+                                        <WorkspacePremiumIcon className="w-5 h-5 text-amber-500 inline-block" />
                                     </div>
                                 </div>
 
@@ -164,9 +167,9 @@ export default function ProfilSuperAdmin() {
                                                         onChange={e => handleThemeChange(e.target.value)}
                                                         className="appearance-none bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 rounded-xl px-5 py-3 pr-10 text-sm font-bold cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-100 dark:focus:ring-red-900/30 min-w-[180px] transition-colors duration-300"
                                                     >
-                                                        <option value="system">🌐 Sistem Default</option>
-                                                        <option value="light">☀️ Terang</option>
-                                                        <option value="dark">🌙 Gelap</option>
+                                                        <option value="system">Sistem Sistem Default</option>
+                                                        <option value="light">Terang Terang</option>
+                                                        <option value="dark">Gelap Gelap</option>
                                                     </select>
                                                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400 dark:text-slate-500 transition-colors duration-300">
                                                         <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
@@ -215,9 +218,9 @@ export default function ProfilSuperAdmin() {
                                     >
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                             {[
-                                                { label: 'Status Sistem', value: 'Online', icon: '🟢', bg: 'bg-emerald-50 dark:bg-emerald-900/20', border: 'border-emerald-100 dark:border-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-400' },
-                                                { label: 'Mode Akses', value: 'Produksi', icon: '🚀', bg: 'bg-blue-50 dark:bg-blue-900/20', border: 'border-blue-100 dark:border-blue-900/30', text: 'text-blue-700 dark:text-blue-400' },
-                                                { label: 'Role Aktif', value: 'Root', icon: '👑', bg: 'bg-rose-50 dark:bg-rose-900/20', border: 'border-rose-100 dark:border-rose-900/30', text: 'text-rose-700 dark:text-rose-400' },
+                                                { label: 'Status Sistem', value: 'Online', icon: '<CheckCircleIcon className="w-5 h-5 text-emerald-500 inline-block" />', bg: 'bg-emerald-50 dark:bg-emerald-900/20', border: 'border-emerald-100 dark:border-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-400' },
+                                                { label: 'Mode Akses', value: 'Produksi', icon: '<RocketLaunchIcon className="w-5 h-5 inline-block text-red-500" />', bg: 'bg-red-50 dark:bg-red-900/20', border: 'border-red-100 dark:border-red-900/30', text: 'text-red-700 dark:text-red-400' },
+                                                { label: 'Role Aktif', value: 'Root', icon: '<WorkspacePremiumIcon className="w-5 h-5 text-amber-500 inline-block" />', bg: 'bg-rose-50 dark:bg-rose-900/20', border: 'border-rose-100 dark:border-rose-900/30', text: 'text-rose-700 dark:text-rose-400' },
                                             ].map(stat => (
                                                 <BentoCard key={stat.label} className={`!p-6 ${stat.bg} ${stat.border}`}>
                                                     <div className="flex flex-col h-full justify-between gap-3">
@@ -250,26 +253,12 @@ export default function ProfilSuperAdmin() {
                                                         </p>
                                                         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 transition-colors duration-300">Aktifkan untuk mengunci akses pengguna reguler selama perbaikan.</p>
                                                     </div>
-                                                    {!confirmMaintenance ? (
-                                                        <button
-                                                            onClick={() => setConfirmMaintenance(true)}
-                                                            className="shrink-0 px-6 py-3 rounded-xl font-bold text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors duration-300 border border-red-100 dark:border-red-900/30"
-                                                        >
-                                                            Aktifkan Mode
-                                                        </button>
-                                                    ) : (
-                                                        <div className="flex items-center gap-3 shrink-0">
-                                                            <button
-                                                                onClick={() => setConfirmMaintenance(false)}
-                                                                className="px-5 py-3 rounded-xl font-bold text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-300"
-                                                            >
-                                                                Batal
-                                                            </button>
-                                                            <button className="px-5 py-3 rounded-xl font-bold text-sm text-white bg-red-600 hover:bg-red-700 shadow-md shadow-red-200 dark:shadow-none transition-colors duration-300">
-                                                                ⚠️ Konfirmasi
-                                                            </button>
-                                                        </div>
-                                                    )}
+                                                    <button
+                                                        onClick={() => setConfirmMaintenance(true)}
+                                                        className="shrink-0 px-6 py-3 rounded-xl font-bold text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors duration-300 border border-red-100 dark:border-red-900/30"
+                                                    >
+                                                        Aktifkan Mode
+                                                    </button>
                                                 </div>
                                             </div>
                                         </BentoCard>
@@ -280,6 +269,22 @@ export default function ProfilSuperAdmin() {
                     </div>
                 </div>
             </div>
+            <ConfirmActionDialog
+                show={confirmMaintenance}
+                variant="danger"
+                title="Aktifkan Mode Maintenance?"
+                message="Aksi ini akan mengunci akses pengguna reguler selama perbaikan. Pastikan pengumuman sudah disiapkan sebelum mode ini dipakai."
+                details={[
+                    { label: 'Operator', value: user?.username || user?.name || 'Superadmin' },
+                    { label: 'Dampak', value: 'Akses user reguler dibatasi' },
+                ]}
+                confirmLabel="Konfirmasi"
+                onConfirm={() => {
+                    setConfirmMaintenance(false);
+                    handleSave();
+                }}
+                onCancel={() => setConfirmMaintenance(false)}
+            />
         </AuthenticatedLayout>
     );
 }

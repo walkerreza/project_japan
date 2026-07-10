@@ -1,6 +1,8 @@
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { MedalIcon, ScrollIcon, KabutoIcon } from '@/Components/JapaneseIcons';
 import { motion, useInView } from 'framer-motion';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import LockIcon from '@mui/icons-material/Lock';
@@ -232,14 +234,16 @@ export default function Certificate({ certificates = [] }) {
                 <div className="max-w-6xl mx-auto px-6 pt-16">
                     {certificates.length === 0 ? (
                         <div className="text-center py-20 px-6">
-                            <span className="text-[80px] block mb-6 filter drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]">🎌</span>
+                            <div className="flex justify-center mb-6">
+                                <ScrollIcon className="w-24 h-24 text-amber-500 drop-shadow-[0_0_30px_rgba(251,191,36,0.3)] animate-pulse" />
+                            </div>
                             <h2 className="text-[1.8rem] font-black text-slate-900 dark:text-gray-50 mb-3 transition-colors duration-300">Belum Ada Sertifikat</h2>
                             <p className="text-base text-slate-600 dark:text-gray-400 mb-8 leading-[1.7] transition-colors duration-300">
                                 Mulai perjalanan belajar Bahasa Jepang-mu sekarang.<br />
                                 Selesaikan materi dan kuis untuk mendapatkan sertifikat pertamamu!
                             </p>
                             <Link href="/user/materi" className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-br from-amber-500 to-amber-700 text-white font-extrabold rounded-xl text-[15px] shadow-[0_4px_0_#92400e,0_8px_24px_rgba(217,119,6,0.4)] transition-all duration-150 hover:brightness-110 hover:-translate-y-0.5">
-                                📚 Mulai Belajar Sekarang
+                                <ScrollIcon className="w-5 h-5" /> Mulai Belajar Sekarang
                             </Link>
                         </div>
                     ) : (
@@ -263,21 +267,21 @@ export default function Certificate({ certificates = [] }) {
                         <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-6">
                             <StepCard
                                 num="1"
-                                emoji="📖"
+                                emoji={<ScrollIcon className="w-8 h-8 text-indigo-500" />}
                                 title="Selesaikan Materi"
                                 desc="Pelajari seluruh konten pada setiap level hingga progres mencapai 100%."
                                 delay={0}
                             />
                             <StepCard
                                 num="2"
-                                emoji="✏️"
+                                emoji={<KabutoIcon className="w-8 h-8 text-orange-500" />}
                                 title="Kerjakan Kuis"
                                 desc="Uji pemahamanmu dengan mengerjakan kuis di akhir setiap level pembelajaran."
                                 delay={0.1}
                             />
                             <StepCard
                                 num="3"
-                                emoji="🏆"
+                                emoji={<EmojiEventsIcon className="w-8 h-8 text-yellow-500" />}
                                 title="Raih Sertifikat"
                                 desc="Sertifikat diterbitkan otomatis setelah semua materi dan kuis diselesaikan."
                                 delay={0.2}

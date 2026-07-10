@@ -14,8 +14,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['"Plus Jakarta Sans"', ...defaultTheme.fontFamily.sans],
-                display: ['"Outfit"', '"Plus Jakarta Sans"', ...defaultTheme.fontFamily.sans],
+                sans: ['"Noto Sans JP"', '"Inter"', ...defaultTheme.fontFamily.sans],
+                display: ['"Yuji Syuku"', '"Noto Sans JP"', ...defaultTheme.fontFamily.sans],
             },
         },
     },

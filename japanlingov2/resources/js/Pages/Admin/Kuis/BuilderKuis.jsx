@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ConfirmActionDialog, { useConfirmAction } from '@/Components/UI/ConfirmActionDialog';
 
 import SettingsIcon from '@mui/icons-material/Settings';
 import AssessmentIcon from '@mui/icons-material/Assessment';
@@ -38,6 +39,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
     const importInputRef = useRef(null);
     const initialForm = {
         time_limit: quiz?.time_limit ?? '',
+        passing_score: quiz?.passing_score ?? 70,
         questions: normalizeQuestions(initialQuestions, quiz?.type),
     };
     const cleanSnapshotRef = useRef(JSON.stringify(initialForm));
@@ -49,6 +51,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
         mode: 'meaning',
         status: 'published',
     });
+    const { confirmState, openConfirm, closeConfirm } = useConfirmAction();
 
     const activeQ = data.questions[activeIndex] || data.questions[0] || emptyQuestion(quiz?.type || 'multiple_choice');
     const optLabels = ['A', 'B', 'C', 'D'];
@@ -74,7 +77,24 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
         return () => window.removeEventListener('beforeunload', handleBeforeUnload);
     }, [hasUnsavedChanges]);
 
-    const confirmLeave = () => !hasUnsavedChanges || window.confirm('Ada perubahan yang belum disimpan. Tetap keluar dari builder?');
+    const requestUnsavedAction = (action, config = {}) => {
+        if (!hasUnsavedChanges) {
+            action();
+            return;
+        }
+
+        openConfirm({
+            variant: 'warning',
+            title: 'Ada Perubahan Belum Disimpan',
+            message: 'Perubahan terakhir di builder belum dipublish. Lanjutkan aksi ini?',
+            confirmLabel: 'Lanjutkan',
+            ...config,
+            onConfirm: () => {
+                closeConfirm();
+                action();
+            },
+        });
+    };
 
     const updateQuestion = (index, field, value) => {
         clearErrors();
@@ -131,7 +151,15 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
             const invalidIndex = questionErrors.findIndex(Boolean);
             setActiveTab('questions');
             setActiveIndex(invalidIndex);
-            window.alert(firstQuestionError);
+            openConfirm({
+                variant: 'warning',
+                title: 'Soal Belum Lengkap',
+                message: firstQuestionError,
+                details: [{ label: 'Nomor soal', value: `Q${invalidIndex + 1}` }],
+                confirmLabel: 'Perbaiki',
+                cancelLabel: 'Tutup',
+                onConfirm: closeConfirm,
+            });
             return;
         }
 
@@ -146,33 +174,49 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
     const handleImportQuestions = (event) => {
         const file = event.target.files?.[0];
         if (!file) return;
-        if (!confirmLeave()) {
-            event.target.value = '';
+        const input = event.target;
+
+        const importNow = () => {
+            const payload = new FormData();
+            payload.append('import_file', file);
+            setImportProcessing(true);
+
+            router.post(route('admin.quizzes.questions.import', quiz.id), payload, {
+                forceFormData: true,
+                preserveScroll: true,
+                preserveState: false,
+                onFinish: () => {
+                    setImportProcessing(false);
+                    input.value = '';
+                },
+            });
+        };
+
+        if (hasUnsavedChanges) {
+            input.value = '';
+            requestUnsavedAction(importNow, {
+                title: 'Import Soal Sekarang?',
+                message: 'Import akan memuat ulang daftar soal dari file. Perubahan yang belum dipublish bisa tertimpa.',
+                confirmLabel: 'Import Sekarang',
+            });
             return;
         }
 
-        const payload = new FormData();
-        payload.append('import_file', file);
-        setImportProcessing(true);
-
-        router.post(route('admin.quizzes.questions.import', quiz.id), payload, {
-            forceFormData: true,
-            preserveScroll: true,
-            preserveState: false,
-            onFinish: () => {
-                setImportProcessing(false);
-                event.target.value = '';
-            },
-        });
+        importNow();
     };
 
     const handleGenerateKanjiQuestions = (event) => {
         event.preventDefault();
-        if (!confirmLeave()) return;
-        kanjiForm.post(route('admin.quizzes.questions.generate-kanji', quiz.id), {
-            preserveScroll: true,
-            preserveState: false,
-            onSuccess: () => setShowKanjiGenerate(false),
+        requestUnsavedAction(() => {
+            kanjiForm.post(route('admin.quizzes.questions.generate-kanji', quiz.id), {
+                preserveScroll: true,
+                preserveState: false,
+                onSuccess: () => setShowKanjiGenerate(false),
+            });
+        }, {
+            title: 'Generate Soal Kanji?',
+            message: 'Soal hasil generate akan ditambahkan dari Kanji Bank. Simpan perubahan manual dulu jika masih diperlukan.',
+            confirmLabel: 'Generate',
         });
     };
 
@@ -406,13 +450,26 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                         />
                         {errors.time_limit && <p className="mt-1 text-[10px] font-bold text-red-600">{errors.time_limit}</p>}
                     </div>
+                    <div>
+                        <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-1"><TrendingUpIcon sx={{ fontSize: 12 }} /> Nilai Lulus (%)</label>
+                        <input
+                            type="number"
+                            min="1"
+                            max="100"
+                            value={data.passing_score ?? 70}
+                            onChange={(e) => setData('passing_score', e.target.value)}
+                            className="w-full h-12 rounded-xl border border-transparent bg-gray-50 px-4 text-sm font-bold text-gray-900 outline-none focus:border-red-100 focus:bg-white focus:ring-4 focus:ring-red-500/10 dark:bg-gray-800/50 dark:text-white dark:focus:border-red-900/30 dark:focus:bg-gray-950"
+                            placeholder="Default 70"
+                        />
+                        {errors.passing_score && <p className="mt-1 text-[10px] font-bold text-red-600">{errors.passing_score}</p>}
+                    </div>
                 </div>
 
                 <div className="border-t border-gray-100 dark:border-gray-800 pt-6 space-y-4">
                     <h3 className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Opsi Pengacakan</h3>
                     <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl opacity-70">
                         <div className="flex items-center gap-3">
-                            <ShuffleIcon className="text-blue-500" sx={{ fontSize: 20 }} />
+                            <ShuffleIcon className="text-red-500" sx={{ fontSize: 20 }} />
                             <div>
                                 <p className="text-sm font-bold text-gray-900 dark:text-white">Acak Urutan Soal</p>
                                 <p className="text-[11px] text-gray-400 dark:text-gray-500">Soal muncul acak untuk setiap siswa</p>
@@ -467,7 +524,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     {[
                         { label: 'Total Soal', value: qCount, color: 'text-[#E64A19]' },
-                        { label: 'Multiple Choice', value: mcCount, color: 'text-blue-600 dark:text-blue-400' },
+                        { label: 'Multiple Choice', value: mcCount, color: 'text-red-600 dark:text-red-400' },
                         { label: 'Fill in Blank', value: fillCount, color: 'text-purple-600' },
                         { label: 'Listening', value: listenCount, color: 'text-green-600' },
                     ].map((item, i) => (
@@ -535,11 +592,11 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                     </div>
                 </div>
 
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 rounded-2xl p-5 flex items-start gap-3">
-                    <HelpOutlineIcon className="text-blue-500 shrink-0 mt-0.5" sx={{ fontSize: 18 }} />
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 rounded-2xl p-5 flex items-start gap-3">
+                    <HelpOutlineIcon className="text-red-500 shrink-0 mt-0.5" sx={{ fontSize: 18 }} />
                     <div>
-                        <p className="text-sm font-bold text-blue-900">Tentang Item Analysis</p>
-                        <p className="text-xs text-blue-700 dark:text-blue-400 mt-1 leading-relaxed">
+                        <p className="text-sm font-bold text-red-900">Tentang Item Analysis</p>
+                        <p className="text-xs text-red-700 dark:text-red-400 mt-1 leading-relaxed">
                             <strong>Difficulty (p-value)</strong>: Proporsi siswa yang menjawab benar. Rentang 0.0 (semua salah) — 1.0 (semua benar). Ideal: 0.3–0.7.<br />
                             <strong>Discrimination</strong>: Seberapa baik soal membedakan siswa pintar vs kurang. Positif = baik. Nol/negatif = soal perlu direvisi.
                         </p>
@@ -609,6 +666,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                 </div>
                 <div className="h-10 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between px-4">
                     <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Time: {data.time_limit ? `${data.time_limit} min` : '∞'}</span>
+                    <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Lulus: {data.passing_score || 70}%</span>
                     <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Pts: 10</span>
                 </div>
             </div>
@@ -624,9 +682,9 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
             <header className="sticky top-0 z-40 shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 lg:h-16 lg:px-6 lg:py-0">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-0 items-center gap-4">
-                    <Link href={route('admin.quizzes.index')} onBefore={confirmLeave} className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
+                    <button type="button" onClick={() => requestUnsavedAction(() => router.visit(route('admin.quizzes.index')), { title: 'Keluar dari Builder?', message: 'Perubahan terakhir belum dipublish. Keluar sekarang?' })} className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    </Link>
+                    </button>
                     <div className="h-6 w-px bg-gray-200"></div>
                     <div className="flex min-w-0 items-center gap-2">
                         <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">文A</div>
@@ -660,7 +718,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                         <button
                             type="button"
                             onClick={() => setShowTemplateMenu(value => !value)}
-                            className="h-9 rounded-xl border border-blue-200 bg-blue-50 px-4 text-sm font-bold text-blue-700 transition-colors hover:border-blue-300 hover:bg-blue-100 dark:border-blue-900/40 dark:bg-blue-900/20 dark:text-blue-300"
+                            className="h-9 rounded-xl border border-red-200 bg-red-50 px-4 text-sm font-bold text-red-700 transition-colors hover:border-red-300 hover:bg-red-100 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-300"
                         >
                             Template Import
                         </button>
@@ -676,7 +734,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                                 <a
                                     href={route('admin.quizzes.questions.template', { quiz: quiz.id, format: 'csv' })}
                                     onClick={() => setShowTemplateMenu(false)}
-                                    className="block border-t border-gray-100 px-4 py-3 text-sm font-bold text-gray-700 hover:bg-blue-50 hover:text-blue-700 dark:border-gray-800 dark:text-gray-200 dark:hover:bg-blue-900/20 dark:hover:text-blue-300"
+                                    className="block border-t border-gray-100 px-4 py-3 text-sm font-bold text-gray-700 hover:bg-red-50 hover:text-red-700 dark:border-gray-800 dark:text-gray-200 dark:hover:bg-red-900/20 dark:hover:text-red-300"
                                 >
                                     Download CSV (.csv)
                                 </a>
@@ -842,6 +900,7 @@ export default function QuizBuilder({ quiz, questions: initialQuestions = [] }) 
                     </form>
                 </div>
             )}
+            <ConfirmActionDialog {...confirmState} onCancel={closeConfirm} />
             </div>
         </AuthenticatedLayout>
     );
